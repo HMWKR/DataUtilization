@@ -1,0 +1,1233 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>이산형 vs 연속형 확률변수 - 인터랙티브 학습</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+<style>
+:root {
+  --bg:#fff;--bg2:#f8f9fa;--fg:#1a1a2e;--fg2:#495057;
+  --accent:#2563eb;--accent2:#3b82f6;--border:#dee2e6;
+  --code-bg:#f1f3f5;--why-bg:#eff6ff;--why-border:#93c5fd;--why-fg:#1e40af;
+  --nav-bg:#f8f9fa;--nav-fg:#495057;--nav-active:#2563eb;
+  --shadow:rgba(0,0,0,.08);--radius:8px;
+  --success:#10b981;--danger:#ef4444;--warning:#f59e0b;
+  --kw:#7c3aed;--str:#059669;--num:#d97706;--cmt:#6b7280;
+  --func:#2563eb;--builtin:#dc2626;
+}
+[data-theme="dark"] {
+  --bg:#0f172a;--bg2:#1e293b;--fg:#e2e8f0;--fg2:#94a3b8;
+  --accent:#60a5fa;--accent2:#93c5fd;--border:#334155;
+  --code-bg:#1e293b;--why-bg:#172554;--why-border:#1d4ed8;--why-fg:#93c5fd;
+  --nav-bg:#1e293b;--nav-fg:#94a3b8;--nav-active:#60a5fa;
+  --shadow:rgba(0,0,0,.3);
+  --success:#34d399;--danger:#f87171;--warning:#fbbf24;
+  --kw:#c084fc;--str:#34d399;--num:#fbbf24;--cmt:#6b7280;
+  --func:#60a5fa;--builtin:#f87171;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:80px}
+body{font-family:'Malgun Gothic','Apple SD Gothic Neo',system-ui,sans-serif;background:var(--bg);color:var(--fg);line-height:1.8;transition:background .3s,color .3s}
+
+.top-header{position:sticky;top:0;z-index:100;background:var(--bg);border-bottom:1px solid var(--border);padding:12px 24px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 8px var(--shadow)}
+.top-header h1{font-size:1.1rem;color:var(--accent)}
+.top-header .controls{display:flex;gap:12px;align-items:center}
+.theme-btn,.menu-btn{background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:6px 14px;cursor:pointer;font-size:.9rem;color:var(--fg);transition:all .2s}
+.theme-btn:hover,.menu-btn:hover{border-color:var(--accent);color:var(--accent)}
+
+.layout{display:flex;max-width:1400px;margin:0 auto}
+.sidebar{width:280px;position:sticky;top:60px;height:calc(100vh - 60px);overflow-y:auto;padding:20px 16px;border-right:1px solid var(--border);background:var(--nav-bg);flex-shrink:0}
+.sidebar a{display:block;padding:8px 12px;color:var(--nav-fg);text-decoration:none;border-radius:6px;font-size:.88rem;margin-bottom:2px;transition:all .2s;border-left:3px solid transparent}
+.sidebar a:hover{background:var(--bg);color:var(--accent)}
+.sidebar a.active{background:var(--why-bg);color:var(--nav-active);border-left-color:var(--nav-active);font-weight:600}
+.sidebar .nav-section{font-weight:700;color:var(--fg);margin-top:16px;padding:4px 12px;font-size:.8rem;text-transform:uppercase;letter-spacing:.5px}
+.main-content{flex:1;min-width:0;padding:32px 40px;max-width:920px}
+
+.main-content h1{font-size:1.8rem;color:var(--accent);border-bottom:3px solid var(--accent);padding-bottom:8px;margin:48px 0 24px}
+.main-content h1:first-child{margin-top:0}
+.main-content h2{font-size:1.4rem;color:var(--fg);margin:36px 0 16px;border-left:4px solid var(--accent);padding-left:12px}
+.main-content h3{font-size:1.15rem;margin:24px 0 12px;color:var(--fg)}
+.main-content p{margin:12px 0;color:var(--fg2)}
+.main-content ul,.main-content ol{margin:8px 0 8px 24px;color:var(--fg2)}
+.main-content li{margin:4px 0}
+.main-content table{border-collapse:collapse;width:100%;margin:16px 0;font-size:.9rem}
+.main-content th,.main-content td{border:1px solid var(--border);padding:10px 14px;text-align:left}
+.main-content th{background:var(--bg2);font-weight:600;color:var(--fg)}
+.main-content td{color:var(--fg2)}
+.main-content blockquote{border-left:4px solid var(--accent);background:var(--bg2);padding:12px 20px;margin:16px 0;border-radius:0 var(--radius) var(--radius) 0;color:var(--fg2);font-style:italic}
+.main-content hr{border:none;border-top:2px solid var(--border);margin:32px 0}
+code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-size:.85em;font-family:'Cascadia Code','Fira Code','Consolas',monospace}
+
+.code-wrap{position:relative;margin:16px 0}
+.code-wrap pre{background:var(--code-bg);color:var(--fg);padding:20px;border-radius:var(--radius);overflow-x:auto;font-family:'Cascadia Code','Fira Code','Consolas',monospace;font-size:.85rem;line-height:1.6;border:1px solid var(--border)}
+.copy-btn{position:absolute;top:8px;right:8px;background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:4px 10px;cursor:pointer;font-size:.75rem;color:var(--fg2);opacity:0;transition:opacity .2s}
+.code-wrap:hover .copy-btn{opacity:1}
+
+.why-box{background:var(--why-bg);border:1px solid var(--why-border);border-radius:var(--radius);margin:20px 0;overflow:hidden}
+.why-box summary{padding:14px 20px;cursor:pointer;font-weight:700;color:var(--why-fg);font-size:1rem;list-style:none;display:flex;align-items:center;gap:8px}
+.why-box summary::before{content:'\1F4A1';font-size:1.2rem}
+.why-box summary::after{content:'\25B6';margin-left:auto;transition:transform .3s;font-size:.7rem}
+.why-box[open] summary::after{transform:rotate(90deg)}
+.why-box .why-content{padding:0 20px 16px;color:var(--fg2);font-size:.93rem;line-height:1.9}
+.why-box .why-content p{margin:8px 0}
+
+.interactive-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin:24px 0;box-shadow:0 2px 12px var(--shadow)}
+.interactive-card h3{margin:0 0 16px;color:var(--accent);font-size:1.1rem;display:flex;align-items:center;gap:8px}
+.interactive-card h3::before{content:'';display:inline-block;width:6px;height:6px;background:var(--accent);border-radius:50%}
+
+.toggle-container{display:flex;align-items:center;justify-content:center;gap:16px;margin:16px 0}
+.toggle-label{font-weight:600;font-size:.95rem;color:var(--fg2);transition:color .3s}
+.toggle-label.active{color:var(--accent)}
+.toggle-switch{position:relative;width:60px;height:30px;cursor:pointer}
+.toggle-switch input{opacity:0;width:0;height:0}
+.toggle-slider{position:absolute;inset:0;background:var(--accent);border-radius:15px;transition:.3s}
+.toggle-slider::before{content:'';position:absolute;height:24px;width:24px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.3s}
+.toggle-switch input:checked + .toggle-slider::before{transform:translateX(30px)}
+
+.btn{background:var(--accent);color:#fff;border:none;border-radius:6px;padding:10px 20px;cursor:pointer;font-size:.9rem;font-weight:600;transition:all .2s;font-family:inherit}
+.btn:hover{background:var(--accent2);transform:translateY(-1px);box-shadow:0 4px 12px var(--shadow)}
+.btn:active{transform:translateY(0)}
+.btn-outline{background:transparent;color:var(--accent);border:2px solid var(--accent)}
+.btn-outline:hover{background:var(--accent);color:#fff}
+.btn-sm{padding:6px 14px;font-size:.82rem}
+.btn-success{background:var(--success)}
+.btn-danger{background:var(--danger)}
+
+.input-field{background:var(--bg);border:2px solid var(--border);border-radius:6px;padding:10px 16px;color:var(--fg);font-size:.95rem;font-family:inherit;width:100%;transition:border-color .2s}
+.input-field:focus{outline:none;border-color:var(--accent)}
+
+.plot-container{width:100%;min-height:350px;border-radius:var(--radius);overflow:hidden}
+.zoom-controls{display:flex;gap:8px;align-items:center;justify-content:center;margin:12px 0;flex-wrap:wrap}
+.zoom-info{text-align:center;color:var(--fg2);font-size:.88rem;margin:8px 0}
+
+.quiz-area{display:flex;gap:20px;flex-wrap:wrap;margin:16px 0}
+.quiz-source{flex:1;min-width:200px}
+.quiz-targets{display:flex;gap:16px;flex:2;min-width:300px}
+.quiz-target-box{flex:1;min-height:180px;background:var(--bg);border:2px dashed var(--border);border-radius:var(--radius);padding:12px;transition:all .3s}
+.quiz-target-box.drag-over{border-color:var(--accent);background:var(--why-bg);transform:scale(1.02)}
+.quiz-target-box h4{text-align:center;color:var(--accent);margin-bottom:12px;font-size:.95rem}
+.quiz-item{background:var(--bg);border:2px solid var(--border);border-radius:6px;padding:8px 14px;margin:6px 0;cursor:grab;font-size:.9rem;color:var(--fg);transition:all .2s;user-select:none;display:flex;align-items:center;gap:8px}
+.quiz-item:hover{border-color:var(--accent);box-shadow:0 2px 8px var(--shadow)}
+.quiz-item:active{cursor:grabbing}
+.quiz-item .item-icon{font-size:1.1rem}
+.quiz-item.correct{border-color:var(--success);background:rgba(16,185,129,.1);cursor:default}
+.quiz-item.wrong{border-color:var(--danger);background:rgba(239,68,68,.1);animation:shake .4s}
+.quiz-result{text-align:center;padding:16px;margin-top:12px;border-radius:var(--radius);font-weight:600}
+
+.float-bits{display:flex;gap:1px;margin:12px 0;flex-wrap:wrap;justify-content:center}
+.float-bit{width:28px;height:32px;display:flex;align-items:center;justify-content:center;font-family:'Cascadia Code',monospace;font-size:.8rem;font-weight:600;border-radius:3px;color:#fff}
+.float-bit.sign{background:#ef4444}
+.float-bit.exponent{background:#3b82f6}
+.float-bit.mantissa{background:#10b981}
+.float-legend{display:flex;gap:16px;justify-content:center;margin:8px 0;font-size:.85rem}
+.float-legend span{display:flex;align-items:center;gap:4px}
+.float-legend .dot{width:12px;height:12px;border-radius:3px;display:inline-block}
+
+.step-list{counter-reset:step}
+.step-item{counter-increment:step;padding:12px 16px 12px 52px;position:relative;border-left:2px solid var(--border);margin-left:16px}
+.step-item::before{content:counter(step);position:absolute;left:-14px;top:10px;width:28px;height:28px;background:var(--accent);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:700}
+.step-item:last-child{border-left-color:transparent}
+.step-highlight{background:var(--why-bg);border-radius:4px;padding:2px 6px;font-weight:600;color:var(--why-fg)}
+
+.badge{display:inline-block;padding:3px 10px;border-radius:12px;font-size:.78rem;font-weight:600;text-transform:uppercase}
+.badge-discrete{background:#dbeafe;color:#1d4ed8}
+.badge-continuous{background:#dcfce7;color:#166534}
+[data-theme="dark"] .badge-discrete{background:#1e3a5f;color:#93c5fd}
+[data-theme="dark"] .badge-continuous{background:#14532d;color:#86efac}
+
+.split-view{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.split-panel{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:16px;transition:all .3s}
+.split-panel h4{text-align:center;font-size:1rem;margin-bottom:8px}
+
+.comparison-grid{display:grid;grid-template-columns:auto 1fr 1fr;gap:0;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin:16px 0}
+.comparison-grid .cell{padding:12px 16px;border:1px solid var(--border);font-size:.9rem}
+.comparison-grid .header{background:var(--accent);color:#fff;font-weight:700;text-align:center}
+.comparison-grid .row-label{background:var(--bg2);font-weight:600;color:var(--fg)}
+
+.progress-bar{width:100%;height:8px;background:var(--border);border-radius:4px;overflow:hidden;margin:12px 0}
+.progress-fill{height:100%;background:var(--accent);border-radius:4px;transition:width .5s ease}
+
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.fade-in{animation:fadeIn .5s ease}
+
+@media(max-width:768px){
+  .sidebar{display:none;position:fixed;left:0;top:60px;width:280px;z-index:50;box-shadow:4px 0 16px var(--shadow)}
+  .sidebar.open{display:block}
+  .main-content{padding:20px 16px}
+  .menu-btn{display:inline-block!important}
+  .split-view{grid-template-columns:1fr}
+  .quiz-area{flex-direction:column}
+  .quiz-targets{flex-direction:column}
+  .comparison-grid{font-size:.82rem}
+  .float-bit{width:22px;height:26px;font-size:.7rem}
+}
+@media(min-width:769px){.menu-btn{display:none!important}}
+@media print{
+  .top-header,.sidebar,.copy-btn,.theme-btn,.menu-btn,.interactive-card,.zoom-controls{display:none!important}
+  .main-content{max-width:100%;padding:0}
+}
+.katex-display{margin:16px 0!important;overflow-x:auto}
+</style>
+</head>
+<body>
+
+<header class="top-header">
+  <h1>02. 이산형 vs 연속형 확률변수</h1>
+  <div class="controls">
+    <button class="menu-btn" onclick="document.querySelector('.sidebar').classList.toggle('open')">&#9776; 목차</button>
+    <button class="theme-btn" id="themeBtn">&#127763; 테마</button>
+  </div>
+</header>
+
+<div class="layout">
+<nav class="sidebar" id="sidebar">
+  <div class="nav-section">학습 목차</div>
+  <a href="#sec-intro">개요: 왜 구분하는가?</a>
+  <a href="#sec-discrete">1. 이산형 변수란?</a>
+  <a href="#sec-continuous">2. 연속형 변수란?</a>
+  <a href="#sec-compare-tool">도구: 이산/연속 비교기</a>
+  <a href="#sec-precision">3. 왜 정확한 값을 알 수 없는가?</a>
+  <a href="#sec-float-explorer">도구: 부동소수점 탐색기</a>
+  <a href="#sec-pzero">4. P(X=정확히 k) = 0인 이유</a>
+  <a href="#sec-zoom-tool">도구: 수직선 줌</a>
+  <a href="#sec-ml">5. ML에서의 의미</a>
+  <a href="#sec-quiz">분류 퀴즈</a>
+  <a href="#sec-summary">최종 정리</a>
+</nav>
+
+<main class="main-content">
+
+<!-- === 개요 === -->
+<section id="sec-intro">
+<h1>왜 이산형과 연속형을 구분하는가?</h1>
+<p>확률변수(Random Variable)는 <strong>실험 결과를 수치로 대응</strong>시킨 것입니다. 이 수치가 <b>"셀 수 있는" 값</b>인지, <b>"측정하는" 값</b>인지에 따라 확률을 다루는 방법이 완전히 달라집니다.</p>
+
+<div class="comparison-grid">
+  <div class="cell header"></div>
+  <div class="cell header">이산형 (Discrete)</div>
+  <div class="cell header">연속형 (Continuous)</div>
+  <div class="cell row-label">값의 성질</div>
+  <div class="cell">양의 정수로 셀 수 있다</div>
+  <div class="cell">실수로 연속된다</div>
+  <div class="cell row-label">예시</div>
+  <div class="cell">동전 앞/뒤, 주사위 눈, 카드 종류</div>
+  <div class="cell">키, 몸무게, 시간, 나이</div>
+  <div class="cell row-label">확률 표현</div>
+  <div class="cell">$$P(X=k)$$로 계산</div>
+  <div class="cell">$$P(a \le X \le b) = \int_a^b f(x)\,dx$$</div>
+  <div class="cell row-label">X=1 의미</div>
+  <div class="cell">정확히 1 (의미 있음)</div>
+  <div class="cell">1.000000... (확률 = 0)</div>
+  <div class="cell row-label">ML 연결</div>
+  <div class="cell">분류(Classification)</div>
+  <div class="cell">회귀(Regression)</div>
+</div>
+
+<details class="why-box">
+  <summary>왜 이 구분이 중요한가요?</summary>
+  <div class="why-content">
+    <p>이산형은 <b>확률질량함수(PMF)</b>로, 연속형은 <b>확률밀도함수(PDF)</b>로 다룹니다. 둘을 섞으면 확률 계산이 완전히 틀어집니다.</p>
+    <p>예: 주사위에서 $$P(X=3)=1/6$$ 은 의미가 있지만, 키에서 $$P(X=170.000...)=0$$ 입니다. 연속형에서는 <em>구간 확률</em>만 의미가 있습니다.</p>
+  </div>
+</details>
+</section>
+
+<!-- === 1. 이산형 === -->
+<section id="sec-discrete">
+<h1>1. 이산형 변수란? - 셀 수 있는 것들</h1>
+
+<h2>핵심 정의</h2>
+<p>확률변수 $$X$$가 취할 수 있는 값을 <strong>하나, 둘, 셋...</strong> 으로 셀 수 있으면 <span class="badge badge-discrete">이산형</span>입니다.</p>
+<blockquote>양의 정수(positive integer)로 세어나갈 수 있으면 이산, 그렇지 않으면 연속이다.</blockquote>
+
+<h2>대표적인 예시</h2>
+<table>
+  <tr><th>실험</th><th>확률변수 X</th><th>가능한 값</th><th>셀 수 있나?</th></tr>
+  <tr><td>동전 던지기</td><td>앞면 수</td><td>{0, 1}</td><td>O (2개)</td></tr>
+  <tr><td>주사위 1개</td><td>나온 눈</td><td>{1, 2, 3, 4, 5, 6}</td><td>O (6개)</td></tr>
+  <tr><td>카드 뽑기</td><td>카드 종류</td><td>{스페이드, 하트, 다이아, 클럽}</td><td>O (4개)</td></tr>
+  <tr><td>불량품 검사</td><td>불량 개수</td><td>{0, 1, 2, ..., n}</td><td>O (유한)</td></tr>
+  <tr><td>전화 횟수/일</td><td>수신 건수</td><td>{0, 1, 2, 3, ...}</td><td>O (무한이지만 가산)</td></tr>
+</table>
+
+<h2>확률질량함수 (PMF)</h2>
+<p>이산형 변수에서는 각 값에 확률을 직접 부여할 수 있습니다.</p>
+$$P(X=k) \ge 0 \quad \text{이고} \quad \sum_{\text{모든 } k} P(X=k) = 1$$
+<p>주사위라면: $$P(X=1) = P(X=2) = \cdots = P(X=6) = \frac{1}{6}$$</p>
+
+<details class="why-box">
+  <summary>이산형의 핵심 특징 3가지</summary>
+  <div class="why-content">
+    <ul>
+      <li><b>셈(counting)</b>이 가능하다 - 값 사이에 "빈틈"이 있다</li>
+      <li><b>각 값에 확률</b>을 부여할 수 있다 - $$P(X=3)=1/6$$</li>
+      <li><b>확률의 합이 1</b> - 모든 가능한 값의 확률을 더하면 정확히 1</li>
+    </ul>
+  </div>
+</details>
+</section>
+
+<!-- === 2. 연속형 === -->
+<section id="sec-continuous">
+<h1>2. 연속형 변수란? - 측정하는 것들</h1>
+
+<h2>핵심 정의</h2>
+<p>확률변수 $$X$$가 <strong>실수 구간의 모든 값</strong>을 취할 수 있으면 <span class="badge badge-continuous">연속형</span>입니다. 값 사이에 빈틈이 없고, 어떤 두 값 사이에도 무한히 많은 값이 존재합니다.</p>
+<blockquote>실수형으로 연속되어 정확하게 관측하지 못하면 연속(Continuous)이다.</blockquote>
+
+<h2>대표적인 예시</h2>
+<table>
+  <tr><th>측정 대상</th><th>변수</th><th>왜 연속형?</th></tr>
+  <tr><td>사람의 키</td><td>170.3cm? 170.31cm?</td><td>소수점 아래 끝없이 세분화 가능</td></tr>
+  <tr><td>몸무게</td><td>65.2kg? 65.21kg?</td><td>측정 정밀도에 따라 무한히 세분화</td></tr>
+  <tr><td>시간</td><td>1시 10분 00.000...초</td><td>시간은 연속적으로 흐른다</td></tr>
+  <tr><td>나이</td><td>25세? 25.123...세?</td><td>나이도 실수로 연속</td></tr>
+  <tr><td>온도</td><td>36.5도? 36.51도?</td><td>무한한 정밀도</td></tr>
+</table>
+
+<h2>X=1 vs X=1.0 의 차이</h2>
+<p>이산형에서 $$X=1$$은 명확합니다. 하지만 연속형에서 $$X=1.0$$이란?</p>
+<div class="code-wrap">
+<pre>이산형: X = 1      (정확히 1, 다른 값과 구분됨)
+연속형: X = 1.0    (1.0000000000...?)
+        X = 1.00000000001?  ← 이것도 "거의" 1인데?
+        X = 0.99999999999?  ← 이것은?</pre>
+</div>
+<p>연속형에서는 "정확히 1.0"이라는 점 하나의 확률이 0입니다. 이것이 연속형의 핵심 성질입니다.</p>
+
+<h2>확률밀도함수 (PDF)</h2>
+$$P(a \le X \le b) = \int_a^b f(x)\,dx$$
+<p>연속형에서는 <b>구간의 넓이(적분)</b>로만 확률을 구할 수 있습니다.</p>
+</section>
+
+<!-- === 이산/연속 비교기 === -->
+<section id="sec-compare-tool">
+<h1>도구: 이산/연속 토글 비교기</h1>
+<p>같은 데이터를 이산형(막대) 차트와 연속형(곡선) 차트로 비교해보세요.</p>
+
+<div class="interactive-card">
+  <h3>이산형 vs 연속형 시각화 비교</h3>
+  <div class="toggle-container">
+    <span class="toggle-label active" id="labelDiscrete">이산형 (막대)</span>
+    <label class="toggle-switch">
+      <input type="checkbox" id="chartToggle">
+      <span class="toggle-slider"></span>
+    </label>
+    <span class="toggle-label" id="labelContinuous">연속형 (곡선)</span>
+  </div>
+  <div class="split-view" id="splitView">
+    <div class="split-panel">
+      <h4><span class="badge badge-discrete">이산형</span> 주사위 확률</h4>
+      <div id="discretePlot" class="plot-container"></div>
+      <p style="text-align:center;font-size:.85rem;color:var(--fg2)">각 눈금에 정확한 확률값 존재</p>
+    </div>
+    <div class="split-panel">
+      <h4><span class="badge badge-continuous">연속형</span> 키 분포</h4>
+      <div id="continuousPlot" class="plot-container"></div>
+      <p style="text-align:center;font-size:.85rem;color:var(--fg2)">곡선 아래 "면적"이 확률</p>
+    </div>
+  </div>
+  <div id="singleView" style="display:none">
+    <div id="animatedPlot" class="plot-container"></div>
+  </div>
+  <div style="text-align:center;margin-top:12px">
+    <button class="btn btn-sm btn-outline" id="resetCompareBtn">Split 뷰로 돌아가기</button>
+  </div>
+</div>
+</section>
+
+<!-- === 3. 정밀도 === -->
+<section id="sec-precision">
+<h1>3. 왜 정확한 값을 알 수 없는가?</h1>
+
+<h2>당신의 정확한 키를 아시나요?</h2>
+<p>병원에서 "170cm"라고 측정받았다고 합시다. 하지만:</p>
+<ul>
+  <li>정밀한 기계: 170.3cm</li>
+  <li>더 정밀한 기계: 170.312cm</li>
+  <li>원자 수준: 170.312847291038...cm</li>
+</ul>
+<p><strong>측정 도구의 정밀도가 높아질수록 숫자는 끝없이 이어집니다.</strong> "정확한" 키는 무한 소수이고, 우리는 절대 그 모든 자릿수를 알 수 없습니다.</p>
+
+<h2>컴퓨터도 마찬가지: 0.1 + 0.2 문제</h2>
+<p>Python으로 직접 확인해봅시다:</p>
+<div class="code-wrap">
+  <pre><span style="color:var(--kw)">print</span>(<span style="color:var(--num)">0.1</span> + <span style="color:var(--num)">0.2</span>)</pre>
+  <button class="copy-btn" onclick="copyCode(this)">복사</button>
+</div>
+<div style="background:var(--bg2);border:1px solid var(--border);border-left:4px solid #ef4444;padding:16px 20px;margin:8px 0 16px;border-radius:0 var(--radius) var(--radius) 0;font-family:'Consolas',monospace;font-size:.9rem;color:var(--danger)">
+  0.30000000000000004
+</div>
+
+<p><strong>소수점 아래 16번째 자리에서 4가 튀어나옵니다!</strong> 이것은 Python의 버그가 아닙니다. 64비트(double precision)로 실수를 표현하는 모든 컴퓨터에서 발생하는 현상입니다.</p>
+
+<h2>왜 이런 일이 생기는가?</h2>
+<div class="step-list">
+  <div class="step-item">
+    <p><b>10진수 0.1을 2진수로 변환</b></p>
+    <p>$$0.1_{10} = 0.0001100110011001100..._2$$</p>
+    <p>2진수에서 0.1은 <span class="step-highlight">무한 순환소수</span>입니다!</p>
+  </div>
+  <div class="step-item">
+    <p><b>64비트에 잘라서 저장</b></p>
+    <p>IEEE 754 표준: 부호(1비트) + 지수(11비트) + 가수(52비트) = 64비트</p>
+    <p>52비트로 무한소수를 잘라야 하므로 <span class="step-highlight">반올림 오차</span> 발생</p>
+  </div>
+  <div class="step-item">
+    <p><b>오차가 누적</b></p>
+    <p>0.1의 근사값 + 0.2의 근사값 = 0.3의 근사값이 아닌 0.30000000000000004</p>
+  </div>
+</div>
+
+<details class="why-box">
+  <summary>교수님이 전달하시는 핵심 메시지</summary>
+  <div class="why-content">
+    <p>연속형 변수의 "정확한 값"이란 <b>이론적으로만 존재</b>합니다. 인간도, 컴퓨터도 유한한 정밀도를 갖기 때문에 실수를 "정확히" 표현하거나 관측할 수 없습니다.</p>
+    <p>이것이 바로 연속형 변수에서 <em>"한 점의 확률이 0"</em>인 물리적 직관입니다.</p>
+  </div>
+</details>
+</section>
+
+<!-- === 부동소수점 탐색기 === -->
+<section id="sec-float-explorer">
+<h1>도구: 부동소수점 탐색기</h1>
+<p>소수를 입력하면 컴퓨터가 이 숫자를 어떻게 64비트로 저장하는지 실시간으로 확인할 수 있습니다.</p>
+
+<div class="interactive-card">
+  <h3>IEEE 754 Double Precision 시각화</h3>
+  <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+    <input type="text" class="input-field" id="floatInput" value="0.1" placeholder="숫자를 입력하세요 (예: 0.1)" style="max-width:300px">
+    <button class="btn btn-sm" id="floatConvertBtn">변환</button>
+    <button class="btn btn-sm btn-outline" data-float-preset="0.1">0.1</button>
+    <button class="btn btn-sm btn-outline" data-float-preset="0.2">0.2</button>
+    <button class="btn btn-sm btn-outline" data-float-preset="0.3">0.3</button>
+  </div>
+  <div class="float-legend" style="margin-top:16px">
+    <span><span class="dot" style="background:#ef4444"></span> 부호 (1비트)</span>
+    <span><span class="dot" style="background:#3b82f6"></span> 지수 (11비트)</span>
+    <span><span class="dot" style="background:#10b981"></span> 가수 (52비트)</span>
+  </div>
+  <div class="float-bits" id="floatBits"></div>
+  <div id="floatInfo" style="margin-top:16px;padding:16px;background:var(--bg);border-radius:var(--radius);border:1px solid var(--border)"></div>
+
+  <hr style="margin:24px 0">
+
+  <h3>0.1 + 0.2 = ? 단계별 오차 추적</h3>
+  <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:12px">
+    <input type="text" class="input-field" id="addExprA" value="0.1" style="max-width:120px">
+    <span style="font-size:1.2rem;font-weight:700;color:var(--accent)">+</span>
+    <input type="text" class="input-field" id="addExprB" value="0.2" style="max-width:120px">
+    <button class="btn btn-sm" id="computeAddBtn">계산</button>
+  </div>
+  <div id="additionResult" style="padding:16px;background:var(--bg);border-radius:var(--radius);border:1px solid var(--border)"></div>
+</div>
+</section>
+
+<!-- === 4. P(X=k)=0 === -->
+<section id="sec-pzero">
+<h1>4. 연속형에서 P(X=정확히 k) = 0인 이유</h1>
+
+<h2>직관적 이해: 버스 문제</h2>
+<p>당신이 <strong>"정확히 1시 10분 00.000...초"</strong>에 버스를 탈 확률은 얼마일까요?</p>
+<blockquote>"1시10분에 버스를 탈 확률은?" - <b>정확히 그 순간의 확률은 0</b>입니다.</blockquote>
+
+<p>왜일까요? 시간은 연속적으로 흐릅니다:</p>
+<ul>
+  <li>1시 10분 00.000000001초도 "1시 10분"이 아닙니다</li>
+  <li>1시 09분 59.999999999초도 "1시 10분"이 아닙니다</li>
+  <li>정확히 1:10:00.000...인 "점"은 시간 축 위의 <b>무한히 작은 점</b> 하나</li>
+  <li>점 하나의 "길이(폭)"는 0이므로, 확률(면적)도 0</li>
+</ul>
+
+<h2>수학적 이해</h2>
+$$P(X = k) = \int_k^k f(x)\,dx = 0$$
+<p>적분 구간의 폭이 0이면 면적도 0입니다. 아무리 $$f(k)$$가 크더라도!</p>
+
+<h2>하지만 "불가능"은 아닙니다</h2>
+<p>$$P(X=k)=0$$이라고 해서 $$X=k$$가 일어나지 않는다는 뜻이 아닙니다. 확률 0인 사건도 일어날 수 있습니다. 이것이 연속 확률의 독특한 점입니다.</p>
+
+<details class="why-box">
+  <summary>구간 확률은 의미가 있습니다</summary>
+  <div class="why-content">
+    <p>"1시 10분 <b>전후 30초</b> 사이에 버스를 탈 확률"은 의미 있는 양수입니다.</p>
+    $$P(1:09:30 \le X \le 1:10:30) = \int_{1:09:30}^{1:10:30} f(x)\,dx > 0$$
+    <p>연속형에서는 항상 <b>구간</b>으로 물어야 의미 있는 확률을 얻습니다.</p>
+  </div>
+</details>
+</section>
+
+<!-- === 수직선 줌 === -->
+<section id="sec-zoom-tool">
+<h1>도구: 수직선 무한 줌</h1>
+<p>두 숫자 사이를 계속 확대해보세요. 아무리 가까운 두 수 사이에도 <strong>무한히 많은 실수</strong>가 존재합니다.</p>
+
+<div class="interactive-card">
+  <h3>수직선 줌 도구</h3>
+  <div class="zoom-controls">
+    <button class="btn btn-sm" id="zoomInBtn">확대 (+)</button>
+    <button class="btn btn-sm" id="zoomOutBtn">축소 (-)</button>
+    <button class="btn btn-sm btn-outline" id="zoomResetBtn">초기화</button>
+    <button class="btn btn-sm btn-outline" data-zoom="1.499,1.501">1.5 근처 줌</button>
+    <button class="btn btn-sm btn-outline" data-zoom="0.999999,1.000001">1.0 근처 줌</button>
+  </div>
+  <div id="zoomPlot" class="plot-container" style="min-height:250px"></div>
+  <div class="zoom-info" id="zoomInfo">구간: [0, 3] | 표시된 점 사이에도 무한히 많은 수가 있습니다</div>
+  <div style="text-align:center;margin-top:8px">
+    <p style="font-size:.88rem;color:var(--fg2)">클릭하여 특정 지점에 줌하거나, 버튼으로 확대/축소하세요.<br>
+    아무리 확대해도 점 사이의 빈틈은 줄어들지 않습니다 - 실수의 <b>비가산 무한</b>입니다.</p>
+  </div>
+  <details class="why-box" style="margin-top:16px">
+    <summary>왜 이것이 P(X=k)=0과 연결되는가?</summary>
+    <div class="why-content">
+      <p>한 점 $$k$$를 찍어도, 그 점의 "폭"은 0입니다. 전체 구간의 길이에서 점 하나가 차지하는 비율은:</p>
+      $$\frac{0}{\text{구간 길이}} = 0$$
+      <p>확대할수록 더 많은 점이 보이지만, 각 점의 폭은 여전히 0입니다. 이것이 연속형 변수에서 한 점의 확률이 0인 기하학적 이유입니다.</p>
+    </div>
+  </details>
+</div>
+</section>
+
+<!-- === 5. ML === -->
+<section id="sec-ml">
+<h1>5. ML에서의 의미 - 분류 vs 회귀</h1>
+<p>이산형과 연속형의 구분은 머신러닝에서 가장 기본적인 문제 분류와 직결됩니다.</p>
+
+<div class="split-view">
+  <div class="split-panel" style="border-top:3px solid #3b82f6">
+    <h4><span class="badge badge-discrete">분류 (Classification)</span></h4>
+    <p style="font-size:.9rem;color:var(--fg2)"><b>예측 대상이 이산형</b>일 때</p>
+    <ul style="font-size:.88rem;color:var(--fg2)">
+      <li>스팸 메일? 정상? (0 또는 1)</li>
+      <li>고양이? 강아지? 새? (3개 클래스)</li>
+      <li>신용 등급: Good / Bad</li>
+      <li>질병 진단: 양성 / 음성</li>
+    </ul>
+    <p style="font-size:.88rem;color:var(--fg2);margin-top:12px"><b>출력</b>: 이산적 레이블(label)</p>
+    <p style="font-size:.88rem;color:var(--fg2)"><b>손실함수</b>: Cross-entropy</p>
+    <p style="font-size:.88rem;color:var(--fg2)"><b>평가지표</b>: 정확도, F1, AUC</p>
+  </div>
+  <div class="split-panel" style="border-top:3px solid #10b981">
+    <h4><span class="badge badge-continuous">회귀 (Regression)</span></h4>
+    <p style="font-size:.9rem;color:var(--fg2)"><b>예측 대상이 연속형</b>일 때</p>
+    <ul style="font-size:.88rem;color:var(--fg2)">
+      <li>집 가격은? (연속적 금액)</li>
+      <li>내일 기온은? (실수)</li>
+      <li>매출 예측 (연속적 금액)</li>
+      <li>주가 예측 (실수 값)</li>
+    </ul>
+    <p style="font-size:.88rem;color:var(--fg2);margin-top:12px"><b>출력</b>: 연속적 실수값</p>
+    <p style="font-size:.88rem;color:var(--fg2)"><b>손실함수</b>: MSE, MAE</p>
+    <p style="font-size:.88rem;color:var(--fg2)"><b>평가지표</b>: RMSE, R-squared</p>
+  </div>
+</div>
+
+<details class="why-box">
+  <summary>경계가 모호한 경우는?</summary>
+  <div class="why-content">
+    <p><b>시험 점수</b>는 이산? 연속? - 0~100점의 정수라면 이산형이지만, 실무에서 연속형 근사하기도 합니다.</p>
+    <p><b>나이</b>는 보통 정수(25세)로 기록하지만 본질적으로 연속형입니다.</p>
+    <p>중요한 것은 <em>문제를 어떻게 모델링하느냐</em>입니다. 같은 변수도 상황에 따라 이산/연속으로 다르게 취급할 수 있습니다.</p>
+  </div>
+</details>
+</section>
+
+<!-- === 퀴즈 === -->
+<section id="sec-quiz">
+<h1>분류 퀴즈: 이산인가, 연속인가?</h1>
+<p>아래 항목들을 올바른 상자에 드래그해보세요. (모바일에서는 항목을 클릭하면 선택지가 나타납니다.)</p>
+
+<div class="interactive-card">
+  <h3>드래그 앤 드롭 분류 퀴즈</h3>
+  <div class="progress-bar"><div class="progress-fill" id="quizProgress" style="width:0%"></div></div>
+  <p style="text-align:center;font-size:.85rem;color:var(--fg2)" id="quizScore">0 / 8 완료</p>
+  <div class="quiz-area">
+    <div class="quiz-source" id="quizSource"></div>
+    <div class="quiz-targets">
+      <div class="quiz-target-box" id="discreteBox">
+        <h4><span class="badge badge-discrete">이산형</span></h4>
+      </div>
+      <div class="quiz-target-box" id="continuousBox">
+        <h4><span class="badge badge-continuous">연속형</span></h4>
+      </div>
+    </div>
+  </div>
+  <div class="quiz-result" id="quizResult" style="display:none"></div>
+  <div style="text-align:center;margin-top:16px">
+    <button class="btn btn-sm btn-outline" id="resetQuizBtn">퀴즈 초기화</button>
+  </div>
+</div>
+</section>
+
+<!-- === 최종 정리 === -->
+<section id="sec-summary">
+<h1>최종 정리</h1>
+<div class="comparison-grid">
+  <div class="cell header"></div>
+  <div class="cell header">이산형 (Discrete)</div>
+  <div class="cell header">연속형 (Continuous)</div>
+  <div class="cell row-label">판별 기준</div>
+  <div class="cell">양의 정수로 셀 수 있다</div>
+  <div class="cell">실수로 연속, 정확한 관측 불가</div>
+  <div class="cell row-label">확률함수</div>
+  <div class="cell">확률질량함수 (PMF)</div>
+  <div class="cell">확률밀도함수 (PDF)</div>
+  <div class="cell row-label">P(X=k)</div>
+  <div class="cell">의미 있는 양수</div>
+  <div class="cell">항상 0</div>
+  <div class="cell row-label">확률 계산</div>
+  <div class="cell">합(summation)</div>
+  <div class="cell">적분(integration)</div>
+  <div class="cell row-label">시각화</div>
+  <div class="cell">막대 그래프</div>
+  <div class="cell">곡선 (면적 = 확률)</div>
+  <div class="cell row-label">정밀도</div>
+  <div class="cell">정확한 값 존재</div>
+  <div class="cell">부동소수점 한계, 무한 정밀도</div>
+  <div class="cell row-label">ML 적용</div>
+  <div class="cell">분류 (Classification)</div>
+  <div class="cell">회귀 (Regression)</div>
+</div>
+
+<details class="why-box">
+  <summary>기억할 한 문장</summary>
+  <div class="why-content">
+    <p style="font-size:1.1rem;text-align:center;font-weight:700;color:var(--accent);padding:12px 0">
+      "셀 수 있으면 이산, 잴 수 있으면 연속.<br>이산은 점에 확률, 연속은 구간에 확률."
+    </p>
+  </div>
+</details>
+</section>
+
+</main>
+</div>
+
+<footer style="text-align:center;padding:32px;color:var(--fg2);font-size:.85rem;border-top:1px solid var(--border);margin-top:48px">
+  이산형 vs 연속형 확률변수 | 조상구 교수님 확률 강의 | Week 03
+</footer>
+
+<script>
+(function(){
+  "use strict";
+
+  // ===========================
+  // Helpers - safe DOM builders
+  // ===========================
+  function el(tag, attrs, children){
+    var node = document.createElement(tag);
+    if(attrs){
+      for(var k in attrs){
+        if(k === 'className') node.className = attrs[k];
+        else if(k === 'textContent') node.textContent = attrs[k];
+        else if(k.indexOf('on') === 0) node.addEventListener(k.slice(2), attrs[k]);
+        else node.setAttribute(k, attrs[k]);
+      }
+    }
+    if(children){
+      if(typeof children === 'string') node.textContent = children;
+      else if(Array.isArray(children)) children.forEach(function(c){ if(c) node.appendChild(c); });
+      else node.appendChild(children);
+    }
+    return node;
+  }
+
+  function clearChildren(parent){
+    while(parent.firstChild) parent.removeChild(parent.firstChild);
+  }
+
+  // ===========================
+  // Theme
+  // ===========================
+  var savedTheme = localStorage.getItem('theme');
+  if(savedTheme) document.documentElement.setAttribute('data-theme', savedTheme);
+
+  document.getElementById('themeBtn').addEventListener('click', function(){
+    var html = document.documentElement;
+    var current = html.getAttribute('data-theme');
+    html.setAttribute('data-theme', current === 'dark' ? 'light' : 'dark');
+    localStorage.setItem('theme', html.getAttribute('data-theme'));
+    replotAll();
+  });
+
+  // ===========================
+  // Sidebar active tracking
+  // ===========================
+  var sections = document.querySelectorAll('section[id]');
+  var navLinks = document.querySelectorAll('.sidebar a');
+  window.addEventListener('scroll', function(){
+    var current = '';
+    sections.forEach(function(s){
+      if(window.scrollY >= s.offsetTop - 120) current = s.id;
+    });
+    navLinks.forEach(function(a){
+      a.classList.remove('active');
+      if(a.getAttribute('href') === '#' + current) a.classList.add('active');
+    });
+  });
+
+  // ===========================
+  // Copy code
+  // ===========================
+  window.copyCode = function(btn){
+    var code = btn.parentElement.querySelector('pre').textContent;
+    navigator.clipboard.writeText(code);
+    btn.textContent = '복사됨!';
+    setTimeout(function(){ btn.textContent = '복사'; }, 1500);
+  };
+
+  // ===========================
+  // Plotly helpers
+  // ===========================
+  function isDark(){ return document.documentElement.getAttribute('data-theme') === 'dark'; }
+
+  function getLayout(title, xTitle, yTitle, extra){
+    var dk = isDark();
+    var base = {
+      title: { text: title, font: { size: 14, color: dk ? '#e2e8f0' : '#1a1a2e' } },
+      paper_bgcolor: 'transparent', plot_bgcolor: 'transparent',
+      font: { family: 'Malgun Gothic, system-ui', color: dk ? '#94a3b8' : '#495057' },
+      xaxis: { title: xTitle, gridcolor: dk ? '#334155' : '#e5e7eb', zerolinecolor: dk ? '#475569' : '#d1d5db' },
+      yaxis: { title: yTitle, gridcolor: dk ? '#334155' : '#e5e7eb', zerolinecolor: dk ? '#475569' : '#d1d5db' },
+      margin: { t: 50, r: 20, b: 50, l: 55 },
+      hoverlabel: { font: { family: 'Malgun Gothic' } }
+    };
+    if(extra){
+      for(var key in extra){
+        if(typeof extra[key] === 'object' && !Array.isArray(extra[key]) && base[key]){
+          for(var sk in extra[key]) base[key][sk] = extra[key][sk];
+        } else {
+          base[key] = extra[key];
+        }
+      }
+    }
+    return base;
+  }
+  var pcfg = { responsive: true, displayModeBar: false };
+
+  // ===========================
+  // 1. Comparison Charts
+  // ===========================
+  function plotDiscrete(){
+    var x = [1,2,3,4,5,6];
+    var y = x.map(function(){ return 1/6; });
+    Plotly.newPlot('discretePlot', [{
+      x: x, y: y, type: 'bar',
+      marker: { color: '#3b82f6', line: { width: 1, color: '#1d4ed8' } },
+      text: y.map(function(v){ return (v*100).toFixed(1) + '%'; }),
+      textposition: 'outside',
+      hovertemplate: '눈금 %{x}<br>확률: %{y:.4f}<extra></extra>'
+    }], getLayout('주사위 P(X=k)', '눈금 (k)', '확률 P(X=k)', {
+      yaxis: { title: '확률 P(X=k)', range: [0, 0.25] }, bargap: 0.3
+    }), pcfg);
+  }
+
+  function plotContinuous(){
+    var mu = 170, sigma = 6;
+    var x = [], i;
+    for(i = 145; i <= 195; i += 0.5) x.push(i);
+    var y = x.map(function(v){ return (1/(sigma*Math.sqrt(2*Math.PI)))*Math.exp(-0.5*Math.pow((v-mu)/sigma, 2)); });
+    Plotly.newPlot('continuousPlot', [{
+      x: x, y: y, type: 'scatter', mode: 'lines',
+      fill: 'tozeroy', fillcolor: 'rgba(16,185,129,0.2)',
+      line: { color: '#10b981', width: 2.5 },
+      hovertemplate: '키: %{x:.1f}cm<br>밀도: %{y:.6f}<extra></extra>'
+    }], getLayout('키 분포 f(x) ~ N(170, 6)', '키 (cm)', '확률밀도 f(x)'), pcfg);
+  }
+
+  var chartMode = 'split';
+
+  document.getElementById('chartToggle').addEventListener('change', function(){
+    var tog = this;
+    document.getElementById('labelDiscrete').classList.toggle('active', !tog.checked);
+    document.getElementById('labelContinuous').classList.toggle('active', tog.checked);
+    if(chartMode === 'split'){
+      chartMode = 'single';
+      document.getElementById('splitView').style.display = 'none';
+      document.getElementById('singleView').style.display = 'block';
+    }
+    if(tog.checked) plotAnimCont(); else plotAnimDisc();
+  });
+
+  function plotAnimDisc(){
+    var x = [1,2,3,4,5,6];
+    var y = x.map(function(){ return 1/6; });
+    Plotly.newPlot('animatedPlot', [{
+      x: x, y: y, type: 'bar',
+      marker: { color: '#3b82f6', line: { width: 1, color: '#1d4ed8' } },
+      text: y.map(function(v){ return 'P=' + v.toFixed(4); }), textposition: 'outside'
+    }], getLayout('이산형: 주사위 확률질량함수 (PMF)', '눈금 (k)', '확률 P(X=k)', {
+      yaxis: { title: '확률 P(X=k)', range: [0, 0.25] }, bargap: 0.3
+    }), pcfg);
+  }
+
+  function plotAnimCont(){
+    var mu = 170, sigma = 6;
+    var x = [], i;
+    for(i = 145; i <= 195; i += 0.3) x.push(i);
+    var y = x.map(function(v){ return (1/(sigma*Math.sqrt(2*Math.PI)))*Math.exp(-0.5*Math.pow((v-mu)/sigma, 2)); });
+    Plotly.newPlot('animatedPlot', [{
+      x: x, y: y, type: 'scatter', mode: 'lines',
+      fill: 'tozeroy', fillcolor: 'rgba(16,185,129,0.2)',
+      line: { color: '#10b981', width: 2.5 }
+    }], getLayout('연속형: 키 확률밀도함수 (PDF)', '키 (cm)', '확률밀도 f(x)'), pcfg);
+  }
+
+  document.getElementById('resetCompareBtn').addEventListener('click', function(){
+    chartMode = 'split';
+    document.getElementById('splitView').style.display = 'grid';
+    document.getElementById('singleView').style.display = 'none';
+    document.getElementById('chartToggle').checked = false;
+    document.getElementById('labelDiscrete').classList.add('active');
+    document.getElementById('labelContinuous').classList.remove('active');
+    plotDiscrete(); plotContinuous();
+  });
+
+  // ===========================
+  // 2. Float Explorer
+  // ===========================
+  function float64ToBits(num){
+    var buf = new ArrayBuffer(8);
+    new Float64Array(buf)[0] = num;
+    var bytes = new Uint8Array(buf);
+    var bits = '';
+    for(var i = 7; i >= 0; i--) bits += bytes[i].toString(2).padStart(8, '0');
+    return bits;
+  }
+
+  function updateFloatViz(){
+    var input = document.getElementById('floatInput').value;
+    var num = parseFloat(input);
+    var bitsEl = document.getElementById('floatBits');
+    var infoEl = document.getElementById('floatInfo');
+
+    if(isNaN(num)){
+      clearChildren(bitsEl);
+      bitsEl.appendChild(el('span', { style: 'color:var(--danger)' }, '유효한 숫자를 입력하세요'));
+      return;
+    }
+
+    var bits = float64ToBits(num);
+    var sign = bits[0];
+    var exponent = bits.substring(1, 12);
+    var mantissa = bits.substring(12);
+
+    // Build bit display with safe DOM
+    clearChildren(bitsEl);
+    bitsEl.appendChild(el('div', { className: 'float-bit sign', title: '부호: ' + (sign === '0' ? '+' : '-') }, sign));
+    for(var i = 0; i < 11; i++) bitsEl.appendChild(el('div', { className: 'float-bit exponent', title: '지수 비트 ' + i }, exponent[i]));
+    for(var j = 0; j < 52; j++) bitsEl.appendChild(el('div', { className: 'float-bit mantissa', title: '가수 비트 ' + j }, mantissa[j]));
+
+    var expVal = parseInt(exponent, 2) - 1023;
+
+    clearChildren(infoEl);
+    infoEl.appendChild(el('p', {}, [
+      el('b', {}, '입력값: '), document.createTextNode(input)
+    ]));
+    infoEl.appendChild(el('p', {}, [
+      el('b', {}, '부호: '), document.createTextNode(sign === '0' ? '+ (양수)' : '- (음수)')
+    ]));
+    var expLine = el('p');
+    expLine.appendChild(el('b', {}, '지수: '));
+    expLine.appendChild(document.createTextNode(exponent));
+    var sub2a = el('sub'); sub2a.textContent = '2'; expLine.appendChild(sub2a);
+    expLine.appendChild(document.createTextNode(' = ' + parseInt(exponent, 2) + ' (바이어스 제거: ' + expVal + ')'));
+    infoEl.appendChild(expLine);
+
+    var mantLine = el('p');
+    mantLine.appendChild(el('b', {}, '가수: '));
+    mantLine.appendChild(document.createTextNode('1.' + mantissa));
+    var sub2b = el('sub'); sub2b.textContent = '2'; mantLine.appendChild(sub2b);
+    mantLine.appendChild(document.createTextNode(' (52비트)'));
+    infoEl.appendChild(mantLine);
+
+    infoEl.appendChild(el('p', {}, [
+      el('b', {}, '실제 저장값: '),
+      el('code', {}, num.toPrecision(17))
+    ]));
+
+    if(input.indexOf('.') !== -1){
+      var expectedNum = parseFloat(input);
+      var diff = num - expectedNum;
+      if(Math.abs(diff) > 0){
+        infoEl.appendChild(el('p', { style: 'color:var(--danger);font-weight:600' },
+          '입력 "' + input + '"은 2진수로 정확히 표현할 수 없어 근사값이 저장됩니다'));
+      }
+    }
+  }
+
+  document.getElementById('floatInput').addEventListener('input', updateFloatViz);
+  document.getElementById('floatConvertBtn').addEventListener('click', updateFloatViz);
+
+  document.querySelectorAll('[data-float-preset]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      document.getElementById('floatInput').value = this.getAttribute('data-float-preset');
+      updateFloatViz();
+    });
+  });
+
+  function computeAddition(){
+    var aStr = document.getElementById('addExprA').value;
+    var bStr = document.getElementById('addExprB').value;
+    var a = parseFloat(aStr);
+    var b = parseFloat(bStr);
+    var resultEl = document.getElementById('additionResult');
+
+    clearChildren(resultEl);
+
+    if(isNaN(a) || isNaN(b)){
+      resultEl.appendChild(el('span', { style: 'color:var(--danger)' }, '유효한 숫자를 입력하세요'));
+      return;
+    }
+
+    var result = a + b;
+    var expected = parseFloat((a + b).toFixed(1));
+    var error = Math.abs(result - expected);
+
+    var list = el('div', { className: 'step-list' });
+
+    function addStep(title, value){
+      var item = el('div', { className: 'step-item' });
+      item.appendChild(el('p', {}, [el('b', {}, title)]));
+      var codeP = el('p');
+      codeP.appendChild(el('code', {}, value));
+      item.appendChild(codeP);
+      list.appendChild(item);
+    }
+
+    addStep(aStr + '의 64비트 저장값', a.toPrecision(20));
+    addStep(bStr + '의 64비트 저장값', b.toPrecision(20));
+
+    var resultItem = el('div', { className: 'step-item' });
+    resultItem.appendChild(el('p', {}, [el('b', {}, '덧셈 결과 (컴퓨터)')]));
+    var bigP = el('p', { style: 'font-size:1.1rem' });
+    bigP.appendChild(el('code', {}, result.toPrecision(20)));
+    resultItem.appendChild(bigP);
+    list.appendChild(resultItem);
+
+    addStep('우리가 기대한 값', expected.toFixed(1));
+
+    if(error > 1e-18){
+      var errPos = -Math.floor(Math.log10(error));
+      var errItem = el('div', { className: 'step-item' });
+      errItem.appendChild(el('p', {}, [el('b', {}, '오차')]));
+      errItem.appendChild(el('p', { style: 'color:var(--danger);font-weight:600' }, error.toExponential(4)));
+      errItem.appendChild(el('p', {}, '소수점 약 ' + errPos + '번째 자리에서 오차 발생!'));
+      list.appendChild(errItem);
+    } else {
+      var okItem = el('div', { className: 'step-item' });
+      okItem.appendChild(el('p', {}, [el('b', {}, '결과')]));
+      okItem.appendChild(el('p', { style: 'color:var(--success)' }, '이 경우 오차 없음 (운 좋게 정확히 표현 가능)'));
+      list.appendChild(okItem);
+    }
+
+    resultEl.appendChild(list);
+  }
+
+  document.getElementById('computeAddBtn').addEventListener('click', computeAddition);
+
+  // ===========================
+  // 3. Zoom tool
+  // ===========================
+  var zoomLeft = 0, zoomRight = 3;
+
+  function plotZoomLine(){
+    var dk = isDark();
+    var range = zoomRight - zoomLeft;
+    var nPoints = 25;
+    var step = range / (nPoints + 1);
+    var points = [], i;
+    for(i = 1; i <= nPoints; i++) points.push(zoomLeft + step * i);
+
+    var decimals = Math.max(0, Math.ceil(-Math.log10(range)) + 2);
+    var labelInterval = Math.max(1, Math.floor(nPoints / 8));
+    var textLabels = points.map(function(v, idx){
+      return idx % labelInterval === 0 ? v.toFixed(Math.min(decimals, 14)) : '';
+    });
+
+    var traces = [
+      {
+        x: [zoomLeft, zoomRight], y: [0, 0],
+        mode: 'lines', line: { color: dk ? '#60a5fa' : '#2563eb', width: 3 },
+        showlegend: false, hoverinfo: 'skip'
+      },
+      {
+        x: points, y: points.map(function(){ return 0; }),
+        mode: 'markers+text',
+        marker: { color: dk ? '#60a5fa' : '#2563eb', size: 8 },
+        text: textLabels,
+        textposition: 'top center',
+        textfont: { size: 10, color: dk ? '#94a3b8' : '#495057' },
+        showlegend: false,
+        hovertemplate: '%{x:.' + Math.min(decimals + 2, 16) + 'f}<extra></extra>'
+      }
+    ];
+
+    if(zoomLeft <= 1.5 && zoomRight >= 1.5){
+      traces.push({
+        x: [1.5], y: [0], mode: 'markers',
+        marker: { color: '#ef4444', size: 12, symbol: 'diamond' },
+        name: 'X=1.5',
+        hovertemplate: 'X = 1.5 (이 점의 확률 = 0)<extra></extra>'
+      });
+    }
+
+    Plotly.newPlot('zoomPlot', traces, {
+      paper_bgcolor: 'transparent', plot_bgcolor: 'transparent',
+      font: { family: 'Malgun Gothic', color: dk ? '#94a3b8' : '#495057' },
+      xaxis: { range: [zoomLeft - range * 0.05, zoomRight + range * 0.05], gridcolor: dk ? '#334155' : '#e5e7eb', title: '실수 직선' },
+      yaxis: { range: [-0.5, 0.5], showticklabels: false, showgrid: false, zeroline: false },
+      margin: { t: 20, b: 50, l: 20, r: 20 },
+      showlegend: false,
+      annotations: [{
+        x: (zoomLeft + zoomRight) / 2, y: 0.35,
+        text: '이 구간에도 무한히 많은 실수가 존재합니다',
+        showarrow: false, font: { size: 12, color: dk ? '#94a3b8' : '#6b7280' }
+      }]
+    }, pcfg);
+
+    var plotEl = document.getElementById('zoomPlot');
+    plotEl.on('plotly_click', function(data){
+      var clickX = data.points[0].x;
+      var newRange = range * 0.3;
+      zoomLeft = clickX - newRange / 2;
+      zoomRight = clickX + newRange / 2;
+      plotZoomLine();
+    });
+
+    document.getElementById('zoomInfo').textContent =
+      '구간: [' + zoomLeft.toFixed(Math.min(decimals, 10)) + ', ' + zoomRight.toFixed(Math.min(decimals, 10)) +
+      '] | 폭: ' + range.toExponential(3) + ' | 줌 레벨: x' + (3 / range).toFixed(0);
+  }
+
+  document.getElementById('zoomInBtn').addEventListener('click', function(){
+    var mid = (zoomLeft + zoomRight) / 2;
+    var r = (zoomRight - zoomLeft) * 0.4;
+    zoomLeft = mid - r / 2; zoomRight = mid + r / 2;
+    plotZoomLine();
+  });
+
+  document.getElementById('zoomOutBtn').addEventListener('click', function(){
+    var mid = (zoomLeft + zoomRight) / 2;
+    var r = (zoomRight - zoomLeft) * 2;
+    zoomLeft = mid - r / 2; zoomRight = mid + r / 2;
+    plotZoomLine();
+  });
+
+  document.getElementById('zoomResetBtn').addEventListener('click', function(){
+    zoomLeft = 0; zoomRight = 3; plotZoomLine();
+  });
+
+  document.querySelectorAll('[data-zoom]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var parts = this.getAttribute('data-zoom').split(',');
+      zoomLeft = parseFloat(parts[0]);
+      zoomRight = parseFloat(parts[1]);
+      plotZoomLine();
+    });
+  });
+
+  // ===========================
+  // 4. Quiz
+  // ===========================
+  var quizItems = [
+    { name: '주사위 눈금', icon: '\uD83C\uDFB2', answer: 'discrete', hint: '1~6의 정수' },
+    { name: '사람의 키', icon: '\uD83D\uDCCF', answer: 'continuous', hint: '170.312...cm' },
+    { name: '동전 앞/뒤', icon: '\uD83E\uDE99', answer: 'discrete', hint: '앞(0) 또는 뒤(1)' },
+    { name: '기온(온도)', icon: '\uD83C\uDF21\uFE0F', answer: 'continuous', hint: '36.512...도' },
+    { name: '혈액형', icon: '\uD83E\uDE78', answer: 'discrete', hint: 'A, B, O, AB 4가지' },
+    { name: '시험 점수', icon: '\uD83D\uDCDD', answer: 'discrete', hint: '0~100 정수' },
+    { name: '버스 대기 시간', icon: '\uD83D\uDE8C', answer: 'continuous', hint: '3.141592...분' },
+    { name: '몸무게', icon: '\u2696\uFE0F', answer: 'continuous', hint: '65.234...kg' }
+  ];
+
+  var quizState = { answered: 0, correct: 0 };
+
+  function initQuiz(){
+    quizState = { answered: 0, correct: 0 };
+
+    var source = document.getElementById('quizSource');
+    var dBox = document.getElementById('discreteBox');
+    var cBox = document.getElementById('continuousBox');
+
+    clearChildren(source);
+    clearChildren(dBox);
+    clearChildren(cBox);
+
+    dBox.appendChild(el('h4', {}, [el('span', { className: 'badge badge-discrete' }, '이산형')]));
+    cBox.appendChild(el('h4', {}, [el('span', { className: 'badge badge-continuous' }, '연속형')]));
+
+    document.getElementById('quizResult').style.display = 'none';
+    document.getElementById('quizProgress').style.width = '0%';
+    document.getElementById('quizScore').textContent = '0 / ' + quizItems.length + ' 완료';
+
+    source.appendChild(el('h4', { style: 'color:var(--fg);margin-bottom:8px' }, '분류할 항목'));
+
+    // Shuffle
+    var shuffled = quizItems.slice().sort(function(){ return Math.random() - 0.5; });
+
+    shuffled.forEach(function(item, idx){
+      var itemEl = el('div', {
+        className: 'quiz-item fade-in',
+        draggable: 'true',
+        'data-answer': item.answer,
+        'data-name': item.name,
+        'data-hint': item.hint,
+        style: 'animation-delay:' + (idx * 0.05) + 's'
+      }, [
+        el('span', { className: 'item-icon' }, item.icon),
+        el('span', {}, item.name)
+      ]);
+
+      itemEl.addEventListener('dragstart', function(e){
+        e.dataTransfer.setData('text/plain', item.name);
+      });
+
+      itemEl.addEventListener('click', function(){
+        if(this.classList.contains('correct') || this.dataset.placed === 'true') return;
+        var choice = prompt('"' + item.name + '"은(는) 이산형? 연속형?\n\n1 = 이산형\n2 = 연속형', '');
+        if(choice === '1') placeItem(this, 'discrete');
+        else if(choice === '2') placeItem(this, 'continuous');
+      });
+
+      source.appendChild(itemEl);
+    });
+
+    // Setup drop zones
+    setupDropZone('discreteBox', 'discrete');
+    setupDropZone('continuousBox', 'continuous');
+  }
+
+  function setupDropZone(boxId, boxType){
+    var box = document.getElementById(boxId);
+    box.addEventListener('dragover', function(e){ e.preventDefault(); this.classList.add('drag-over'); });
+    box.addEventListener('dragleave', function(){ this.classList.remove('drag-over'); });
+    box.addEventListener('drop', function(e){
+      e.preventDefault();
+      this.classList.remove('drag-over');
+      var name = e.dataTransfer.getData('text/plain');
+      var itemEl = document.querySelector('.quiz-item[data-name="' + name + '"]');
+      if(itemEl && !itemEl.classList.contains('correct') && itemEl.dataset.placed !== 'true'){
+        placeItem(itemEl, boxType);
+      }
+    });
+  }
+
+  function placeItem(itemEl, boxType){
+    var answer = itemEl.dataset.answer;
+    var isCorrect = (answer === boxType);
+    var targetBox = document.getElementById(boxType === 'discrete' ? 'discreteBox' : 'continuousBox');
+    var correctBox = document.getElementById(answer === 'discrete' ? 'discreteBox' : 'continuousBox');
+    var iconText = itemEl.querySelector('.item-icon').textContent;
+    var nameText = itemEl.dataset.name;
+
+    itemEl.dataset.placed = 'true';
+
+    if(isCorrect){
+      quizState.answered++;
+      quizState.correct++;
+      itemEl.classList.add('correct');
+      itemEl.draggable = false;
+
+      // Rebuild content safely
+      clearChildren(itemEl);
+      itemEl.appendChild(el('span', { className: 'item-icon' }, iconText));
+      itemEl.appendChild(el('span', {}, nameText));
+      itemEl.appendChild(el('span', { style: 'color:var(--success);font-size:.8rem;margin-left:auto' }, 'O 정답!'));
+      targetBox.appendChild(itemEl);
+    } else {
+      itemEl.classList.add('wrong');
+      clearChildren(itemEl);
+      itemEl.appendChild(el('span', { className: 'item-icon' }, iconText));
+      itemEl.appendChild(el('span', {}, nameText));
+      itemEl.appendChild(el('span', { style: 'color:var(--danger);font-size:.8rem;margin-left:auto' }, 'X (' + itemEl.dataset.hint + ')'));
+      targetBox.appendChild(itemEl);
+
+      setTimeout(function(){
+        quizState.answered++;
+        itemEl.classList.remove('wrong');
+        itemEl.classList.add('correct');
+        itemEl.draggable = false;
+        correctBox.appendChild(itemEl);
+        updateQuizProgress();
+      }, 1000);
+    }
+
+    updateQuizProgress();
+  }
+
+  function updateQuizProgress(){
+    var pct = (quizState.answered / quizItems.length) * 100;
+    document.getElementById('quizProgress').style.width = pct + '%';
+    document.getElementById('quizScore').textContent = quizState.correct + ' / ' + quizItems.length + ' 정답 (' + quizState.answered + '개 완료)';
+
+    if(quizState.answered >= quizItems.length){
+      var result = document.getElementById('quizResult');
+      result.style.display = 'block';
+      if(quizState.correct === quizItems.length){
+        result.style.background = 'rgba(16,185,129,0.15)';
+        result.style.color = 'var(--success)';
+        result.textContent = '완벽합니다! ' + quizState.correct + '/' + quizItems.length + ' 모두 정확하게 분류했습니다!';
+      } else {
+        result.style.background = 'rgba(245,158,11,0.15)';
+        result.style.color = 'var(--warning)';
+        result.textContent = quizState.correct + '/' + quizItems.length + ' 정답. 틀린 항목의 해설을 확인해보세요.';
+      }
+    }
+  }
+
+  document.getElementById('resetQuizBtn').addEventListener('click', initQuiz);
+
+  // ===========================
+  // Replot on theme change
+  // ===========================
+  function replotAll(){
+    plotDiscrete();
+    plotContinuous();
+    plotZoomLine();
+    if(chartMode === 'single'){
+      if(document.getElementById('chartToggle').checked) plotAnimCont();
+      else plotAnimDisc();
+    }
+  }
+
+  // ===========================
+  // Init
+  // ===========================
+  document.addEventListener('DOMContentLoaded', function(){
+    if(typeof renderMathInElement !== 'undefined'){
+      renderMathInElement(document.body, {
+        delimiters: [
+          { left: '$$', right: '$$', display: true },
+          { left: '$', right: '$', display: false }
+        ],
+        throwOnError: false
+      });
+    }
+    plotDiscrete();
+    plotContinuous();
+    plotZoomLine();
+    updateFloatViz();
+    computeAddition();
+    initQuiz();
+  });
+
+  window.addEventListener('load', function(){
+    if(typeof renderMathInElement !== 'undefined'){
+      renderMathInElement(document.body, {
+        delimiters: [
+          { left: '$$', right: '$$', display: true },
+          { left: '$', right: '$', display: false }
+        ],
+        throwOnError: false
+      });
+    }
+  });
+
+})();
+</script>
+</body>
+</html>

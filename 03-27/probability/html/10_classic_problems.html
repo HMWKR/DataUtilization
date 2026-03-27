@@ -1,0 +1,1390 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>고전 확률 문제 — Monty Hall, Survivorship Bias, Pascal/Fermat</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]})"></script>
+<style>
+:root {
+  --bg: #ffffff; --bg2: #f8f9fa; --fg: #1a1a2e;
+  --fg2: #495057; --accent: #2563eb; --accent2: #3b82f6;
+  --border: #dee2e6; --code-bg: #f1f3f5; --code-fg: #1a1a2e;
+  --why-bg: #eff6ff; --why-border: #93c5fd; --why-fg: #1e40af;
+  --nav-bg: #f8f9fa; --nav-fg: #495057; --nav-active: #2563eb;
+  --shadow: rgba(0,0,0,0.08); --radius: 8px;
+  --success: #059669; --danger: #dc2626; --warn: #d97706;
+  --card-hover: #f0f4ff;
+}
+[data-theme="dark"] {
+  --bg: #0f172a; --bg2: #1e293b; --fg: #e2e8f0;
+  --fg2: #94a3b8; --accent: #60a5fa; --accent2: #93c5fd;
+  --border: #334155; --code-bg: #1e293b; --code-fg: #e2e8f0;
+  --why-bg: #172554; --why-border: #1d4ed8; --why-fg: #93c5fd;
+  --nav-bg: #1e293b; --nav-fg: #94a3b8; --nav-active: #60a5fa;
+  --shadow: rgba(0,0,0,0.3);
+  --success: #34d399; --danger: #f87171; --warn: #fbbf24;
+  --card-hover: #1e3a5f;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; scroll-padding-top: 80px; }
+body {
+  font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', system-ui, sans-serif;
+  background: var(--bg); color: var(--fg); line-height: 1.8;
+  transition: background .3s, color .3s;
+}
+.top-header {
+  position: sticky; top: 0; z-index: 100;
+  background: var(--bg); border-bottom: 1px solid var(--border);
+  padding: 12px 24px; display: flex; align-items: center;
+  justify-content: space-between; box-shadow: 0 2px 8px var(--shadow);
+}
+.top-header h1 { font-size: 1.1rem; color: var(--accent); }
+.top-header .controls { display: flex; gap: 12px; align-items: center; }
+.theme-btn, .menu-btn {
+  background: var(--bg2); border: 1px solid var(--border); border-radius: 6px;
+  padding: 6px 14px; cursor: pointer; font-size: 0.9rem; color: var(--fg);
+  transition: all .2s;
+}
+.theme-btn:hover, .menu-btn:hover { border-color: var(--accent); color: var(--accent); }
+.layout { display: flex; max-width: 1400px; margin: 0 auto; }
+.sidebar {
+  width: 280px; position: sticky; top: 60px; height: calc(100vh - 60px);
+  overflow-y: auto; padding: 20px 16px; border-right: 1px solid var(--border);
+  background: var(--nav-bg); flex-shrink: 0;
+}
+.sidebar a {
+  display: block; padding: 8px 12px; color: var(--nav-fg);
+  text-decoration: none; border-radius: 6px; font-size: 0.88rem;
+  margin-bottom: 2px; transition: all .2s; border-left: 3px solid transparent;
+}
+.sidebar a:hover { background: var(--bg); color: var(--accent); }
+.sidebar a.active {
+  background: var(--why-bg); color: var(--nav-active);
+  border-left-color: var(--nav-active); font-weight: 600;
+}
+.sidebar .nav-section { font-weight: 700; color: var(--fg); margin-top: 16px; padding: 4px 12px; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; }
+.main-content { flex: 1; min-width: 0; padding: 32px 40px; max-width: 960px; }
+.main-content h1 { font-size: 1.8rem; color: var(--accent); border-bottom: 3px solid var(--accent); padding-bottom: 8px; margin: 48px 0 24px; }
+.main-content h1:first-of-type { margin-top: 0; }
+.main-content h2 { font-size: 1.4rem; color: var(--fg); margin: 36px 0 16px; border-left: 4px solid var(--accent); padding-left: 12px; }
+.main-content h3 { font-size: 1.15rem; margin: 24px 0 12px; color: var(--fg); }
+.main-content p { margin: 12px 0; color: var(--fg2); }
+.main-content ul, .main-content ol { margin: 8px 0 8px 24px; color: var(--fg2); }
+.main-content li { margin: 4px 0; }
+.main-content table { border-collapse: collapse; width: 100%; margin: 16px 0; font-size: 0.9rem; }
+.main-content th, .main-content td { border: 1px solid var(--border); padding: 10px 14px; text-align: center; }
+.main-content th { background: var(--bg2); font-weight: 600; color: var(--fg); }
+.main-content td { color: var(--fg2); }
+.main-content blockquote { border-left: 4px solid var(--accent); background: var(--bg2); padding: 12px 20px; margin: 16px 0; border-radius: 0 var(--radius) var(--radius) 0; color: var(--fg2); font-style: italic; }
+.main-content hr { border: none; border-top: 2px solid var(--border); margin: 32px 0; }
+.why-box {
+  background: var(--why-bg); border: 1px solid var(--why-border);
+  border-radius: var(--radius); margin: 20px 0; overflow: hidden;
+}
+.why-box summary {
+  padding: 14px 20px; cursor: pointer; font-weight: 700;
+  color: var(--why-fg); font-size: 1rem; list-style: none;
+  display: flex; align-items: center; gap: 8px;
+}
+.why-box summary::before { content: '\1F4A1'; font-size: 1.2rem; }
+.why-box summary::after { content: '\25B6'; margin-left: auto; transition: transform .3s; font-size: 0.7rem; }
+.why-box[open] summary::after { transform: rotate(90deg); }
+.why-box .why-content { padding: 0 20px 16px; color: var(--fg2); font-size: 0.93rem; line-height: 1.9; }
+.why-box .why-content p { margin: 8px 0; }
+.why-box .why-content ul { margin: 6px 0 6px 20px; }
+.why-box .why-content li { margin: 4px 0; }
+.why-box .why-content b { color: var(--fg); }
+.why-box .why-content em { color: var(--accent); font-style: normal; font-weight: 500; }
+
+/* Interactive Section Styles */
+.interactive-box {
+  border: 2px solid var(--border); border-radius: var(--radius);
+  padding: 24px; margin: 24px 0; background: var(--bg);
+  box-shadow: 0 2px 12px var(--shadow);
+}
+.interactive-box h3 { margin-top: 0; color: var(--accent); }
+
+/* Buttons */
+.btn {
+  display: inline-block; padding: 10px 24px; border: none; border-radius: 6px;
+  cursor: pointer; font-size: 0.95rem; font-weight: 600; transition: all .2s;
+  font-family: inherit;
+}
+.btn-primary { background: var(--accent); color: #fff; }
+.btn-primary:hover { background: var(--accent2); transform: translateY(-1px); box-shadow: 0 4px 12px var(--shadow); }
+.btn-secondary { background: var(--bg2); color: var(--fg); border: 1px solid var(--border); }
+.btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+.btn-success { background: var(--success); color: #fff; }
+.btn-success:hover { opacity: 0.9; }
+.btn-danger { background: var(--danger); color: #fff; }
+.btn-danger:hover { opacity: 0.9; }
+.btn-warn { background: var(--warn); color: #fff; }
+.btn-warn:hover { opacity: 0.9; }
+.btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.btn-group { display: flex; gap: 12px; flex-wrap: wrap; margin: 16px 0; }
+
+/* Monty Hall Doors */
+.doors-container { display: flex; gap: 20px; justify-content: center; margin: 24px 0; flex-wrap: wrap; }
+.door-panel {
+  width: 160px; height: 220px; border-radius: 12px; cursor: pointer;
+  position: relative; transition: all .3s; perspective: 800px;
+  user-select: none;
+}
+.door-panel:hover:not(.opened):not(.disabled) { transform: translateY(-4px); box-shadow: 0 8px 24px var(--shadow); }
+.door-front, .door-back {
+  position: absolute; width: 100%; height: 100%; border-radius: 12px;
+  backface-visibility: hidden; transition: transform 0.6s;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+}
+.door-front {
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  border: 3px solid #4f46e5;
+  color: #fff; font-size: 2.5rem; font-weight: 900;
+}
+.door-front .door-label { font-size: 0.9rem; margin-top: 8px; font-weight: 400; }
+.door-back {
+  transform: rotateY(180deg);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  font-size: 3rem;
+}
+.door-back.car-back { background: linear-gradient(135deg, #fbbf24, #f59e0b); border: 3px solid #d97706; }
+.door-back.goat-back { background: linear-gradient(135deg, #94a3b8, #64748b); border: 3px solid #475569; }
+.door-back .result-label { font-size: 0.85rem; margin-top: 6px; color: rgba(0,0,0,0.7); font-weight: 600; }
+.door-panel.opened .door-front { transform: rotateY(-180deg); }
+.door-panel.opened .door-back { transform: rotateY(0deg); }
+.door-panel.selected .door-front { border-color: var(--accent); box-shadow: 0 0 0 4px rgba(37,99,235,0.3); }
+.door-panel.disabled { cursor: not-allowed; opacity: 0.7; }
+
+/* Score Board */
+.score-board {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px;
+  margin: 20px 0; padding: 16px; background: var(--bg2); border-radius: var(--radius);
+  border: 1px solid var(--border);
+}
+.score-item { text-align: center; }
+.score-item .score-val { font-size: 1.8rem; font-weight: 900; color: var(--accent); }
+.score-item .score-label { font-size: 0.8rem; color: var(--fg2); }
+
+/* Pascal Tree */
+.tree-container { overflow-x: auto; padding: 16px 0; }
+.tree-container svg { display: block; margin: 0 auto; }
+.tree-node circle { transition: all .3s; cursor: pointer; }
+.tree-node text { font-family: 'Malgun Gothic', system-ui, sans-serif; }
+.tree-link { fill: none; stroke-width: 2; }
+
+/* Aircraft SVG */
+.aircraft-container { text-align: center; margin: 24px 0; position: relative; }
+.toggle-group { display: flex; gap: 12px; justify-content: center; margin: 16px 0; flex-wrap: wrap; }
+.toggle-btn {
+  padding: 10px 20px; border: 2px solid var(--border); border-radius: 8px;
+  background: var(--bg); color: var(--fg); cursor: pointer; font-weight: 600;
+  font-family: inherit; font-size: 0.9rem; transition: all .2s;
+}
+.toggle-btn.active-red { border-color: var(--danger); background: rgba(220,38,38,0.1); color: var(--danger); }
+.toggle-btn.active-blue { border-color: var(--accent); background: rgba(37,99,235,0.1); color: var(--accent); }
+.toggle-btn.active-green { border-color: var(--success); background: rgba(5,150,105,0.1); color: var(--success); }
+
+/* Calculator */
+.calc-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 16px 0;
+}
+.calc-input-group { display: flex; flex-direction: column; gap: 6px; }
+.calc-input-group label { font-weight: 600; color: var(--fg); font-size: 0.9rem; }
+.calc-input-group input {
+  padding: 10px 14px; border: 1px solid var(--border); border-radius: 6px;
+  background: var(--bg); color: var(--fg); font-size: 1rem; font-family: inherit;
+}
+.calc-input-group input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(37,99,235,0.15); }
+.result-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 20px 0;
+}
+.result-card {
+  padding: 20px; border-radius: var(--radius); text-align: center;
+  border: 1px solid var(--border); background: var(--bg2);
+}
+.result-card .result-val { font-size: 2rem; font-weight: 900; }
+.result-card .result-desc { font-size: 0.85rem; color: var(--fg2); margin-top: 4px; }
+
+/* Contingency Table */
+.ct-table { margin: 16px 0; }
+.ct-table td.highlight-high { background: rgba(220,38,38,0.1); font-weight: 700; }
+.ct-table td.highlight-low { background: rgba(5,150,105,0.1); font-weight: 700; }
+
+/* Chart bars */
+.bar-chart-container { display: flex; gap: 40px; justify-content: center; align-items: flex-end; height: 200px; margin: 24px 0; }
+.bar-wrapper { display: flex; flex-direction: column; align-items: center; }
+.bar {
+  width: 80px; border-radius: 6px 6px 0 0; transition: height .5s ease; position: relative;
+}
+.bar .bar-value {
+  position: absolute; top: -28px; left: 50%; transform: translateX(-50%);
+  font-weight: 700; font-size: 0.95rem; white-space: nowrap;
+}
+.bar-label { margin-top: 8px; font-size: 0.85rem; color: var(--fg2); text-align: center; }
+
+/* Simulation Progress */
+.sim-progress { height: 6px; background: var(--bg2); border-radius: 3px; margin: 12px 0; overflow: hidden; }
+.sim-progress-bar { height: 100%; background: var(--accent); border-radius: 3px; transition: width .1s; }
+.sim-stats { font-size: 0.9rem; color: var(--fg2); text-align: center; margin: 8px 0; }
+
+/* Phase indicator */
+.phase-msg {
+  text-align: center; font-size: 1.1rem; font-weight: 600; color: var(--accent);
+  margin: 16px 0; min-height: 32px;
+}
+
+/* Math display */
+.math-block {
+  background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 20px; margin: 16px 0; overflow-x: auto; text-align: center;
+}
+
+/* Fermat Table */
+.fermat-table td.win-a { background: rgba(37,99,235,0.12); font-weight: 600; color: var(--accent); }
+.fermat-table td.win-b { background: rgba(220,38,38,0.12); font-weight: 600; color: var(--danger); }
+
+/* Timeline */
+.timeline-item {
+  position: relative; padding-left: 28px; margin: 16px 0;
+}
+.timeline-item::before {
+  content: ''; position: absolute; left: 8px; top: 0; bottom: 0;
+  width: 2px; background: var(--border);
+}
+.timeline-item::after {
+  content: ''; position: absolute; left: 3px; top: 8px;
+  width: 12px; height: 12px; border-radius: 50%; background: var(--accent);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .sidebar { display: none; position: fixed; left: 0; top: 60px; width: 280px; z-index: 50; box-shadow: 4px 0 16px var(--shadow); }
+  .sidebar.open { display: block; }
+  .main-content { padding: 20px 16px; }
+  .menu-btn { display: inline-block; }
+  .doors-container { gap: 12px; }
+  .door-panel { width: 120px; height: 170px; }
+  .door-front { font-size: 2rem; }
+  .calc-grid { grid-template-columns: 1fr; }
+  .result-grid { grid-template-columns: 1fr; }
+}
+@media (min-width: 769px) { .menu-btn { display: none; } }
+@media print {
+  .top-header, .sidebar, .theme-btn, .menu-btn { display: none !important; }
+  .main-content { max-width: 100%; padding: 0; }
+  .why-box { break-inside: avoid; }
+}
+</style>
+</head>
+<body>
+<header class="top-header">
+  <h1>고전 확률 문제 학습 자료</h1>
+  <div class="controls">
+    <button class="menu-btn" aria-label="메뉴">&#9776; 목차</button>
+    <button class="theme-btn" id="themeToggle">&#127769; Dark</button>
+  </div>
+</header>
+
+<div class="layout">
+<nav class="sidebar" id="sidebar">
+  <div class="nav-section">목차</div>
+  <a href="#sec-intro">개요</a>
+  <div class="nav-section">1. Pascal &amp; Fermat</div>
+  <a href="#sec-pascal-history">역사적 맥락</a>
+  <a href="#sec-pascal-problem">문제 설명</a>
+  <a href="#sec-pascal-tree">Decision Tree 풀이</a>
+  <a href="#sec-fermat-enum">경우의 수 풀이</a>
+  <a href="#sec-joint-prob">결합확률 개념</a>
+  <div class="nav-section">2. Monty Hall</div>
+  <a href="#sec-monty-desc">문제 설명</a>
+  <a href="#sec-monty-math">수학적 증명</a>
+  <a href="#sec-monty-game">인터랙티브 게임</a>
+  <div class="nav-section">3. Survivorship Bias</div>
+  <a href="#sec-surv-story">Abraham Wald 이야기</a>
+  <a href="#sec-surv-diagram">항공기 다이어그램</a>
+  <a href="#sec-surv-ml">ML에서의 생존자 편향</a>
+  <div class="nav-section">4. 식중독 문제</div>
+  <a href="#sec-food-desc">조건부 확률 계산</a>
+  <a href="#sec-food-calc">인터랙티브 계산기</a>
+</nav>
+
+<main class="main-content">
+
+<!-- ========== INTRO ========== -->
+<h1 id="sec-intro">고전 확률 문제</h1>
+<hr>
+<p><b>과목</b>: 조상구 교수님 &mdash; 3주차 확률론</p>
+<p><b>주제</b>: 확률론의 역사를 만든 고전 문제들</p>
+<p><b>날짜</b>: 2026-03-27</p>
+<blockquote>확률론은 도박 문제를 풀기 위해 시작되었습니다. 이 자료에서는 확률론의 탄생을 이끈 네 가지 고전 문제를 인터랙티브하게 학습합니다.</blockquote>
+
+<hr>
+
+<!-- ===================================================================== -->
+<!-- SECTION 1: Pascal & Fermat                                            -->
+<!-- ===================================================================== -->
+<h1 id="sec-pascal-history">1. 파스칼과 페르마의 상금 배분 문제</h1>
+
+<h2>역사적 맥락 (1654년)</h2>
+<div class="timeline-item">
+  <p><b>1654년, 파리</b> &mdash; 도박꾼 슈발리에 드 메레(Chevalier de Mere)가 블레즈 파스칼(Blaise Pascal)에게 질문합니다: "게임이 중단되었을 때, 상금을 어떻게 나눠야 공정한가?"</p>
+</div>
+<div class="timeline-item">
+  <p>파스칼은 피에르 드 페르마(Pierre de Fermat)에게 편지를 보내 이 문제를 논의합니다. 두 수학자는 <b>서로 다른 방법</b>으로 같은 답에 도달했고, 이것이 <b>확률론의 탄생</b>이 되었습니다.</p>
+</div>
+<div class="timeline-item">
+  <p>이 서신 교환은 수학사에서 가장 유명한 편지로 남아있으며, 결합확률(joint probability)과 기대값(expected value) 개념의 기초가 되었습니다.</p>
+</div>
+
+<h2 id="sec-pascal-problem">문제 설명</h2>
+<blockquote><b>1억 원 상금 게임</b>: 두 사람 A와 B가 게임을 합니다. 매 라운드마다 각각 50%의 승률을 가지며, <b>6번을 먼저 이기는 사람</b>이 상금 1억 원을 가져갑니다. 현재 <b>A는 5승, B는 3승</b>인 상태에서 게임이 중단되었습니다. 상금을 어떻게 나눠야 공정할까요?</blockquote>
+
+<p>핵심 질문: A가 이길 확률과 B가 이길 확률을 구하여 그 비율로 상금을 배분해야 합니다.</p>
+<ul>
+  <li><b>A</b>는 1승만 더 하면 됩니다 (5승 &rarr; 6승)</li>
+  <li><b>B</b>는 3승을 더 해야 합니다 (3승 &rarr; 6승)</li>
+  <li>최대 <b>3라운드</b>가 더 진행되면 반드시 승부가 결정됩니다</li>
+</ul>
+
+<h2 id="sec-pascal-tree">파스칼의 Decision Tree 풀이</h2>
+<p>파스칼은 <b>의사결정 나무(Decision Tree)</b>를 그려서 모든 가능한 경우를 분석했습니다. 각 분기점에서 A가 이길 확률과 B가 이길 확률은 각각 $\frac{1}{2}$입니다.</p>
+
+<div class="interactive-box">
+  <h3>인터랙티브 Decision Tree</h3>
+  <p style="color:var(--fg2); font-size:0.9rem;">노드를 클릭하면 해당 경로의 확률 계산을 확인할 수 있습니다. 각 분기에서 위쪽은 A 승리, 아래쪽은 B 승리입니다.</p>
+  <div class="tree-container" id="pascalTreeContainer">
+    <svg id="pascalTree" width="880" height="420"></svg>
+  </div>
+  <div id="treeInfo" style="text-align:center; min-height: 24px; color: var(--fg2); font-size: 0.95rem; margin-top: 8px;"></div>
+
+  <div class="math-block" style="margin-top: 20px;">
+    <p style="margin-bottom:12px; font-weight:700; color:var(--fg);">파스칼의 확률 계산</p>
+    <p>$$P(A \text{ 승리}) = \frac{1}{2} + \frac{1}{2} \cdot \frac{1}{2} + \frac{1}{2} \cdot \frac{1}{2} \cdot \frac{1}{2} = \frac{4}{8} + \frac{2}{8} + \frac{1}{8} = \frac{7}{8}$$</p>
+    <p>$$P(B \text{ 승리}) = \frac{1}{2} \cdot \frac{1}{2} \cdot \frac{1}{2} = \frac{1}{8}$$</p>
+    <p style="margin-top:12px;">따라서 상금 배분: <b>A = 8,750만 원</b>, <b>B = 1,250만 원</b></p>
+  </div>
+</div>
+
+<h2 id="sec-fermat-enum">페르마의 경우의 수 열거 풀이</h2>
+<p>페르마는 다른 접근을 했습니다. 남은 최대 3라운드에서 <b>가능한 모든 결과</b>를 열거한 뒤, A가 이기는 경우와 B가 이기는 경우를 세었습니다.</p>
+<p>3라운드의 가능한 결과는 $2^3 = 8$가지입니다:</p>
+
+<table class="fermat-table" id="fermatTable">
+  <thead>
+    <tr><th>경우</th><th>1라운드</th><th>2라운드</th><th>3라운드</th><th>A 누적승</th><th>B 누적승</th><th>최종 승자</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>1</td><td>A</td><td>A</td><td>A</td><td>6+</td><td>3</td><td class="win-a">A 승리</td></tr>
+    <tr><td>2</td><td>A</td><td>A</td><td>B</td><td>6+</td><td>3</td><td class="win-a">A 승리</td></tr>
+    <tr><td>3</td><td>A</td><td>B</td><td>A</td><td>6+</td><td>3</td><td class="win-a">A 승리</td></tr>
+    <tr><td>4</td><td>A</td><td>B</td><td>B</td><td>6+</td><td>4</td><td class="win-a">A 승리</td></tr>
+    <tr><td>5</td><td>B</td><td>A</td><td>A</td><td>6+</td><td>4</td><td class="win-a">A 승리</td></tr>
+    <tr><td>6</td><td>B</td><td>A</td><td>B</td><td>6</td><td>4</td><td class="win-a">A 승리</td></tr>
+    <tr><td>7</td><td>B</td><td>B</td><td>A</td><td>6</td><td>5</td><td class="win-a">A 승리</td></tr>
+    <tr><td>8</td><td>B</td><td>B</td><td>B</td><td>5</td><td>6</td><td class="win-b">B 승리</td></tr>
+  </tbody>
+</table>
+
+<p><b>결과</b>: 8가지 경우 중 A가 이기는 경우가 <b>7개</b>, B가 이기는 경우가 <b>1개</b>입니다.</p>
+
+<div class="math-block">
+  <p>$$P(A) = \frac{7}{8} = 87.5\%, \quad P(B) = \frac{1}{8} = 12.5\%$$</p>
+  <p style="margin-top:8px;">파스칼의 방법과 <b>정확히 동일한 결과</b>입니다!</p>
+</div>
+
+<h2 id="sec-joint-prob">결합확률과 동시확률 개념</h2>
+<p>이 문제에서 사용된 핵심 개념을 정리합니다.</p>
+
+<h3>결합확률 (Joint Probability)</h3>
+<p>두 사건 A, B가 동시에 일어날 확률입니다. 독립 사건일 경우:</p>
+<div class="math-block">
+  <p>$$P(A \cap B) = P(A) \times P(B)$$</p>
+</div>
+<p>예: B가 3연승할 확률 = $\frac{1}{2} \times \frac{1}{2} \times \frac{1}{2} = \frac{1}{8}$</p>
+
+<h3>배반 사건의 합 (Addition Rule)</h3>
+<p>서로 동시에 일어날 수 없는 사건들의 확률은 더할 수 있습니다:</p>
+<div class="math-block">
+  <p>$$P(A_1 \cup A_2 \cup A_3) = P(A_1) + P(A_2) + P(A_3) = \frac{1}{2} + \frac{1}{4} + \frac{1}{8} = \frac{7}{8}$$</p>
+</div>
+
+<details class="why-box">
+  <summary>ML에서의 활용: 기대값과 위험 관리</summary>
+  <div class="why-content">
+    <p>파스칼-페르마 문제의 핵심 원리인 <b>기대값(Expected Value)</b>은 머신러닝에서 다양하게 활용됩니다:</p>
+    <ul>
+      <li><b>손실 함수 (Loss Function)</b>: 모델 학습은 기대 손실을 최소화하는 과정입니다. $E[L(\theta)] = \sum P(x) \cdot L(\theta, x)$</li>
+      <li><b>의사결정 트리 (Decision Tree)</b>: 파스칼이 사용한 것과 동일한 구조가 ML의 분류 알고리즘에 직접 활용됩니다</li>
+      <li><b>강화학습 (Reinforcement Learning)</b>: 에이전트의 행동 가치 = 미래 보상의 기대값</li>
+      <li><b>포트폴리오 최적화</b>: 자산의 기대 수익률과 위험(분산)을 기반으로 최적 배분 결정</li>
+    </ul>
+  </div>
+</details>
+
+<hr>
+
+<!-- ===================================================================== -->
+<!-- SECTION 2: Monty Hall                                                 -->
+<!-- ===================================================================== -->
+<h1 id="sec-monty-desc">2. Monty Hall 문제</h1>
+
+<h2>문제 설명</h2>
+<p>미국 TV 게임쇼 <b>"Let's Make a Deal"</b>의 진행자 Monty Hall의 이름을 딴 유명한 확률 문제입니다.</p>
+
+<blockquote>3개의 문 중 하나 뒤에 <b>자동차</b>가, 나머지 두 문 뒤에는 <b>염소</b>가 있습니다. 참가자가 문 하나를 선택하면, 진행자(정답을 알고 있는)가 나머지 문 중 <b>염소가 있는 문 하나</b>를 열어 보여줍니다. 그리고 묻습니다: <b>"선택을 바꾸시겠습니까?"</b></blockquote>
+
+<p><b>핵심 조건</b> (이 조건이 빠지면 답이 달라집니다!):</p>
+<ol>
+  <li>진행자는 <b>반드시</b> 자동차가 없는 문을 엽니다</li>
+  <li>진행자는 <b>반드시</b> 문을 엽니다 (열지 않을 수 없음)</li>
+  <li>참가자가 선택한 문은 열지 않습니다</li>
+</ol>
+
+<h2 id="sec-monty-math">수학적 증명</h2>
+
+<h3>직관 vs 수학</h3>
+<p>대부분의 사람들은 "바꾸나 안 바꾸나 $\frac{1}{2}$" 이라고 생각합니다. 하지만 이것은 <b>틀립니다</b>.</p>
+<p>올바른 답: <b>바꾸면 $\frac{2}{3}$, 안 바꾸면 $\frac{1}{3}$</b></p>
+
+<h3>베이즈 정리를 이용한 증명</h3>
+<p>참가자가 문 1을 선택했고, 진행자가 문 3을 열었다고 가정합니다.</p>
+
+<div class="math-block">
+  <p style="text-align:left; font-weight:600; margin-bottom:10px;">사전 확률 (각 문 뒤에 자동차가 있을 확률):</p>
+  <p>$$P(C_1) = P(C_2) = P(C_3) = \frac{1}{3}$$</p>
+  <p style="text-align:left; font-weight:600; margin-top:16px; margin-bottom:10px;">진행자가 문 3을 열 확률 (자동차 위치별):</p>
+  <p>$$P(H_3 | C_1) = \frac{1}{2}, \quad P(H_3 | C_2) = 1, \quad P(H_3 | C_3) = 0$$</p>
+  <p style="text-align:left; font-weight:600; margin-top:16px; margin-bottom:10px;">베이즈 정리 적용:</p>
+  <p>$$P(C_1 | H_3) = \frac{P(H_3|C_1) \cdot P(C_1)}{P(H_3)} = \frac{\frac{1}{2} \cdot \frac{1}{3}}{\frac{1}{2}} = \frac{1}{3}$$</p>
+  <p>$$P(C_2 | H_3) = \frac{P(H_3|C_2) \cdot P(C_2)}{P(H_3)} = \frac{1 \cdot \frac{1}{3}}{\frac{1}{2}} = \frac{2}{3}$$</p>
+</div>
+
+<p><b>결론</b>: 선택을 바꾸면 당첨 확률이 $\frac{1}{3}$에서 $\frac{2}{3}$로 <b>2배</b> 증가합니다!</p>
+
+<h3>직관적 이해</h3>
+<p>처음 선택할 때 자동차를 고를 확률은 $\frac{1}{3}$이고, 염소를 고를 확률은 $\frac{2}{3}$입니다. 진행자가 문을 열어도 <b>처음 선택의 확률은 변하지 않습니다</b>. 따라서:</p>
+<ul>
+  <li>안 바꾸면 = 처음 선택 그대로 = $\frac{1}{3}$</li>
+  <li>바꾸면 = 나머지 확률이 한 문으로 집중 = $\frac{2}{3}$</li>
+</ul>
+
+<h2 id="sec-monty-game">인터랙티브 Monty Hall 게임</h2>
+
+<div class="interactive-box" id="montySection">
+  <h3>직접 체험해보세요!</h3>
+  <div class="phase-msg" id="montyMsg">문을 하나 선택하세요</div>
+
+  <div class="doors-container" id="doorsContainer">
+    <div class="door-panel" data-door="0" onclick="monty.selectDoor(0)">
+      <div class="door-front"><span>1</span><div class="door-label">문 1</div></div>
+      <div class="door-back"><span></span><div class="result-label"></div></div>
+    </div>
+    <div class="door-panel" data-door="1" onclick="monty.selectDoor(1)">
+      <div class="door-front"><span>2</span><div class="door-label">문 2</div></div>
+      <div class="door-back"><span></span><div class="result-label"></div></div>
+    </div>
+    <div class="door-panel" data-door="2" onclick="monty.selectDoor(2)">
+      <div class="door-front"><span>3</span><div class="door-label">문 3</div></div>
+      <div class="door-back"><span></span><div class="result-label"></div></div>
+    </div>
+  </div>
+
+  <div class="btn-group" id="montyChoiceBtns" style="justify-content:center; display:none;">
+    <button class="btn btn-primary" onclick="monty.makeChoice('stay')">그대로 유지 (Stay)</button>
+    <button class="btn btn-warn" onclick="monty.makeChoice('switch')">선택 바꾸기 (Switch)</button>
+  </div>
+
+  <div class="score-board" id="montyScore">
+    <div class="score-item"><div class="score-val" id="totalGames">0</div><div class="score-label">총 게임 수</div></div>
+    <div class="score-item"><div class="score-val" id="stayWins">0</div><div class="score-label">Stay 승리</div></div>
+    <div class="score-item"><div class="score-val" id="stayRate">0%</div><div class="score-label">Stay 승률</div></div>
+    <div class="score-item"><div class="score-val" id="switchWins">0</div><div class="score-label">Switch 승리</div></div>
+    <div class="score-item"><div class="score-val" id="switchRate">0%</div><div class="score-label">Switch 승률</div></div>
+  </div>
+
+  <div class="btn-group" style="justify-content:center;">
+    <button class="btn btn-secondary" id="newGameBtn" onclick="monty.newGame()">새 게임</button>
+    <button class="btn btn-success" id="simBtn" onclick="monty.simulate(1000)">1000회 시뮬레이션</button>
+    <button class="btn btn-danger" onclick="monty.resetAll()">전체 리셋</button>
+  </div>
+
+  <div class="sim-progress" id="simProgress" style="display:none;">
+    <div class="sim-progress-bar" id="simProgressBar"></div>
+  </div>
+  <div class="sim-stats" id="simStats"></div>
+</div>
+
+<details class="why-box">
+  <summary>ML에서의 활용: 베이즈 정리의 위력</summary>
+  <div class="why-content">
+    <p>Monty Hall 문제의 핵심인 <b>베이즈 정리</b>는 머신러닝의 근간입니다:</p>
+    <ul>
+      <li><b>나이브 베이즈 분류기</b>: 스팸 필터, 감성 분석 등에서 사전/사후 확률 업데이트</li>
+      <li><b>베이지안 최적화</b>: 하이퍼파라미터 튜닝에서 사전 결과를 바탕으로 탐색 범위 좁히기</li>
+      <li><b>베이지안 신경망</b>: 가중치를 확률분포로 표현하여 불확실성을 정량화</li>
+      <li><b>A/B 테스트</b>: 새로운 데이터가 관측될 때마다 가설의 확률을 업데이트</li>
+    </ul>
+    <p>"새로운 증거를 관찰했을 때, 기존 믿음을 어떻게 업데이트해야 하는가?" &mdash; 이것이 베이즈 정리의 본질이자 ML의 학습 원리입니다.</p>
+  </div>
+</details>
+
+<hr>
+
+<!-- ===================================================================== -->
+<!-- SECTION 3: Survivorship Bias                                          -->
+<!-- ===================================================================== -->
+<h1 id="sec-surv-story">3. 생존자 편향 (Survivorship Bias)</h1>
+
+<h2>Abraham Wald의 이야기 (WWII)</h2>
+<p>제2차 세계대전 중, 미군은 폭격기의 생존율을 높이기 위해 <b>장갑을 어디에 보강해야 하는지</b> 고민했습니다.</p>
+
+<p>귀환한 폭격기들을 조사한 결과, 피격 패턴이 발견되었습니다:</p>
+<ul>
+  <li><b>동체(fuselage)</b>: 많은 피탄 흔적</li>
+  <li><b>날개 끝</b>: 약간의 피탄 흔적</li>
+  <li><b>엔진 부분</b>: 거의 손상 없음</li>
+</ul>
+
+<p>군부는 "손상이 많은 동체에 장갑을 보강하자"고 주장했습니다. 하지만 통계학자 <b>에이브러햄 월드(Abraham Wald)</b>는 정반대의 결론을 내렸습니다:</p>
+
+<blockquote><b>"엔진 부분에 피탄된 비행기는 돌아오지 못했기 때문에 우리가 볼 수 없는 것입니다. 장갑은 손상이 없는 부위, 즉 엔진에 보강해야 합니다."</b> &mdash; Abraham Wald</blockquote>
+
+<p>이것이 바로 <b>생존자 편향(Survivorship Bias)</b>입니다: 살아남은 것들만 관찰하고, 탈락한 것들의 데이터를 무시하는 오류.</p>
+
+<h2 id="sec-surv-diagram">인터랙티브 항공기 다이어그램</h2>
+
+<div class="interactive-box">
+  <h3>WWII 폭격기 손상 분석</h3>
+  <p style="color:var(--fg2); font-size:0.9rem;">버튼을 눌러 귀환 항공기의 피탄 위치와 실제 강화해야 할 위치를 비교해보세요.</p>
+
+  <div class="toggle-group">
+    <button class="toggle-btn" id="toggleDamage" onclick="aircraft.toggleDamage()">귀환 항공기 피격 위치</button>
+    <button class="toggle-btn" id="toggleArmor" onclick="aircraft.toggleArmor()">실제 강화해야 할 위치</button>
+    <button class="toggle-btn" id="toggleBoth" onclick="aircraft.toggleBoth()">비교 보기</button>
+  </div>
+
+  <div class="aircraft-container">
+    <svg id="aircraftSvg" viewBox="0 0 700 400" width="700" height="400" style="max-width:100%;"></svg>
+  </div>
+
+  <div id="aircraftExplanation" style="text-align:center; color:var(--fg2); font-size:0.95rem; margin-top:12px; min-height:48px;"></div>
+</div>
+
+<h3>식당 식중독 사례</h3>
+<p>생존자 편향의 일상적 예를 하나 더 봅시다:</p>
+<blockquote>어떤 식당에서 식중독이 발생했습니다. 조사관이 식당에 찾아와 손님들에게 물어봅니다: "어떤 음식을 드셨나요?" 하지만 여기서 조사관이 만난 손님은 <b>식당에 다시 올 수 있을 정도로 건강한 사람들</b>입니다. 심하게 아픈 사람들은 병원에 있거나 집에 누워있어서 조사에 참여하지 못합니다.</blockquote>
+<p>올바른 조사: 식당 방문 기록을 토대로 <b>모든 방문자</b>(건강한 사람 + 아픈 사람)를 추적해야 합니다.</p>
+
+<h2 id="sec-surv-ml">ML에서의 생존자 편향</h2>
+
+<details class="why-box" open>
+  <summary>ML에서의 생존자 편향 사례</summary>
+  <div class="why-content">
+    <ul>
+      <li><b>데이터 수집 편향</b>: 대출 승인 모델 &mdash; 기존에 승인된 사람들의 데이터만 학습하면, "거절됐지만 실제로 상환 가능했을 사람들"을 놓칩니다</li>
+      <li><b>모델 평가 함정</b>: 이탈(churn) 예측 모델 &mdash; 현재 남아있는 고객 데이터만 분석하면 이미 떠난 고객의 패턴을 놓칩니다</li>
+      <li><b>성공 편향</b>: "성공한 스타트업은 이런 특징이 있다"는 분석은, 같은 특징을 가졌지만 실패한 스타트업을 무시한 것일 수 있습니다</li>
+      <li><b>Feature Selection</b>: 현재 데이터에서 잘 작동하는 피처만 선택하면, 결측/탈락된 데이터에서 중요한 피처를 놓칠 수 있습니다</li>
+    </ul>
+    <p><b>해결책</b>: 1) 결측 데이터 메커니즘 분석 (MCAR/MAR/MNAR) 2) 전체 모집단 대표성 검증 3) Reject Inference 기법 활용</p>
+  </div>
+</details>
+
+<hr>
+
+<!-- ===================================================================== -->
+<!-- SECTION 4: Food Poisoning                                             -->
+<!-- ===================================================================== -->
+<h1 id="sec-food-desc">4. 식중독 조건부 확률 문제</h1>
+
+<h2>조건부 확률이란?</h2>
+<p>어떤 사건 B가 일어났다는 조건 하에 사건 A가 일어날 확률:</p>
+<div class="math-block">
+  <p>$$P(A|B) = \frac{P(A \cap B)}{P(B)}$$</p>
+</div>
+
+<h3>식중독 사례</h3>
+<p>회사 야유회에서 식중독 사고가 발생했습니다. 원인 음식을 찾기 위해, 각 음식을 먹은 그룹과 먹지 않은 그룹의 식중독 발생률을 비교합니다.</p>
+
+<p>만약 특정 음식(예: 계란 샐러드)에 대해:</p>
+<ul>
+  <li>$P(\text{식중독} | \text{섭취})$가 높고</li>
+  <li>$P(\text{식중독} | \text{미섭취})$가 낮다면</li>
+</ul>
+<p>해당 음식이 원인일 가능성이 높습니다. 두 확률의 차이가 클수록 의심도가 높아집니다.</p>
+
+<h2 id="sec-food-calc">인터랙티브 식중독 계산기</h2>
+
+<div class="interactive-box">
+  <h3>조건부 확률 계산기</h3>
+  <p style="color:var(--fg2); font-size:0.9rem;">인원 수를 입력하면 자동으로 조건부 확률과 분할표가 계산됩니다.</p>
+
+  <div class="calc-grid">
+    <div class="calc-input-group">
+      <label>전체 인원</label>
+      <input type="number" id="calcTotal" value="100" min="1" oninput="foodCalc.calculate()">
+    </div>
+    <div class="calc-input-group">
+      <label>해당 음식 섭취 인원</label>
+      <input type="number" id="calcAte" value="60" min="0" oninput="foodCalc.calculate()">
+    </div>
+    <div class="calc-input-group">
+      <label>섭취자 중 식중독 발생</label>
+      <input type="number" id="calcSickAte" value="40" min="0" oninput="foodCalc.calculate()">
+    </div>
+    <div class="calc-input-group">
+      <label>미섭취자 중 식중독 발생</label>
+      <input type="number" id="calcSickNotAte" value="5" min="0" oninput="foodCalc.calculate()">
+    </div>
+  </div>
+
+  <div class="result-grid" id="foodResults">
+    <div class="result-card">
+      <div class="result-val" id="pSickGivenAte" style="color:var(--danger);">-</div>
+      <div class="result-desc">P(식중독 | 섭취)</div>
+    </div>
+    <div class="result-card">
+      <div class="result-val" id="pSickGivenNot" style="color:var(--success);">-</div>
+      <div class="result-desc">P(식중독 | 미섭취)</div>
+    </div>
+  </div>
+
+  <h3 style="margin-top:24px;">분할표 (Contingency Table)</h3>
+  <table class="ct-table" id="contingencyTable">
+    <thead>
+      <tr><th></th><th>식중독 발생</th><th>식중독 미발생</th><th>합계</th></tr>
+    </thead>
+    <tbody>
+      <tr><th>섭취</th><td id="ct-a">-</td><td id="ct-b">-</td><td id="ct-ab">-</td></tr>
+      <tr><th>미섭취</th><td id="ct-c">-</td><td id="ct-d">-</td><td id="ct-cd">-</td></tr>
+      <tr><th>합계</th><td id="ct-ac">-</td><td id="ct-bd">-</td><td id="ct-total">-</td></tr>
+    </tbody>
+  </table>
+
+  <h3 style="margin-top:24px;">시각화</h3>
+  <div class="bar-chart-container" id="foodBarChart">
+    <div class="bar-wrapper">
+      <div class="bar" id="bar1" style="height:0; background:var(--danger);">
+        <div class="bar-value" id="barVal1">-</div>
+      </div>
+      <div class="bar-label">P(식중독|섭취)</div>
+    </div>
+    <div class="bar-wrapper">
+      <div class="bar" id="bar2" style="height:0; background:var(--success);">
+        <div class="bar-value" id="barVal2">-</div>
+      </div>
+      <div class="bar-label">P(식중독|미섭취)</div>
+    </div>
+  </div>
+
+  <div id="foodConclusion" style="text-align:center; margin-top:16px; padding:16px; background:var(--bg2); border-radius:var(--radius); color:var(--fg); font-weight:600;"></div>
+</div>
+
+<details class="why-box">
+  <summary>ML에서의 활용: 분할표와 조건부 확률</summary>
+  <div class="why-content">
+    <ul>
+      <li><b>혼동 행렬 (Confusion Matrix)</b>: 분할표와 동일한 구조입니다. TP, FP, FN, TN으로 모델의 성능을 분석합니다</li>
+      <li><b>Precision과 Recall</b>: 조건부 확률의 직접적 응용입니다
+        <ul>
+          <li>Precision = $P(\text{실제 양성}|\text{예측 양성})$</li>
+          <li>Recall = $P(\text{예측 양성}|\text{실제 양성})$</li>
+        </ul>
+      </li>
+      <li><b>상대 위험도 (Relative Risk)</b>: 두 조건부 확률의 비율. 역학 연구와 인과 추론에서 활용</li>
+      <li><b>카이제곱 검정</b>: 분할표에서 두 변수의 독립성을 검정. Feature Selection에 활용</li>
+    </ul>
+  </div>
+</details>
+
+<hr>
+<footer style="text-align:center; padding:32px; color:var(--fg2); font-size:0.85rem; border-top:1px solid var(--border); margin-top:48px;">
+  고전 확률 문제 학습 자료 &mdash; 조상구 교수님 3주차 &mdash; 2026
+</footer>
+</main>
+</div>
+
+<!-- ===================================================================== -->
+<!-- SCRIPTS                                                                -->
+<!-- ===================================================================== -->
+<script>
+/* ========== Theme Toggle ========== */
+var themeBtn = document.getElementById('themeToggle');
+var menuBtn = document.querySelector('.menu-btn');
+var sidebarEl = document.getElementById('sidebar');
+
+themeBtn.addEventListener('click', function() {
+  var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  document.documentElement.setAttribute('data-theme', isDark ? '' : 'dark');
+  themeBtn.textContent = isDark ? '\uD83C\uDF19 Dark' : '\u2600\uFE0F Light';
+});
+
+menuBtn.addEventListener('click', function() { sidebarEl.classList.toggle('open'); });
+
+/* Sidebar scroll spy */
+var navLinks = document.querySelectorAll('.sidebar a[href^="#"]');
+var sectionsList = [];
+navLinks.forEach(function(a) {
+  var id = a.getAttribute('href').substring(1);
+  var el = document.getElementById(id);
+  if (el) sectionsList.push({ el: el, a: a });
+});
+window.addEventListener('scroll', function() {
+  var current = sectionsList[0];
+  for (var i = 0; i < sectionsList.length; i++) {
+    if (sectionsList[i].el.getBoundingClientRect().top <= 120) current = sectionsList[i];
+  }
+  navLinks.forEach(function(a) { a.classList.remove('active'); });
+  if (current) current.a.classList.add('active');
+});
+
+/* ========== Pascal Decision Tree (Pure SVG) ========== */
+(function() {
+  var svg = document.getElementById('pascalTree');
+  var info = document.getElementById('treeInfo');
+  var NS = 'http://www.w3.org/2000/svg';
+
+  var allNodes = [];
+  var allLinks = [];
+
+  function buildTree() {
+    var tree = {
+      id: 0, label: 'A:5 B:3', x: 440, y: 40, depth: 0, prob: 1,
+      children: []
+    };
+    var nextId = 1;
+
+    function expand(node, aWins, bWins, depth, prob) {
+      if (aWins >= 6) { node.winner = 'A'; node.prob = prob; return; }
+      if (bWins >= 6) { node.winner = 'B'; node.prob = prob; return; }
+      if (depth >= 3) {
+        node.winner = aWins >= 6 ? 'A' : 'B';
+        node.prob = prob;
+        return;
+      }
+
+      // A wins this round
+      var aChild = {
+        id: nextId++, label: 'A:' + (aWins+1) + ' B:' + bWins, depth: depth+1,
+        x: 0, y: 0, prob: prob * 0.5,
+        branchLabel: 'A \uC2B9', children: [], parent: node
+      };
+      expand(aChild, aWins+1, bWins, depth+1, prob * 0.5);
+      node.children.push(aChild);
+
+      // B wins this round
+      var bChild = {
+        id: nextId++, label: 'A:' + aWins + ' B:' + (bWins+1), depth: depth+1,
+        x: 0, y: 0, prob: prob * 0.5,
+        branchLabel: 'B \uC2B9', children: [], parent: node
+      };
+      expand(bChild, aWins, bWins+1, depth+1, prob * 0.5);
+      node.children.push(bChild);
+    }
+
+    expand(tree, 5, 3, 0, 1);
+    return tree;
+  }
+
+  function collectNodes(node) {
+    allNodes.push(node);
+    node.children.forEach(function(c) {
+      allLinks.push({ from: node, to: c });
+      collectNodes(c);
+    });
+  }
+
+  var tree = buildTree();
+  collectNodes(tree);
+
+  function layoutTree(node, xMin, xMax) {
+    node.x = (xMin + xMax) / 2;
+    node.y = 50 + node.depth * 95;
+    if (node.children.length === 2) {
+      var mid = (xMin + xMax) / 2;
+      layoutTree(node.children[0], xMin, mid);
+      layoutTree(node.children[1], mid, xMax);
+    }
+  }
+  layoutTree(tree, 20, 860);
+
+  // Draw links
+  allLinks.forEach(function(l) {
+    var path = document.createElementNS(NS, 'path');
+    var my = (l.from.y + l.to.y) / 2;
+    path.setAttribute('d', 'M' + l.from.x + ',' + (l.from.y + 20) + ' Q' + l.from.x + ',' + my + ' ' + l.to.x + ',' + (l.to.y - 20));
+    path.setAttribute('class', 'tree-link');
+    path.setAttribute('stroke', l.to.branchLabel === 'A \uC2B9' ? '#2563eb' : '#dc2626');
+    path.setAttribute('opacity', '0.4');
+    svg.appendChild(path);
+
+    // Branch prob label
+    var blx = (l.from.x + l.to.x) / 2 + (l.to.branchLabel === 'A \uC2B9' ? -20 : 20);
+    var bly = (l.from.y + l.to.y) / 2 + 5;
+    var bt = document.createElementNS(NS, 'text');
+    bt.setAttribute('x', blx);
+    bt.setAttribute('y', bly);
+    bt.setAttribute('text-anchor', 'middle');
+    bt.setAttribute('font-size', '11');
+    bt.setAttribute('fill', l.to.branchLabel === 'A \uC2B9' ? '#2563eb' : '#dc2626');
+    bt.textContent = '1/2';
+    svg.appendChild(bt);
+  });
+
+  // Draw nodes
+  allNodes.forEach(function(n) {
+    var g = document.createElementNS(NS, 'g');
+    g.setAttribute('class', 'tree-node');
+    g.style.cursor = 'pointer';
+
+    var isLeaf = n.children.length === 0;
+    var r = isLeaf ? 28 : 24;
+
+    var circle = document.createElementNS(NS, 'circle');
+    circle.setAttribute('cx', n.x);
+    circle.setAttribute('cy', n.y);
+    circle.setAttribute('r', r);
+    if (isLeaf) {
+      circle.setAttribute('fill', n.winner === 'A' ? '#dbeafe' : '#fee2e2');
+      circle.setAttribute('stroke', n.winner === 'A' ? '#2563eb' : '#dc2626');
+    } else {
+      circle.setAttribute('fill', n.depth === 0 ? '#f0f4ff' : '#f8f9fa');
+      circle.setAttribute('stroke', '#6366f1');
+    }
+    circle.setAttribute('stroke-width', n.depth === 0 ? '3' : '2');
+    g.appendChild(circle);
+
+    var text = document.createElementNS(NS, 'text');
+    text.setAttribute('x', n.x);
+    text.setAttribute('y', n.y - 3);
+    text.setAttribute('text-anchor', 'middle');
+    text.setAttribute('font-size', isLeaf ? '10' : '11');
+    text.setAttribute('font-weight', '600');
+    text.setAttribute('fill', '#1a1a2e');
+    text.textContent = n.label;
+    g.appendChild(text);
+
+    if (isLeaf) {
+      var wt = document.createElementNS(NS, 'text');
+      wt.setAttribute('x', n.x);
+      wt.setAttribute('y', n.y + 13);
+      wt.setAttribute('text-anchor', 'middle');
+      wt.setAttribute('font-size', '10');
+      wt.setAttribute('font-weight', '700');
+      wt.setAttribute('fill', n.winner === 'A' ? '#2563eb' : '#dc2626');
+      wt.textContent = n.winner + ' \uC2B9\uB9AC';
+      g.appendChild(wt);
+
+      var pt = document.createElementNS(NS, 'text');
+      pt.setAttribute('x', n.x);
+      pt.setAttribute('y', n.y + 42);
+      pt.setAttribute('text-anchor', 'middle');
+      pt.setAttribute('font-size', '11');
+      pt.setAttribute('font-weight', '600');
+      pt.setAttribute('fill', '#495057');
+      var fraction = n.prob === 0.5 ? '4/8' : n.prob === 0.25 ? '2/8' : '1/8';
+      pt.textContent = fraction;
+      g.appendChild(pt);
+    }
+
+    g.addEventListener('click', function() {
+      var probStr;
+      if (isLeaf) {
+        probStr = '\uACBD\uB85C \uD655\uB960: ' + n.prob.toFixed(3) + ' (=' + Math.round(n.prob * 8) + '/8) \u2192 ' + n.winner + ' \uC2B9\uB9AC';
+      } else {
+        probStr = '\uD604\uC7AC \uC0C1\uD0DC: ' + n.label + ', \uB204\uC801 \uD655\uB960: ' + n.prob.toFixed(3);
+      }
+      info.textContent = probStr;
+      document.querySelectorAll('.tree-node circle').forEach(function(c) { c.style.filter = ''; });
+      circle.style.filter = 'drop-shadow(0 0 8px rgba(37,99,235,0.6))';
+    });
+
+    svg.appendChild(g);
+  });
+
+  // Legend
+  var legend = document.createElementNS(NS, 'g');
+  var legendItems = [
+    { color: '#2563eb', label: 'A \uC2B9\uB9AC \uACBD\uB85C', x: 20 },
+    { color: '#dc2626', label: 'B \uC2B9\uB9AC \uACBD\uB85C', x: 150 }
+  ];
+  legendItems.forEach(function(item) {
+    var rect = document.createElementNS(NS, 'rect');
+    rect.setAttribute('x', item.x); rect.setAttribute('y', 400);
+    rect.setAttribute('width', 14); rect.setAttribute('height', 14);
+    rect.setAttribute('rx', 3); rect.setAttribute('fill', item.color); rect.setAttribute('opacity', '0.6');
+    legend.appendChild(rect);
+    var t = document.createElementNS(NS, 'text');
+    t.setAttribute('x', item.x + 20); t.setAttribute('y', 413);
+    t.setAttribute('font-size', '12'); t.setAttribute('fill', '#495057');
+    t.textContent = item.label;
+    legend.appendChild(t);
+  });
+  svg.appendChild(legend);
+})();
+
+
+/* ========== Monty Hall Game ========== */
+var monty = (function() {
+  var carDoor, playerChoice, openedDoor, phase;
+  var stats = { stayWins: 0, stayTotal: 0, switchWins: 0, switchTotal: 0 };
+
+  function getEl(id) { return document.getElementById(id); }
+  function getDoors() { return document.querySelectorAll('.door-panel'); }
+
+  function setDoorContent(doorEl, isCar) {
+    var back = doorEl.querySelector('.door-back');
+    var iconSpan = back.querySelector('span');
+    var labelEl = back.querySelector('.result-label');
+    if (isCar) {
+      back.classList.add('car-back');
+      back.classList.remove('goat-back');
+      iconSpan.textContent = '\uD83D\uDE97';
+      labelEl.textContent = '\uC790\uB3D9\uCC28!';
+    } else {
+      back.classList.add('goat-back');
+      back.classList.remove('car-back');
+      iconSpan.textContent = '\uD83D\uDC10';
+      labelEl.textContent = '\uC5FC\uC18C';
+    }
+  }
+
+  function updateScores() {
+    var total = stats.stayTotal + stats.switchTotal;
+    getEl('totalGames').textContent = total;
+    getEl('stayWins').textContent = stats.stayWins;
+    getEl('switchWins').textContent = stats.switchWins;
+    getEl('stayRate').textContent = stats.stayTotal > 0
+      ? (stats.stayWins / stats.stayTotal * 100).toFixed(1) + '%' : '0%';
+    getEl('switchRate').textContent = stats.switchTotal > 0
+      ? (stats.switchWins / stats.switchTotal * 100).toFixed(1) + '%' : '0%';
+  }
+
+  function newGame() {
+    phase = 'select';
+    carDoor = Math.floor(Math.random() * 3);
+    playerChoice = -1;
+    openedDoor = -1;
+
+    var doors = getDoors();
+    doors.forEach(function(d, i) {
+      d.classList.remove('opened', 'selected', 'disabled');
+      d.style.pointerEvents = '';
+      setDoorContent(d, i === carDoor);
+    });
+
+    getEl('montyMsg').textContent = '\uBB38\uC744 \uD558\uB098 \uC120\uD0DD\uD558\uC138\uC694';
+    getEl('montyMsg').style.color = '';
+    getEl('montyChoiceBtns').style.display = 'none';
+    getEl('simBtn').disabled = false;
+  }
+
+  function selectDoor(idx) {
+    if (phase !== 'select') return;
+    playerChoice = idx;
+    phase = 'host-opens';
+
+    var doors = getDoors();
+    doors.forEach(function(d) { d.classList.remove('selected'); });
+    doors[idx].classList.add('selected');
+
+    getEl('montyMsg').textContent = '\uC9C4\uD589\uC790\uAC00 \uC5FC\uC18C\uAC00 \uC788\uB294 \uBB38\uC744 \uC5F4\uACE0 \uC788\uC2B5\uB2C8\uB2E4...';
+
+    // Host opens a goat door
+    var candidates = [0, 1, 2].filter(function(i) { return i !== idx && i !== carDoor; });
+    openedDoor = candidates[Math.floor(Math.random() * candidates.length)];
+
+    setTimeout(function() {
+      doors[openedDoor].classList.add('opened');
+      doors[openedDoor].classList.add('disabled');
+      doors[openedDoor].style.pointerEvents = 'none';
+
+      phase = 'choose';
+      getEl('montyMsg').textContent = '\uBB38 ' + (openedDoor + 1) + '\uC5D0 \uC5FC\uC18C\uAC00 \uC788\uC2B5\uB2C8\uB2E4! \uC120\uD0DD\uC744 \uBC14\uAFB8\uC2DC\uACA0\uC2B5\uB2C8\uAE4C?';
+      getEl('montyChoiceBtns').style.display = 'flex';
+    }, 800);
+  }
+
+  function makeChoice(choice) {
+    if (phase !== 'choose') return;
+    phase = 'reveal';
+    getEl('montyChoiceBtns').style.display = 'none';
+
+    var doors = getDoors();
+    var finalDoor;
+
+    if (choice === 'stay') {
+      finalDoor = playerChoice;
+      stats.stayTotal++;
+    } else {
+      finalDoor = [0, 1, 2].filter(function(i) { return i !== playerChoice && i !== openedDoor; })[0];
+      stats.switchTotal++;
+      doors[playerChoice].classList.remove('selected');
+      doors[finalDoor].classList.add('selected');
+    }
+
+    var won = finalDoor === carDoor;
+    if (choice === 'stay' && won) stats.stayWins++;
+    if (choice === 'switch' && won) stats.switchWins++;
+
+    setTimeout(function() {
+      doors.forEach(function(d) {
+        if (!d.classList.contains('opened')) d.classList.add('opened');
+        d.style.pointerEvents = 'none';
+      });
+
+      var strategyKo = choice === 'stay' ? '\uC720\uC9C0' : '\uBCC0\uACBD';
+      if (won) {
+        getEl('montyMsg').textContent = '\uCD95\uD558\uD569\uB2C8\uB2E4! \uC790\uB3D9\uCC28\uB97C \uC5BB\uC5C8\uC2B5\uB2C8\uB2E4! (\uC804\uB7B5: ' + strategyKo + ')';
+        getEl('montyMsg').style.color = 'var(--success)';
+      } else {
+        getEl('montyMsg').textContent = '\uC544\uC27D\uB124\uC694, \uC5FC\uC18C\uC785\uB2C8\uB2E4. (\uC804\uB7B5: ' + strategyKo + ')';
+        getEl('montyMsg').style.color = 'var(--danger)';
+      }
+
+      updateScores();
+
+      setTimeout(function() {
+        getEl('montyMsg').style.color = '';
+      }, 2000);
+    }, 500);
+  }
+
+  function simulate(n) {
+    getEl('simBtn').disabled = true;
+    getEl('simProgress').style.display = 'block';
+    getEl('simStats').textContent = '\uC2DC\uBBAC\uB808\uC774\uC158 \uC9C4\uD589 \uC911...';
+
+    var batchSize = 50;
+    var i = 0;
+
+    function runBatch() {
+      var end = Math.min(i + batchSize, n);
+      for (var j = i; j < end; j++) {
+        var car = Math.floor(Math.random() * 3);
+        var pick = Math.floor(Math.random() * 3);
+
+        // Stay
+        stats.stayTotal++;
+        if (pick === car) stats.stayWins++;
+
+        // Switch
+        stats.switchTotal++;
+        if (pick !== car) stats.switchWins++;
+      }
+
+      updateScores();
+      getEl('simProgressBar').style.width = (end / n * 100) + '%';
+      getEl('simStats').textContent =
+        end + '/' + n + ' \uC644\uB8CC \u2014 Stay: ' + (stats.stayWins/stats.stayTotal*100).toFixed(1) + '% vs Switch: ' + (stats.switchWins/stats.switchTotal*100).toFixed(1) + '%';
+
+      i = end;
+      if (i < n) {
+        setTimeout(runBatch, 20);
+      } else {
+        getEl('simStats').textContent =
+          '\uC2DC\uBBAC\uB808\uC774\uC158 \uC644\uB8CC! Stay \uC2B9\uB960: ' + (stats.stayWins/stats.stayTotal*100).toFixed(2) + '% (1/3\u224833.3%) | Switch \uC2B9\uB960: ' + (stats.switchWins/stats.switchTotal*100).toFixed(2) + '% (2/3\u224866.7%)';
+        getEl('simBtn').disabled = false;
+        setTimeout(function() { getEl('simProgress').style.display = 'none'; }, 1000);
+      }
+    }
+    runBatch();
+  }
+
+  function resetAll() {
+    stats = { stayWins: 0, stayTotal: 0, switchWins: 0, switchTotal: 0 };
+    updateScores();
+    getEl('simStats').textContent = '';
+    newGame();
+  }
+
+  newGame();
+  return { selectDoor: selectDoor, makeChoice: makeChoice, newGame: newGame, simulate: simulate, resetAll: resetAll };
+})();
+
+
+/* ========== Aircraft Survivorship Bias Diagram ========== */
+var aircraft = (function() {
+  var svg = document.getElementById('aircraftSvg');
+  var NS = 'http://www.w3.org/2000/svg';
+  var explanationEl = document.getElementById('aircraftExplanation');
+
+  var showDamage = false, showArmor = false;
+
+  function createSvgEl(tag, attrs) {
+    var el = document.createElementNS(NS, tag);
+    for (var k in attrs) {
+      if (attrs.hasOwnProperty(k)) el.setAttribute(k, attrs[k]);
+    }
+    return el;
+  }
+
+  // Draw aircraft silhouette
+  function drawAircraft() {
+    // Main body
+    svg.appendChild(createSvgEl('ellipse', {
+      cx: '370', cy: '200', rx: '310', ry: '28',
+      fill: 'var(--bg2)', stroke: 'var(--fg2)', 'stroke-width': '2', id: 'aircraft-body'
+    }));
+
+    // Cockpit
+    svg.appendChild(createSvgEl('path', {
+      d: 'M660,200 Q685,190 700,200 Q685,210 660,200 Z',
+      fill: 'var(--bg2)', stroke: 'var(--fg2)', 'stroke-width': '2'
+    }));
+
+    // Cockpit window
+    svg.appendChild(createSvgEl('ellipse', {
+      cx: '678', cy: '197', rx: '8', ry: '5',
+      fill: '#93c5fd', stroke: 'var(--fg2)'
+    }));
+
+    // Wings
+    svg.appendChild(createSvgEl('path', {
+      d: 'M280,175 L220,70 L340,70 L380,175 Z',
+      fill: 'var(--bg2)', stroke: 'var(--fg2)', 'stroke-width': '2'
+    }));
+    svg.appendChild(createSvgEl('path', {
+      d: 'M280,225 L220,330 L340,330 L380,225 Z',
+      fill: 'var(--bg2)', stroke: 'var(--fg2)', 'stroke-width': '2'
+    }));
+
+    // Tail fins
+    svg.appendChild(createSvgEl('path', {
+      d: 'M90,175 L50,100 L120,120 L110,175 Z',
+      fill: 'var(--bg2)', stroke: 'var(--fg2)', 'stroke-width': '2'
+    }));
+    svg.appendChild(createSvgEl('path', {
+      d: 'M90,225 L50,300 L120,280 L110,225 Z',
+      fill: 'var(--bg2)', stroke: 'var(--fg2)', 'stroke-width': '2'
+    }));
+
+    // Engine nacelles
+    [{cx: '310', cy: '110'}, {cx: '310', cy: '290'}].forEach(function(pos) {
+      svg.appendChild(createSvgEl('ellipse', {
+        cx: pos.cx, cy: pos.cy, rx: '28', ry: '16',
+        fill: 'var(--bg2)', stroke: 'var(--fg2)', 'stroke-width': '2'
+      }));
+      var t = createSvgEl('text', {
+        x: pos.cx, y: String(parseInt(pos.cy) + 4),
+        'text-anchor': 'middle', 'font-size': '10', fill: 'var(--fg2)'
+      });
+      t.textContent = '\uC5D4\uC9C4';
+      svg.appendChild(t);
+    });
+
+    // Labels
+    [
+      {x: '350', y: '16', text: '\uB0A0\uAC1C (Wing)'},
+      {x: '470', y: '195', text: '\uB3D9\uCCB4 (Fuselage)'},
+      {x: '80', y: '88', text: '\uAF2C\uB9AC (Tail)'},
+      {x: '310', y: '68', text: '\uC5D4\uC9C4 (Engine)'}
+    ].forEach(function(l) {
+      var t = createSvgEl('text', {
+        x: l.x, y: l.y, 'text-anchor': 'middle', 'font-size': '12',
+        'font-weight': '600', fill: 'var(--fg)'
+      });
+      t.textContent = l.text;
+      svg.appendChild(t);
+    });
+  }
+
+  var damageDots = [
+    {x:200,y:192}, {x:230,y:208}, {x:280,y:195}, {x:320,y:205},
+    {x:400,y:193}, {x:430,y:207}, {x:480,y:196}, {x:510,y:204},
+    {x:540,y:197}, {x:560,y:203}, {x:580,y:195}, {x:600,y:200},
+    {x:250,y:200}, {x:370,y:198}, {x:450,y:202}, {x:500,y:194},
+    {x:240,y:82}, {x:260,y:88}, {x:330,y:78},
+    {x:240,y:318}, {x:260,y:312}, {x:330,y:322},
+    {x:75,y:118}, {x:90,y:130}, {x:100,y:140},
+    {x:75,y:282}, {x:90,y:270}, {x:100,y:260}
+  ];
+
+  var armorZones = [
+    {cx: '310', cy: '110', rx: '36', ry: '22', label: '\uC5D4\uC9C4 \uBCF4\uD638'},
+    {cx: '310', cy: '290', rx: '36', ry: '22', label: '\uC5D4\uC9C4 \uBCF4\uD638'},
+    {cx: '680', cy: '200', rx: '24', ry: '16', label: '\uC870\uC885\uC11D'}
+  ];
+
+  var damageGroup = null;
+  var armorGroup = null;
+
+  function drawDamage() {
+    if (damageGroup) { damageGroup.remove(); damageGroup = null; }
+    if (!showDamage) return;
+
+    damageGroup = createSvgEl('g', {id: 'damageGroup'});
+    damageDots.forEach(function(d) {
+      damageGroup.appendChild(createSvgEl('circle', {
+        cx: String(d.x), cy: String(d.y), r: '5', fill: '#dc2626', opacity: '0.7'
+      }));
+    });
+    svg.appendChild(damageGroup);
+  }
+
+  function drawArmorOverlay() {
+    if (armorGroup) { armorGroup.remove(); armorGroup = null; }
+    if (!showArmor) return;
+
+    armorGroup = createSvgEl('g', {id: 'armorGroup'});
+    armorZones.forEach(function(z) {
+      armorGroup.appendChild(createSvgEl('ellipse', {
+        cx: z.cx, cy: z.cy, rx: z.rx, ry: z.ry,
+        fill: 'rgba(37,99,235,0.25)', stroke: '#2563eb',
+        'stroke-width': '3', 'stroke-dasharray': '6,3'
+      }));
+      var t = createSvgEl('text', {
+        x: z.cx, y: String(parseInt(z.cy) + parseInt(z.ry) + 16),
+        'text-anchor': 'middle', 'font-size': '11', 'font-weight': '700', fill: '#2563eb'
+      });
+      t.textContent = z.label;
+      armorGroup.appendChild(t);
+    });
+    svg.appendChild(armorGroup);
+  }
+
+  function updateExplanation() {
+    // Clear previous content safely
+    while (explanationEl.firstChild) explanationEl.removeChild(explanationEl.firstChild);
+
+    if (showDamage && showArmor) {
+      var b1 = document.createElement('b');
+      b1.style.color = 'var(--danger)';
+      b1.textContent = '\u25CF \uBE68\uAC04\uC810';
+      explanationEl.appendChild(b1);
+      explanationEl.appendChild(document.createTextNode(' = \uADC0\uD658 \uD56D\uACF5\uAE30 \uD53C\uD0C4 \uC704\uCE58 (=\uC0DD\uC874 \uAC00\uB2A5)   '));
+      var b2 = document.createElement('b');
+      b2.style.color = 'var(--accent)';
+      b2.textContent = '\u25CB \uD30C\uB780 \uC810\uC120';
+      explanationEl.appendChild(b2);
+      explanationEl.appendChild(document.createTextNode(' = \uC2E4\uC81C \uC7A5\uAC11 \uBCF4\uAC15 \uC704\uCE58 (\uC5EC\uAE30 \uD53C\uD0C4\uB418\uBA74 \uADC0\uD658 \uBD88\uAC00)'));
+      explanationEl.appendChild(document.createElement('br'));
+      var b3 = document.createElement('b');
+      b3.textContent = '\uB3CC\uC544\uC624\uC9C0 \uBABB\uD588\uAE30 \uB54C\uBB38\uC5D0';
+      var span = document.createElement('span');
+      span.textContent = '\uC5D4\uC9C4\uC5D0 \uD53C\uD0C4\uB41C \uBE44\uD589\uAE30\uB294 ';
+      explanationEl.appendChild(span);
+      explanationEl.appendChild(b3);
+      explanationEl.appendChild(document.createTextNode(' \uB370\uC774\uD130\uC5D0 \uC5C6\uB294 \uAC83\uC785\uB2C8\uB2E4.'));
+    } else if (showDamage) {
+      var b4 = document.createElement('b');
+      b4.style.color = 'var(--danger)';
+      b4.textContent = '\u25CF \uBE68\uAC04\uC810';
+      explanationEl.appendChild(b4);
+      explanationEl.appendChild(document.createTextNode(' = \uADC0\uD658\uD55C \uD56D\uACF5\uAE30\uC5D0\uC11C \uBC1C\uACAC\uB41C \uD53C\uD0C4 \uC704\uCE58. \uAD70\uBD80\uB294 \uC774 \uC704\uCE58\uC5D0 \uC7A5\uAC11\uC744 \uBCF4\uAC15\uD558\uC790\uACE0 \uC81C\uC548\uD588\uC2B5\uB2C8\uB2E4.'));
+    } else if (showArmor) {
+      var b5 = document.createElement('b');
+      b5.style.color = 'var(--accent)';
+      b5.textContent = '\u25CB \uD30C\uB780 \uC810\uC120';
+      explanationEl.appendChild(b5);
+      explanationEl.appendChild(document.createTextNode(' = Wald\uAC00 \uC81C\uC548\uD55C \uC2E4\uC81C \uC7A5\uAC11 \uBCF4\uAC15 \uC704\uCE58. \uC5D4\uC9C4\uACFC \uC870\uC885\uC11D\uC740 \uD53C\uD0C4\uB418\uBA74 \uCD94\uB77D\uD558\uBBC0\uB85C \uADC0\uD658 \uB370\uC774\uD130\uC5D0 \uB098\uD0C0\uB098\uC9C0 \uC54A\uC2B5\uB2C8\uB2E4.'));
+    } else {
+      explanationEl.textContent = '\uC704 \uBC84\uD2BC\uC744 \uB20C\uB7EC \uD53C\uD0C4 \uC704\uCE58\uC640 \uC7A5\uAC11 \uBCF4\uAC15 \uC704\uCE58\uB97C \uD655\uC778\uD558\uC138\uC694.';
+    }
+  }
+
+  function clearActiveStates() {
+    document.getElementById('toggleDamage').classList.remove('active-red');
+    document.getElementById('toggleArmor').classList.remove('active-blue');
+    document.getElementById('toggleBoth').classList.remove('active-green');
+  }
+
+  function toggleDamage() {
+    showDamage = !showDamage; showArmor = false;
+    clearActiveStates();
+    if (showDamage) document.getElementById('toggleDamage').classList.add('active-red');
+    drawDamage(); drawArmorOverlay(); updateExplanation();
+  }
+  function toggleArmor() {
+    showArmor = !showArmor; showDamage = false;
+    clearActiveStates();
+    if (showArmor) document.getElementById('toggleArmor').classList.add('active-blue');
+    drawDamage(); drawArmorOverlay(); updateExplanation();
+  }
+  function toggleBoth() {
+    showDamage = true; showArmor = true;
+    clearActiveStates();
+    document.getElementById('toggleBoth').classList.add('active-green');
+    drawDamage(); drawArmorOverlay(); updateExplanation();
+  }
+
+  drawAircraft();
+  updateExplanation();
+
+  return { toggleDamage: toggleDamage, toggleArmor: toggleArmor, toggleBoth: toggleBoth };
+})();
+
+
+/* ========== Food Poisoning Calculator ========== */
+var foodCalc = (function() {
+  function calculate() {
+    var total = parseInt(document.getElementById('calcTotal').value) || 0;
+    var ate = parseInt(document.getElementById('calcAte').value) || 0;
+    var sickAte = parseInt(document.getElementById('calcSickAte').value) || 0;
+    var sickNotAte = parseInt(document.getElementById('calcSickNotAte').value) || 0;
+
+    var notAte = total - ate;
+    var healthyAte = ate - sickAte;
+    var healthyNotAte = notAte - sickNotAte;
+    var totalSick = sickAte + sickNotAte;
+    var totalHealthy = healthyAte + healthyNotAte;
+
+    var conclusionEl = document.getElementById('foodConclusion');
+
+    if (ate > total || sickAte > ate || sickNotAte > notAte || notAte < 0 || healthyAte < 0 || healthyNotAte < 0) {
+      document.getElementById('pSickGivenAte').textContent = '\uC624\uB958';
+      document.getElementById('pSickGivenNot').textContent = '\uC624\uB958';
+      conclusionEl.textContent = '\uC785\uB825\uAC12\uC744 \uD655\uC778\uD574\uC8FC\uC138\uC694. (\uC608: \uC12D\uCDE8\uC790 \uC218\uAC00 \uC804\uCCB4 \uC778\uC6D0\uC744 \uCD08\uACFC)';
+      conclusionEl.style.color = 'var(--danger)';
+      return;
+    }
+
+    var pSickAte = ate > 0 ? sickAte / ate : 0;
+    var pSickNot = notAte > 0 ? sickNotAte / notAte : 0;
+
+    document.getElementById('pSickGivenAte').textContent = (pSickAte * 100).toFixed(1) + '%';
+    document.getElementById('pSickGivenNot').textContent = (pSickNot * 100).toFixed(1) + '%';
+
+    document.getElementById('ct-a').textContent = sickAte;
+    document.getElementById('ct-b').textContent = healthyAte;
+    document.getElementById('ct-ab').textContent = ate;
+    document.getElementById('ct-c').textContent = sickNotAte;
+    document.getElementById('ct-d').textContent = healthyNotAte;
+    document.getElementById('ct-cd').textContent = notAte;
+    document.getElementById('ct-ac').textContent = totalSick;
+    document.getElementById('ct-bd').textContent = totalHealthy;
+    document.getElementById('ct-total').textContent = total;
+
+    document.getElementById('ct-a').className = sickAte > 0 ? 'highlight-high' : '';
+    document.getElementById('ct-c').className = sickNotAte > 0 ? 'highlight-low' : '';
+
+    var maxP = Math.max(pSickAte, pSickNot, 0.01);
+    var maxBarH = 160;
+    document.getElementById('bar1').style.height = (pSickAte / maxP * maxBarH) + 'px';
+    document.getElementById('bar2').style.height = (pSickNot / maxP * maxBarH) + 'px';
+    document.getElementById('barVal1').textContent = (pSickAte * 100).toFixed(1) + '%';
+    document.getElementById('barVal2').textContent = (pSickNot * 100).toFixed(1) + '%';
+
+    var diff = pSickAte - pSickNot;
+    var rr = pSickNot > 0 ? (pSickAte / pSickNot).toFixed(2) : '\u221E';
+    conclusionEl.style.color = '';
+
+    if (diff > 0.2) {
+      conclusionEl.textContent = '\u26A0 \uAC15\uD55C \uC758\uC2EC! P(\uC2DD\uC911\uB3C5|\uC12D\uCDE8) = ' + (pSickAte*100).toFixed(1) + '% vs P(\uC2DD\uC911\uB3C5|\uBBF8\uC12D\uCDE8) = ' + (pSickNot*100).toFixed(1) + '%. \uC0C1\uB300\uC704\uD5D8\uB3C4(RR) = ' + rr + '\uBC30';
+    } else if (diff > 0.05) {
+      conclusionEl.textContent = '\uC57D\uD55C \uC758\uC2EC. \uCC28\uC774: ' + (diff*100).toFixed(1) + '%p. \uC0C1\uB300\uC704\uD5D8\uB3C4(RR) = ' + rr + '\uBC30. \uCD94\uAC00 \uC870\uC0AC \uD544\uC694.';
+    } else {
+      conclusionEl.textContent = '\uD574\uB2F9 \uC74C\uC2DD\uC774 \uC6D0\uC778\uC77C \uAC00\uB2A5\uC131 \uB0AE\uC74C. \uCC28\uC774: ' + (diff*100).toFixed(1) + '%p.';
+    }
+  }
+
+  calculate();
+  return { calculate: calculate };
+})();
+</script>
+</body>
+</html>
