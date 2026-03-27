@@ -1,0 +1,1331 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>09. 베이즈 정리 (Bayes' Theorem) - 인터랙티브 학습</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+<style>
+:root {
+  --bg: #ffffff; --bg2: #f8f9fa; --fg: #1a1a2e;
+  --fg2: #495057; --accent: #2563eb; --accent2: #3b82f6;
+  --border: #dee2e6; --code-bg: #f1f3f5; --code-fg: #1a1a2e;
+  --why-bg: #eff6ff; --why-border: #93c5fd; --why-fg: #1e40af;
+  --nav-bg: #f8f9fa; --nav-fg: #495057; --nav-active: #2563eb;
+  --shadow: rgba(0,0,0,0.08); --radius: 8px;
+  --success: #10b981; --danger: #ef4444; --warning: #f59e0b;
+  --info-bg: #f0fdf4; --info-border: #86efac; --info-fg: #166534;
+  --card-hover: rgba(37,99,235,0.04);
+}
+[data-theme="dark"] {
+  --bg: #0f172a; --bg2: #1e293b; --fg: #e2e8f0;
+  --fg2: #94a3b8; --accent: #60a5fa; --accent2: #93c5fd;
+  --border: #334155; --code-bg: #1e293b; --code-fg: #e2e8f0;
+  --why-bg: #172554; --why-border: #1d4ed8; --why-fg: #93c5fd;
+  --nav-bg: #1e293b; --nav-fg: #94a3b8; --nav-active: #60a5fa;
+  --shadow: rgba(0,0,0,0.3);
+  --info-bg: #052e16; --info-border: #166534; --info-fg: #86efac;
+  --card-hover: rgba(96,165,250,0.06);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; scroll-padding-top: 80px; }
+body {
+  font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', system-ui, sans-serif;
+  background: var(--bg); color: var(--fg); line-height: 1.8;
+  transition: background .3s, color .3s;
+}
+.top-header {
+  position: sticky; top: 0; z-index: 100;
+  background: var(--bg); border-bottom: 1px solid var(--border);
+  padding: 12px 24px; display: flex; align-items: center;
+  justify-content: space-between; box-shadow: 0 2px 8px var(--shadow);
+}
+.top-header h1 { font-size: 1.1rem; color: var(--accent); }
+.top-header .controls { display: flex; gap: 12px; align-items: center; }
+.theme-btn, .menu-btn {
+  background: var(--bg2); border: 1px solid var(--border); border-radius: 6px;
+  padding: 6px 14px; cursor: pointer; font-size: 0.9rem; color: var(--fg);
+  transition: all .2s;
+}
+.theme-btn:hover, .menu-btn:hover { border-color: var(--accent); color: var(--accent); }
+.layout { display: flex; max-width: 1400px; margin: 0 auto; }
+.sidebar {
+  width: 280px; position: sticky; top: 60px; height: calc(100vh - 60px);
+  overflow-y: auto; padding: 20px 16px; border-right: 1px solid var(--border);
+  background: var(--nav-bg); flex-shrink: 0;
+}
+.sidebar a {
+  display: block; padding: 8px 12px; color: var(--nav-fg);
+  text-decoration: none; border-radius: 6px; font-size: 0.88rem;
+  margin-bottom: 2px; transition: all .2s; border-left: 3px solid transparent;
+}
+.sidebar a:hover { background: var(--bg); color: var(--accent); }
+.sidebar a.active {
+  background: var(--why-bg); color: var(--nav-active);
+  border-left-color: var(--nav-active); font-weight: 600;
+}
+.sidebar .nav-section {
+  font-weight: 700; color: var(--fg); margin-top: 16px; padding: 4px 12px;
+  font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px;
+}
+.sidebar .nav-section:first-child { margin-top: 0; }
+.main-content { flex: 1; min-width: 0; padding: 32px 40px; max-width: 960px; }
+.main-content h1 {
+  font-size: 1.8rem; color: var(--accent);
+  border-bottom: 3px solid var(--accent); padding-bottom: 8px; margin: 48px 0 24px;
+}
+.main-content h1:first-child { margin-top: 0; }
+.main-content h2 {
+  font-size: 1.4rem; color: var(--fg); margin: 36px 0 16px;
+  border-left: 4px solid var(--accent); padding-left: 12px;
+}
+.main-content h3 { font-size: 1.15rem; margin: 24px 0 12px; color: var(--fg); }
+.main-content p { margin: 12px 0; color: var(--fg2); }
+.main-content ul, .main-content ol { margin: 8px 0 8px 24px; color: var(--fg2); }
+.main-content li { margin: 4px 0; }
+.main-content blockquote {
+  border-left: 4px solid var(--accent); background: var(--bg2);
+  padding: 16px 24px; margin: 20px 0; border-radius: 0 var(--radius) var(--radius) 0;
+  color: var(--fg2); font-style: italic; font-size: 1.05rem;
+}
+.main-content blockquote cite {
+  display: block; margin-top: 8px; font-size: 0.9rem; color: var(--accent);
+  font-style: normal; font-weight: 600;
+}
+.main-content hr { border: none; border-top: 2px solid var(--border); margin: 32px 0; }
+.main-content table { border-collapse: collapse; width: 100%; margin: 16px 0; font-size: 0.9rem; }
+.main-content th, .main-content td { border: 1px solid var(--border); padding: 10px 14px; text-align: center; }
+.main-content th { background: var(--bg2); font-weight: 600; color: var(--fg); }
+.main-content td { color: var(--fg2); }
+.why-box {
+  background: var(--why-bg); border: 1px solid var(--why-border);
+  border-radius: var(--radius); margin: 20px 0; overflow: hidden;
+}
+.why-box summary {
+  padding: 14px 20px; cursor: pointer; font-weight: 700;
+  color: var(--why-fg); font-size: 1rem; list-style: none;
+  display: flex; align-items: center; gap: 8px;
+}
+.why-box summary::before { content: '\1F4A1'; font-size: 1.2rem; }
+.why-box summary::after {
+  content: '\25B6'; margin-left: auto; transition: transform .3s; font-size: 0.7rem;
+}
+.why-box[open] summary::after { transform: rotate(90deg); }
+.why-box .why-content {
+  padding: 0 20px 16px; color: var(--fg2); font-size: 0.93rem; line-height: 1.9;
+}
+.why-box .why-content p { margin: 8px 0; }
+.why-box .why-content ul { margin: 6px 0 6px 20px; }
+.why-box .why-content li { margin: 4px 0; }
+.why-box .why-content b { color: var(--fg); }
+.why-box .why-content em { color: var(--accent); font-style: normal; font-weight: 500; }
+.info-box {
+  background: var(--info-bg); border: 1px solid var(--info-border);
+  border-radius: var(--radius); padding: 16px 20px; margin: 16px 0;
+  color: var(--info-fg); font-size: 0.93rem;
+}
+.interactive-panel {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 24px; margin: 20px 0;
+}
+.interactive-panel h4 {
+  margin: 0 0 16px; color: var(--accent); font-size: 1.05rem;
+}
+.control-row {
+  display: flex; align-items: center; gap: 16px; margin: 12px 0; flex-wrap: wrap;
+}
+.control-row label {
+  font-weight: 600; color: var(--fg); min-width: 140px; font-size: 0.9rem;
+}
+.control-row input[type="range"] {
+  flex: 1; min-width: 150px; accent-color: var(--accent);
+}
+.control-row .value-display {
+  min-width: 80px; text-align: right; font-family: 'Consolas', monospace;
+  color: var(--accent); font-weight: 600; font-size: 0.95rem;
+}
+.control-row input[type="number"] {
+  width: 180px; padding: 8px 12px; border: 1px solid var(--border);
+  border-radius: 6px; font-size: 0.9rem; background: var(--bg);
+  color: var(--fg); font-family: 'Consolas', monospace;
+}
+.btn-group { display: flex; gap: 10px; flex-wrap: wrap; margin: 16px 0; }
+.btn {
+  padding: 10px 20px; border: 1px solid var(--border); border-radius: 6px;
+  cursor: pointer; font-size: 0.9rem; font-weight: 600;
+  transition: all .2s; background: var(--bg); color: var(--fg);
+}
+.btn:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-1px); }
+.btn-primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+.btn-primary:hover { background: var(--accent2); color: #fff; transform: translateY(-1px); }
+.btn-danger { border-color: var(--danger); color: var(--danger); }
+.btn-danger:hover { background: var(--danger); color: #fff; }
+.btn-success { border-color: var(--success); color: var(--success); }
+.btn-success:hover { background: var(--success); color: #fff; }
+.stats-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px; margin: 16px 0;
+}
+.stat-card {
+  background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 16px; text-align: center; transition: all .2s;
+}
+.stat-card:hover { border-color: var(--accent); background: var(--card-hover); }
+.stat-card .stat-label { font-size: 0.8rem; color: var(--fg2); margin-bottom: 4px; }
+.stat-card .stat-value {
+  font-size: 1.3rem; font-weight: 700; color: var(--accent);
+  font-family: 'Consolas', monospace;
+}
+.formula-box {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 20px; margin: 16px 0;
+  text-align: center; overflow-x: auto;
+}
+.step-container { margin: 16px 0; }
+.step {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 16px 20px; margin: 10px 0;
+  border-left: 4px solid var(--border); transition: all .3s;
+  opacity: 0.5;
+}
+.step.active { border-left-color: var(--accent); opacity: 1; box-shadow: 0 2px 8px var(--shadow); }
+.step.completed { border-left-color: var(--success); opacity: 1; }
+.step .step-number {
+  display: inline-block; background: var(--accent); color: #fff;
+  width: 28px; height: 28px; border-radius: 50%; text-align: center;
+  line-height: 28px; font-size: 0.85rem; font-weight: 700; margin-right: 10px;
+}
+.step.completed .step-number { background: var(--success); }
+.step .step-title { font-weight: 700; color: var(--fg); }
+.step .step-content { margin-top: 8px; color: var(--fg2); font-size: 0.93rem; }
+.result-highlight {
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  color: #fff; border-radius: var(--radius); padding: 20px 24px;
+  margin: 16px 0; text-align: center; font-size: 1.1rem;
+}
+.result-highlight .big-number {
+  font-size: 2.2rem; font-weight: 700; display: block; margin: 8px 0;
+  font-family: 'Consolas', monospace;
+}
+.plot-container {
+  width: 100%; min-height: 400px; margin: 16px 0;
+  border-radius: var(--radius); overflow: hidden;
+}
+.term-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px; margin: 20px 0;
+}
+.term-card {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 20px; transition: all .2s;
+}
+.term-card:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 4px 12px var(--shadow); }
+.term-card .term-name { font-weight: 700; color: var(--accent); font-size: 1rem; margin-bottom: 4px; }
+.term-card .term-symbol { font-family: 'Consolas', monospace; color: var(--fg2); font-size: 0.85rem; margin-bottom: 8px; }
+.term-card .term-desc { color: var(--fg2); font-size: 0.88rem; }
+.contingency-table { margin: 20px auto; }
+.contingency-table td.highlight { background: var(--why-bg); font-weight: 700; color: var(--accent); }
+@media (max-width: 768px) {
+  .sidebar { display: none; position: fixed; left: 0; top: 60px; width: 280px; z-index: 50; box-shadow: 4px 0 16px var(--shadow); }
+  .sidebar.open { display: block; }
+  .main-content { padding: 20px 16px; }
+  .menu-btn { display: inline-block; }
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  .term-grid { grid-template-columns: 1fr; }
+  .control-row { flex-direction: column; align-items: stretch; }
+  .control-row label { min-width: auto; }
+}
+@media (min-width: 769px) { .menu-btn { display: none; } }
+@media print {
+  .top-header, .sidebar, .theme-btn, .menu-btn { display: none !important; }
+  .main-content { max-width: 100%; padding: 0; }
+  .why-box { break-inside: avoid; }
+}
+footer {
+  text-align: center; padding: 32px; color: var(--fg2); font-size: 0.85rem;
+  border-top: 1px solid var(--border); margin-top: 48px;
+}
+</style>
+</head>
+<body>
+
+<header class="top-header">
+  <h1>09. 베이즈 정리 (Bayes' Theorem)</h1>
+  <div class="controls">
+    <button class="menu-btn" aria-label="메뉴">&#9776; 목차</button>
+    <button class="theme-btn" id="themeToggle">&#127769; Dark</button>
+  </div>
+</header>
+
+<div class="layout">
+<nav class="sidebar" id="sidebar">
+  <div class="nav-section">목차</div>
+  <a href="#sec1">1. 베이즈 정리란?</a>
+  <a href="#sec1-quote">인용: 케인즈</a>
+  <a href="#sec1-terms">핵심 용어</a>
+  <a href="#sec1-formula">수식 유도</a>
+  <a href="#sec2">2. 베이지안 업데이트 체험</a>
+  <a href="#sec2-sim">동전 실험 시뮬레이터</a>
+  <a href="#sec2-insight">수렴 관찰</a>
+  <a href="#sec3">3. Sunrise Problem</a>
+  <a href="#sec3-calc">라플라스 계승 규칙</a>
+  <a href="#sec3-philosophy">철학적 의미</a>
+  <a href="#sec4">4. 기저율 무시 오류</a>
+  <a href="#sec4-fingerprint">지문 문제</a>
+  <a href="#sec4-taxi">택시 문제</a>
+  <a href="#sec5">5. ML에서의 베이즈</a>
+  <a href="#sec5-nb">나이브 베이즈</a>
+  <a href="#sec5-bo">베이지안 최적화</a>
+  <a href="#sec5-ab">A/B 테스트</a>
+</nav>
+
+<main class="main-content">
+
+<!-- ============================================================ -->
+<!-- SECTION 1 -->
+<!-- ============================================================ -->
+<h1 id="sec1">1. 베이즈 정리란?</h1>
+
+<blockquote id="sec1-quote">
+  "사실이 바뀌면 나는 생각을 바꿉니다. 당신은 어떻게 하십니까?"
+  <cite>-- 존 메이너드 케인즈 (John Maynard Keynes)</cite>
+</blockquote>
+
+<p>
+  베이즈 정리는 <b>새로운 증거(데이터)가 주어졌을 때, 기존의 믿음(확률)을 어떻게 업데이트해야 하는지</b>를 수학적으로 정확하게 알려주는 정리입니다.
+  단순히 확률을 계산하는 공식이 아니라, <b>학습과 추론의 근본 원리</b>를 담고 있습니다.
+</p>
+
+<h2 id="sec1-terms">핵심 용어</h2>
+<div class="term-grid">
+  <div class="term-card">
+    <div class="term-name">사전확률 (Prior)</div>
+    <div class="term-symbol">P(A)</div>
+    <div class="term-desc">데이터를 보기 전, 가설 A에 대한 초기 믿음의 정도</div>
+  </div>
+  <div class="term-card">
+    <div class="term-name">우도 (Likelihood)</div>
+    <div class="term-symbol">P(B|A)</div>
+    <div class="term-desc">가설 A가 참일 때 데이터 B가 관측될 확률</div>
+  </div>
+  <div class="term-card">
+    <div class="term-name">증거 (Evidence)</div>
+    <div class="term-symbol">P(B)</div>
+    <div class="term-desc">데이터 B가 관측될 전체 확률 (정규화 상수)</div>
+  </div>
+  <div class="term-card">
+    <div class="term-name">사후확률 (Posterior)</div>
+    <div class="term-symbol">P(A|B)</div>
+    <div class="term-desc">데이터 B를 관측한 후, 가설 A에 대한 업데이트된 믿음</div>
+  </div>
+</div>
+
+<h2 id="sec1-formula">수식 유도</h2>
+<div class="formula-box">
+  <p style="font-size:1.2rem; margin-bottom:12px;">$$P(A|B) = \frac{P(B|A) \cdot P(A)}{P(B)}$$</p>
+</div>
+<p><b>유도 과정</b>: 조건부확률의 정의에서 시작합니다.</p>
+<div class="formula-box">
+  $$P(A|B) = \frac{P(A \cap B)}{P(B)} \quad \text{그리고} \quad P(B|A) = \frac{P(A \cap B)}{P(A)}$$
+  <br>
+  $$\therefore P(A \cap B) = P(B|A) \cdot P(A) = P(A|B) \cdot P(B)$$
+  <br>
+  $$\therefore P(A|B) = \frac{P(B|A) \cdot P(A)}{P(B)}$$
+</div>
+<p>전체 확률의 법칙을 적용하면 분모를 전개할 수 있습니다:</p>
+<div class="formula-box">
+  $$P(B) = P(B|A) \cdot P(A) + P(B|A^c) \cdot P(A^c)$$
+</div>
+
+<details class="why-box">
+  <summary>직관적 이해: "새로운 증거로 믿음을 업데이트한다"</summary>
+  <div class="why-content">
+    <p>베이즈 정리를 한 문장으로 요약하면:</p>
+    <p><b>사후확률 = (우도 x 사전확률) / 증거</b></p>
+    <ul>
+      <li><b>사전확률</b>: 아직 아무것도 모를 때의 추측</li>
+      <li><b>우도</b>: 새로운 증거가 가설을 얼마나 지지하는지</li>
+      <li><b>증거</b>: 전체적으로 그 데이터가 얼마나 흔한지 (정규화 역할)</li>
+      <li><b>사후확률</b>: 증거를 반영한 업데이트된 믿음</li>
+    </ul>
+    <p>의사가 환자의 검사 결과를 보고 진단을 업데이트하거나, 탐정이 새 증거를 발견하고 용의자 목록을 수정하는 것이 모두 베이지안 추론입니다.</p>
+  </div>
+</details>
+
+<hr>
+
+<!-- ============================================================ -->
+<!-- SECTION 2 -->
+<!-- ============================================================ -->
+<h1 id="sec2">2. 베이지안 업데이트 체험</h1>
+<p>
+  동전의 <b>실제 앞면 확률</b>을 모르는 상태에서, 동전을 던져가며 관찰 결과를 축적할 때
+  <b>나의 믿음(사후분포)</b>이 어떻게 변화하는지 직접 체험해보세요.
+</p>
+<p>
+  사전분포는 <b>Beta 분포</b>를 사용합니다. Beta(1,1)은 균등분포(아무런 사전 정보 없음)이며,
+  앞면이 나올 때마다 alpha가, 뒷면이 나올 때마다 beta가 1씩 증가합니다.
+</p>
+
+<h2 id="sec2-sim">동전 실험 시뮬레이터</h2>
+<div class="interactive-panel">
+  <h4>Prior 설정</h4>
+  <div class="control-row">
+    <label>Alpha (초기): </label>
+    <input type="range" id="priorAlpha" min="0.5" max="10" step="0.5" value="1">
+    <span class="value-display" id="priorAlphaVal">1.0</span>
+  </div>
+  <div class="control-row">
+    <label>Beta (초기): </label>
+    <input type="range" id="priorBeta" min="0.5" max="10" step="0.5" value="1">
+    <span class="value-display" id="priorBetaVal">1.0</span>
+  </div>
+  <div class="control-row">
+    <label>실제 동전 확률 p: </label>
+    <input type="range" id="trueCoinP" min="0" max="1" step="0.01" value="0.5">
+    <span class="value-display" id="trueCoinPVal" style="filter:blur(6px); cursor:pointer;" title="클릭하여 공개">0.50</span>
+    <button class="btn" id="revealP" style="font-size:0.8rem; padding:6px 12px;">공개</button>
+  </div>
+  <div class="btn-group">
+    <button class="btn btn-primary" id="flipHead">앞면 관찰</button>
+    <button class="btn btn-primary" id="flipTail">뒷면 관찰</button>
+    <button class="btn btn-success" id="flip10">10번 일괄 관찰</button>
+    <button class="btn btn-danger" id="resetCoin">초기화</button>
+  </div>
+  <div class="stats-grid">
+    <div class="stat-card"><div class="stat-label">앞면 (Heads)</div><div class="stat-value" id="headCount">0</div></div>
+    <div class="stat-card"><div class="stat-label">뒷면 (Tails)</div><div class="stat-value" id="tailCount">0</div></div>
+    <div class="stat-card"><div class="stat-label">총 시행</div><div class="stat-value" id="totalFlips">0</div></div>
+    <div class="stat-card"><div class="stat-label">사후 평균 E[p]</div><div class="stat-value" id="posteriorMean">0.500</div></div>
+    <div class="stat-card"><div class="stat-label">관측 비율</div><div class="stat-value" id="observedRatio">-</div></div>
+  </div>
+  <div class="formula-box" id="bayesFormulaDisplay">
+    $$\text{Posterior} = \text{Beta}(\alpha + \text{heads},\; \beta + \text{tails}) = \text{Beta}(1, 1)$$
+  </div>
+  <div id="coinPlot" class="plot-container" style="min-height:420px;"></div>
+</div>
+
+<h2 id="sec2-insight">수렴 관찰</h2>
+<details class="why-box">
+  <summary>데이터가 쌓일수록 무슨 일이 일어나는가?</summary>
+  <div class="why-content">
+    <p><b>핵심 관찰:</b></p>
+    <ul>
+      <li>시행 횟수가 적을 때: 사전분포(Prior)의 영향이 큽니다.</li>
+      <li>시행 횟수가 늘어나면: 데이터가 Prior를 압도하여, 사후분포가 실제 확률 주변으로 수렴합니다.</li>
+      <li>Beta(alpha, beta)의 평균 = alpha/(alpha+beta) 이므로, 관측이 많아지면 실제 p에 수렴합니다.</li>
+      <li>분포의 폭(분산)은 점점 좁아져 "확신"이 강해집니다.</li>
+    </ul>
+    <p><em>"한강에 가장 큰 물고기의 크기는 몇 cm?"</em> 처럼 사전 정보가 부족한 질문도, 데이터를 모으면서 점차 합리적인 추정으로 수렴합니다.</p>
+  </div>
+</details>
+
+<hr>
+
+<!-- ============================================================ -->
+<!-- SECTION 3 -->
+<!-- ============================================================ -->
+<h1 id="sec3">3. Sunrise Problem</h1>
+<p>
+  <b>"지구 나이가 45억 4천만 년이면, 내일 해가 뜰 확률은?"</b>
+</p>
+<p>
+  이 질문은 18세기 수학자 <b>라플라스(Pierre-Simon Laplace)</b>가 제기한 유명한 문제입니다.
+  매일 해가 뜨는 것을 관찰했을 때, "내일도 해가 뜰 것인가?"에 대한 확률을 베이지안으로 추정합니다.
+</p>
+
+<h2 id="sec3-calc">라플라스의 계승 규칙 (Rule of Succession)</h2>
+<div class="formula-box">
+  $$P(\text{내일 해가 뜬다} \mid n\text{일 연속 해가 뜸}) = \frac{n + 1}{n + 2}$$
+</div>
+<p>이 공식은 Beta(1,1) 사전분포 하에서, n번 연속 성공 관측 후 다음 시행도 성공일 확률입니다.</p>
+
+<div class="interactive-panel">
+  <h4>Sunrise 문제 계산기</h4>
+  <div class="control-row">
+    <label>관측 일수 (n): </label>
+    <input type="range" id="sunriseSlider" min="0" max="100" step="1" value="50">
+    <span class="value-display" id="sunriseSliderVal">50</span>
+  </div>
+  <div class="control-row">
+    <label>스케일: </label>
+    <button class="btn" id="scaleLinear" style="padding:6px 12px; font-size:0.8rem;">1 ~ 100</button>
+    <button class="btn" id="scaleThousand" style="padding:6px 12px; font-size:0.8rem;">1 ~ 10,000</button>
+    <button class="btn" id="scaleMillion" style="padding:6px 12px; font-size:0.8rem;">1 ~ 10억</button>
+    <button class="btn btn-primary" id="scaleEarth" style="padding:6px 12px; font-size:0.8rem;">지구 나이</button>
+  </div>
+  <div class="control-row">
+    <label>직접 입력 (n): </label>
+    <input type="number" id="sunriseInput" value="50" min="0" step="1">
+    <button class="btn" id="sunriseApply" style="padding:8px 14px; font-size:0.85rem;">적용</button>
+  </div>
+  <div class="stats-grid">
+    <div class="stat-card"><div class="stat-label">관측 일수 (n)</div><div class="stat-value" id="sunriseN">50</div></div>
+    <div class="stat-card"><div class="stat-label">P(내일 해 뜸)</div><div class="stat-value" id="sunriseProb">0.980769</div></div>
+    <div class="stat-card"><div class="stat-label">1 - P (실패 확률)</div><div class="stat-value" id="sunriseFail">0.019231</div></div>
+    <div class="stat-card"><div class="stat-label">9의 개수</div><div class="stat-value" id="sunriseNines">1</div></div>
+  </div>
+  <div id="sunrisePlot" class="plot-container" style="min-height:380px;"></div>
+</div>
+
+<h2 id="sec3-philosophy">철학적 의미</h2>
+<details class="why-box">
+  <summary>귀납법의 한계와 베이지안 관점</summary>
+  <div class="why-content">
+    <p><b>귀납법의 문제</b>: "과거에 항상 해가 떴으므로 내일도 뜬다"는 귀납적 추론은 논리적으로 완전하지 않습니다(데이비드 흄).</p>
+    <p><b>베이지안 해결</b>: 라플라스의 계승 규칙은 이 불확실성을 정량화합니다.</p>
+    <ul>
+      <li>n=1 (하루 관측): P = 2/3 = 66.7% -- 아직 확신하기 어려움</li>
+      <li>n=365 (1년): P = 366/367 = 99.73%</li>
+      <li>n=1,657,610,000,000 (45.4억년 x 365일): P는 1에 극도로 가깝지만 <b>결코 1이 되지 않습니다</b></li>
+    </ul>
+    <p><em>확률이 0이나 1에 절대 도달하지 않는다</em>는 것은 베이지안 추론의 핵심 철학입니다. 항상 불확실성의 여지를 남겨둡니다.</p>
+  </div>
+</details>
+
+<hr>
+
+<!-- ============================================================ -->
+<!-- SECTION 4 -->
+<!-- ============================================================ -->
+<h1 id="sec4">4. 기저율 무시 오류 (Base Rate Fallacy)</h1>
+<p>
+  인간은 직관적으로 <b>기저율(base rate)</b>을 무시하는 경향이 있습니다.
+  새로운 증거가 주어지면, 그 증거의 강도에만 집중하고 사전확률을 간과하는 것이 <b>기저율 무시 오류</b>입니다.
+</p>
+
+<h2 id="sec4-fingerprint">지문 문제: 0.1%의 함정</h2>
+<p>
+  <b>상황</b>: 살인 현장에서 희귀한 격자무늬 지문이 발견되었습니다.
+  전체 인구 중 <b>0.1%</b>만이 이 지문 패턴을 갖고 있습니다.
+  용의자 A도 이 지문 패턴을 보유하고 있습니다.
+  <b>용의자 A가 범인일 확률은?</b>
+</p>
+
+<div class="interactive-panel">
+  <h4>지문 확률 스텝별 풀이기</h4>
+  <div class="control-row">
+    <label>P(범인) - 사전확률: </label>
+    <input type="range" id="fpPrior" min="0.00001" max="0.01" step="0.00001" value="0.0001">
+    <span class="value-display" id="fpPriorVal">0.01%</span>
+  </div>
+  <div class="control-row">
+    <label>P(지문|범인): </label>
+    <input type="range" id="fpLikelihood" min="0" max="1" step="0.01" value="1">
+    <span class="value-display" id="fpLikelihoodVal">1.00</span>
+  </div>
+  <div class="control-row">
+    <label>P(지문|무고): </label>
+    <input type="range" id="fpFalsePos" min="0.0001" max="0.01" step="0.0001" value="0.001">
+    <span class="value-display" id="fpFalsePosVal">0.10%</span>
+  </div>
+  <div class="btn-group">
+    <button class="btn btn-primary" id="fpNextStep">다음 단계</button>
+    <button class="btn btn-danger" id="fpReset">초기화</button>
+  </div>
+  <div class="step-container" id="fpSteps">
+    <div class="step active" id="fpStep1">
+      <span class="step-number">1</span>
+      <span class="step-title">변수 정의</span>
+      <div class="step-content" id="fpStep1Content">베이즈 정리 적용을 위한 변수를 정의합니다.</div>
+    </div>
+    <div class="step" id="fpStep2">
+      <span class="step-number">2</span>
+      <span class="step-title">분자 계산: P(지문|범인) x P(범인)</span>
+      <div class="step-content" id="fpStep2Content"></div>
+    </div>
+    <div class="step" id="fpStep3">
+      <span class="step-number">3</span>
+      <span class="step-title">분모 계산: P(지문) = 전체 확률</span>
+      <div class="step-content" id="fpStep3Content"></div>
+    </div>
+    <div class="step" id="fpStep4">
+      <span class="step-number">4</span>
+      <span class="step-title">결과: P(범인|지문 일치)</span>
+      <div class="step-content" id="fpStep4Content"></div>
+    </div>
+  </div>
+  <div id="fpTreePlot" class="plot-container" style="min-height:400px;"></div>
+</div>
+
+<details class="why-box">
+  <summary>기저율 무시의 함정</summary>
+  <div class="why-content">
+    <p>"지문이 일치한다 = 범인이다"라고 직관적으로 생각하기 쉽지만, 이는 <b>기저율(사전확률)</b>을 무시한 판단입니다.</p>
+    <p>인구 100만 명 기준으로 생각하면:</p>
+    <ul>
+      <li>범인은 1명이고, 이 지문을 가질 확률 100%</li>
+      <li>무고한 사람 999,999명 중 0.1%인 약 1,000명도 같은 지문 보유</li>
+      <li>따라서 지문이 일치하는 사람은 총 ~1,001명이고, 범인은 그 중 1명</li>
+      <li>P(범인|지문) &#8776; 1/1001 &#8776; <b>0.1%</b></li>
+    </ul>
+    <p><em>검사 양성 = 유죄</em>라는 오류는 법정, 의료 진단 등에서 반복적으로 발생합니다.</p>
+  </div>
+</details>
+
+<h2 id="sec4-taxi">택시 문제: 증언의 신뢰도 vs 기저율</h2>
+<p>
+  <b>상황</b>: 한 도시의 택시는 <b>85%가 녹색</b>, <b>15%가 청색</b>입니다.
+  어느 밤, 택시가 뺑소니를 쳤습니다.
+  목격자가 "그 택시는 <b>청색</b>이었다"고 증언합니다.
+  테스트 결과, 이 목격자의 색상 판별 정확도는 <b>80%</b>입니다.
+  <b>실제로 청색 택시였을 확률은?</b>
+</p>
+
+<div class="interactive-panel">
+  <h4>택시 문제 인터랙티브 계산기</h4>
+  <div class="control-row">
+    <label>녹색 택시 비율: </label>
+    <input type="range" id="taxiGreen" min="0" max="100" step="1" value="85">
+    <span class="value-display" id="taxiGreenVal">85%</span>
+  </div>
+  <div class="control-row">
+    <label>청색 택시 비율: </label>
+    <span class="value-display" id="taxiBlueVal" style="min-width:200px; text-align:left;">15% (자동 계산)</span>
+  </div>
+  <div class="control-row">
+    <label>목격자 정확도: </label>
+    <input type="range" id="taxiAccuracy" min="50" max="100" step="1" value="80">
+    <span class="value-display" id="taxiAccuracyVal">80%</span>
+  </div>
+  <div class="btn-group">
+    <button class="btn btn-primary" id="taxiCalc">계산하기</button>
+    <button class="btn" id="taxiDefault">기본값 복원</button>
+  </div>
+  <div id="taxiResult" style="display:none;">
+    <div class="result-highlight">
+      실제 청색 택시였을 확률
+      <span class="big-number" id="taxiAnswer">-</span>
+    </div>
+    <h4 style="margin:20px 0 12px; color:var(--fg);">분할표 (Contingency Table)</h4>
+    <p style="font-size:0.9rem;">택시 100대 기준</p>
+    <table class="contingency-table">
+      <thead><tr><th></th><th>목격자 "청색"</th><th>목격자 "녹색"</th><th>합계</th></tr></thead>
+      <tbody>
+        <tr><th>실제 청색</th><td id="taxiTT" class="highlight">-</td><td id="taxiFN">-</td><td id="taxiBlueTotal">-</td></tr>
+        <tr><th>실제 녹색</th><td id="taxiFP">-</td><td id="taxiTN">-</td><td id="taxiGreenTotal">-</td></tr>
+        <tr><th>합계</th><td id="taxiBlueSaid">-</td><td id="taxiGreenSaid">-</td><td>100</td></tr>
+      </tbody>
+    </table>
+    <div class="formula-box" id="taxiFormula"></div>
+    <div id="taxiPlot" class="plot-container" style="min-height:380px;"></div>
+  </div>
+</div>
+
+<details class="why-box">
+  <summary>택시 문제의 핵심 교훈</summary>
+  <div class="why-content">
+    <p>기본값(85% 녹색, 80% 정확도)에서 답은 약 <b>41.4%</b>입니다.</p>
+    <p>목격자가 80% 정확도로 "청색"이라 했는데, 실제 청색일 확률은 겨우 41%? 직관에 반하지만 이것이 수학적 결론입니다.</p>
+    <p><b>핵심 이유</b>: 녹색 택시가 압도적으로 많기 때문에, 목격자가 20% 확률로 잘못 판별하는 녹색 택시의 수가, 제대로 판별한 청색 택시의 수보다 많습니다.</p>
+    <ul>
+      <li>정확도 슬라이더를 100%로 올리면: P = 100% (완벽한 목격자)</li>
+      <li>정확도를 50%로 내리면: P = 15% (기저율로 회귀)</li>
+      <li>녹색/청색 비율을 50:50으로 맞추면: P = 정확도와 동일</li>
+    </ul>
+  </div>
+</details>
+
+<hr>
+
+<!-- ============================================================ -->
+<!-- SECTION 5 -->
+<!-- ============================================================ -->
+<h1 id="sec5">5. ML에서의 베이즈</h1>
+<p>
+  베이즈 정리는 현대 머신러닝의 곳곳에 깊이 자리 잡고 있습니다.
+  대표적인 세 가지 응용을 살펴봅니다.
+</p>
+
+<h2 id="sec5-nb">나이브 베이즈 분류기 (Naive Bayes Classifier)</h2>
+<p>텍스트 분류(스팸 필터링 등)에서 가장 널리 사용되는 베이지안 알고리즘입니다.</p>
+<div class="formula-box">
+  $$P(C_k | x_1, x_2, \ldots, x_n) \propto P(C_k) \prod_{i=1}^{n} P(x_i | C_k)$$
+</div>
+<p>"나이브(Naive)"라는 이름은 모든 특성(feature)이 <b>조건부 독립</b>이라는 강한 가정에서 비롯됩니다.</p>
+
+<div class="interactive-panel">
+  <h4>스팸 필터 시뮬레이션</h4>
+  <p style="font-size:0.9rem; color:var(--fg2); margin-bottom:12px;">
+    단어별 조건부 확률이 주어졌을 때, 이메일이 스팸인지 판별합니다.
+  </p>
+  <table style="font-size:0.88rem; margin-bottom:16px;">
+    <thead><tr><th>단어</th><th>P(단어|스팸)</th><th>P(단어|정상)</th><th>이메일에 포함?</th></tr></thead>
+    <tbody>
+      <tr><td>"무료"</td><td>0.80</td><td>0.05</td><td><input type="checkbox" class="spam-word" data-spam="0.80" data-ham="0.05" checked></td></tr>
+      <tr><td>"할인"</td><td>0.70</td><td>0.10</td><td><input type="checkbox" class="spam-word" data-spam="0.70" data-ham="0.10"></td></tr>
+      <tr><td>"회의"</td><td>0.10</td><td>0.60</td><td><input type="checkbox" class="spam-word" data-spam="0.10" data-ham="0.60"></td></tr>
+      <tr><td>"긴급"</td><td>0.65</td><td>0.08</td><td><input type="checkbox" class="spam-word" data-spam="0.65" data-ham="0.08"></td></tr>
+      <tr><td>"보고서"</td><td>0.05</td><td>0.50</td><td><input type="checkbox" class="spam-word" data-spam="0.05" data-ham="0.50"></td></tr>
+    </tbody>
+  </table>
+  <div class="control-row">
+    <label>P(스팸) 사전확률: </label>
+    <input type="range" id="spamPrior" min="0.05" max="0.95" step="0.05" value="0.30">
+    <span class="value-display" id="spamPriorVal">0.30</span>
+  </div>
+  <button class="btn btn-primary" id="spamCalc">판별하기</button>
+  <div id="spamResult" style="display:none; margin-top:16px;">
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-label">P(스팸|단어들)</div><div class="stat-value" id="spamPosterior">-</div></div>
+      <div class="stat-card"><div class="stat-label">P(정상|단어들)</div><div class="stat-value" id="hamPosterior">-</div></div>
+      <div class="stat-card"><div class="stat-label">판별 결과</div><div class="stat-value" id="spamVerdict">-</div></div>
+    </div>
+    <div class="formula-box" id="spamFormula" style="text-align:left; font-size:0.88rem;"></div>
+  </div>
+</div>
+
+<h2 id="sec5-bo">베이지안 최적화 (Bayesian Optimization)</h2>
+<p>하이퍼파라미터 튜닝에서 Grid Search나 Random Search 대신 사용되는 효율적인 방법입니다.</p>
+<div class="info-box">
+  <p><b>핵심 아이디어</b>: 이전 평가 결과를 바탕으로 <b>사후분포</b>를 업데이트하고,
+  <b>Acquisition Function</b>(기대 개선, UCB 등)을 최대화하는 다음 탐색 지점을 선택합니다.</p>
+</div>
+<ul>
+  <li><b>Surrogate Model</b>: 가우시안 프로세스(GP)로 목적 함수를 근사</li>
+  <li><b>Acquisition Function</b>: 탐색(exploration)과 활용(exploitation)의 균형</li>
+  <li><b>장점</b>: 평가 비용이 높은 함수(예: 딥러닝 학습)에서 최소한의 시행으로 최적값 탐색</li>
+</ul>
+<div class="formula-box">
+  $$\text{EI}(x) = \mathbb{E}\left[\max(0, f(x) - f(x^+))\right]$$
+  <p style="font-size:0.85rem; margin-top:8px;">여기서 \(f(x^+)\)는 현재까지 관측된 최대값</p>
+</div>
+
+<h2 id="sec5-ab">A/B 테스트에서의 베이지안 접근</h2>
+<p>전통적인 빈도주의 A/B 테스트(p-value 기반)와 달리, 베이지안 A/B 테스트는 직관적인 해석을 제공합니다.</p>
+
+<div class="interactive-panel">
+  <h4>베이지안 A/B 테스트 시뮬레이터</h4>
+  <div class="control-row">
+    <label>A 그룹 - 전환수/방문수: </label>
+    <input type="number" id="abAconv" value="45" min="0" style="width:80px;"> /
+    <input type="number" id="abAvisit" value="500" min="1" style="width:80px;">
+  </div>
+  <div class="control-row">
+    <label>B 그룹 - 전환수/방문수: </label>
+    <input type="number" id="abBconv" value="62" min="0" style="width:80px;"> /
+    <input type="number" id="abBvisit" value="500" min="1" style="width:80px;">
+  </div>
+  <button class="btn btn-primary" id="abCalc" style="margin-top:8px;">분석하기</button>
+  <div id="abResult" style="display:none; margin-top:16px;">
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-label">A 전환율 (사후 평균)</div><div class="stat-value" id="abARateVal">-</div></div>
+      <div class="stat-card"><div class="stat-label">B 전환율 (사후 평균)</div><div class="stat-value" id="abBRateVal">-</div></div>
+      <div class="stat-card"><div class="stat-label">P(B > A)</div><div class="stat-value" id="abProbBwins">-</div></div>
+    </div>
+    <div id="abPlot" class="plot-container" style="min-height:380px;"></div>
+  </div>
+</div>
+
+<hr>
+<footer>
+  조상구 교수님 - 3주차 확률론 | 09. 베이즈 정리 (Bayes' Theorem) | 2026-03-27
+</footer>
+</main>
+</div>
+
+<script>
+// ==================================================================
+// Helper: safe DOM text/element setters to avoid raw innerHTML usage
+// ==================================================================
+function safeSetText(id, text) {
+  var el = document.getElementById(id);
+  if (el) el.textContent = text;
+}
+function safeSetHTML(id, htmlParts) {
+  // htmlParts is built from developer-controlled strings only
+  var el = document.getElementById(id);
+  if (!el) return;
+  while (el.firstChild) el.removeChild(el.firstChild);
+  if (typeof htmlParts === 'string') {
+    var tmp = document.createElement('div');
+    tmp.innerHTML = htmlParts;  // safe: all inputs are developer-controlled constants
+    while (tmp.firstChild) el.appendChild(tmp.firstChild);
+  }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+
+  // ---- KaTeX auto-render ----
+  function tryRenderMath(root) {
+    if (typeof renderMathInElement === 'function') {
+      renderMathInElement(root || document.body, {
+        delimiters: [
+          {left: '$$', right: '$$', display: true},
+          {left: '\\(', right: '\\)', display: false},
+          {left: '$', right: '$', display: false}
+        ]
+      });
+    }
+  }
+  tryRenderMath();
+
+  // ---- Theme Toggle ----
+  var themeBtn = document.getElementById('themeToggle');
+  var stored = localStorage.getItem('bayes-theme');
+  if (stored === 'dark') { document.documentElement.setAttribute('data-theme', 'dark'); themeBtn.textContent = '\u2600\uFE0F Light'; }
+  themeBtn.addEventListener('click', function() {
+    var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    if (isDark) {
+      document.documentElement.removeAttribute('data-theme');
+      themeBtn.textContent = '\uD83C\uDF19 Dark';
+      localStorage.setItem('bayes-theme', 'light');
+    } else {
+      document.documentElement.setAttribute('data-theme', 'dark');
+      themeBtn.textContent = '\u2600\uFE0F Light';
+      localStorage.setItem('bayes-theme', 'dark');
+    }
+    plotCoin(); plotSunrise();
+    if (document.getElementById('taxiResult').style.display !== 'none') calcTaxi();
+    if (document.getElementById('abResult').style.display !== 'none') calcAB();
+  });
+
+  // ---- Mobile menu ----
+  document.querySelector('.menu-btn').addEventListener('click', function() {
+    document.getElementById('sidebar').classList.toggle('open');
+  });
+
+  // ---- Sidebar active tracking ----
+  var sections = document.querySelectorAll('h1[id], h2[id]');
+  var navLinks = document.querySelectorAll('.sidebar a');
+  window.addEventListener('scroll', function() {
+    var current = '';
+    sections.forEach(function(s) {
+      if (window.scrollY >= s.offsetTop - 120) current = s.getAttribute('id');
+    });
+    navLinks.forEach(function(a) {
+      a.classList.remove('active');
+      if (a.getAttribute('href') === '#' + current) a.classList.add('active');
+    });
+  });
+
+  // ---- Plotly theme helper ----
+  function plotColors() {
+    var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    return {
+      bg: isDark ? '#1e293b' : '#ffffff',
+      paper: isDark ? '#1e293b' : '#ffffff',
+      grid: isDark ? '#334155' : '#e5e7eb',
+      text: isDark ? '#e2e8f0' : '#1a1a2e',
+      accent: isDark ? '#60a5fa' : '#2563eb',
+      accent2: isDark ? '#f472b6' : '#ec4899',
+      accent3: isDark ? '#34d399' : '#10b981',
+      accent4: isDark ? '#fbbf24' : '#f59e0b',
+    };
+  }
+
+  // ==================================================================
+  // Beta PDF with log-gamma (Lanczos)
+  // ==================================================================
+  function logGamma(z) {
+    if (z < 0.5) return Math.log(Math.PI / Math.sin(Math.PI * z)) - logGamma(1 - z);
+    z -= 1;
+    var g = 7;
+    var c = [0.99999999999980993, 676.5203681218851, -1259.1392167224028,
+      771.32342877765313, -176.61502916214059, 12.507343278686905,
+      -0.13857109526572012, 9.9843695780195716e-6, 1.5056327351493116e-7];
+    var x = c[0];
+    for (var i = 1; i < g + 2; i++) x += c[i] / (z + i);
+    var t = z + g + 0.5;
+    return 0.5 * Math.log(2 * Math.PI) + (z + 0.5) * Math.log(t) - t + Math.log(x);
+  }
+  function logBetaFn(a, b) { return logGamma(a) + logGamma(b) - logGamma(a + b); }
+  function betaPDF(x, a, b) {
+    if (x <= 0 || x >= 1 || a <= 0 || b <= 0) return 0;
+    return Math.exp((a - 1) * Math.log(x) + (b - 1) * Math.log(1 - x) - logBetaFn(a, b));
+  }
+
+  // ==================================================================
+  // SECTION 2: Coin Bayesian Update
+  // ==================================================================
+  var coinState = { heads: 0, tails: 0, alpha0: 1, beta0: 1 };
+
+  function plotCoin() {
+    var c = plotColors();
+    var a0 = coinState.alpha0, b0 = coinState.beta0;
+    var aPost = a0 + coinState.heads, bPost = b0 + coinState.tails;
+    var xs = []; for (var i = 0; i <= 200; i++) xs.push(i / 200);
+    var priorY = xs.map(function(x) { return betaPDF(x, a0, b0); });
+    var postY = xs.map(function(x) { return betaPDF(x, aPost, bPost); });
+
+    var traces = [
+      { x: xs, y: priorY, name: 'Prior Beta(' + a0 + ',' + b0 + ')', line: { color: c.accent4, width: 2, dash: 'dash' }, fill: 'tozeroy', fillcolor: c.accent4 + '15' },
+      { x: xs, y: postY, name: 'Posterior Beta(' + aPost + ',' + bPost + ')', line: { color: c.accent, width: 3 }, fill: 'tozeroy', fillcolor: c.accent + '20' }
+    ];
+
+    var trueP = parseFloat(document.getElementById('trueCoinP').value);
+    var revealEl = document.getElementById('trueCoinPVal');
+    if (revealEl.style.filter === 'none') {
+      traces.push({
+        x: [trueP, trueP], y: [0, Math.max.apply(null, postY.concat(priorY)) * 1.05],
+        name: '\uC2E4\uC81C p = ' + trueP.toFixed(2),
+        line: { color: c.accent2, width: 2, dash: 'dot' }, mode: 'lines'
+      });
+    }
+
+    Plotly.newPlot('coinPlot', traces, {
+      title: { text: '\uBCA0\uC774\uC9C0\uC548 \uC5C5\uB370\uC774\uD2B8: Prior \u2192 Posterior', font: { color: c.text, size: 15 } },
+      xaxis: { title: '\uB3D9\uC804 \uC55E\uBA74 \uD655\uB960 (p)', range: [0, 1], gridcolor: c.grid, color: c.text },
+      yaxis: { title: '\uBC00\uB3C4', gridcolor: c.grid, color: c.text },
+      plot_bgcolor: c.bg, paper_bgcolor: c.paper,
+      font: { color: c.text, family: 'Malgun Gothic, system-ui' },
+      legend: { x: 0.02, y: 0.98, bgcolor: 'rgba(0,0,0,0)' },
+      margin: { t: 50, r: 20, b: 50, l: 60 }
+    }, { responsive: true, displayModeBar: false });
+  }
+
+  function updateCoinStats() {
+    var a = coinState.alpha0 + coinState.heads;
+    var b = coinState.beta0 + coinState.tails;
+    var total = coinState.heads + coinState.tails;
+    safeSetText('headCount', coinState.heads);
+    safeSetText('tailCount', coinState.tails);
+    safeSetText('totalFlips', total);
+    safeSetText('posteriorMean', (a / (a + b)).toFixed(3));
+    safeSetText('observedRatio', total > 0 ? (coinState.heads / total).toFixed(3) : '-');
+
+    var formulaEl = document.getElementById('bayesFormulaDisplay');
+    // KaTeX renderMathInElement needs delimiters as literal text in DOM
+    // Using katex.render directly for dynamic formula updates
+    while (formulaEl.firstChild) formulaEl.removeChild(formulaEl.firstChild);
+    var latexStr = '\\text{Posterior} = \\text{Beta}(' + coinState.alpha0 + '+' + coinState.heads + ',\\; ' + coinState.beta0 + '+' + coinState.tails + ') = \\text{Beta}(' + a + ', ' + b + ')';
+    if (typeof katex !== 'undefined') {
+      katex.render(latexStr, formulaEl, { displayMode: true, throwOnError: false });
+    } else {
+      formulaEl.textContent = latexStr;
+    }
+  }
+
+  function flipCoin(n) {
+    var p = parseFloat(document.getElementById('trueCoinP').value);
+    for (var i = 0; i < n; i++) {
+      if (Math.random() < p) coinState.heads++; else coinState.tails++;
+    }
+    updateCoinStats(); plotCoin();
+  }
+
+  document.getElementById('priorAlpha').addEventListener('input', function() {
+    coinState.alpha0 = parseFloat(this.value);
+    safeSetText('priorAlphaVal', this.value);
+    updateCoinStats(); plotCoin();
+  });
+  document.getElementById('priorBeta').addEventListener('input', function() {
+    coinState.beta0 = parseFloat(this.value);
+    safeSetText('priorBetaVal', this.value);
+    updateCoinStats(); plotCoin();
+  });
+  document.getElementById('trueCoinP').addEventListener('input', function() {
+    safeSetText('trueCoinPVal', parseFloat(this.value).toFixed(2));
+    plotCoin();
+  });
+  document.getElementById('revealP').addEventListener('click', function() {
+    var el = document.getElementById('trueCoinPVal');
+    if (el.style.filter !== 'none') {
+      el.style.filter = 'none'; el.style.cursor = 'default';
+      this.textContent = '\uC228\uAE30\uAE30';
+    } else {
+      el.style.filter = 'blur(6px)'; el.style.cursor = 'pointer';
+      this.textContent = '\uACF5\uAC1C';
+    }
+    plotCoin();
+  });
+  document.getElementById('flipHead').addEventListener('click', function() {
+    coinState.heads++; updateCoinStats(); plotCoin();
+  });
+  document.getElementById('flipTail').addEventListener('click', function() {
+    coinState.tails++; updateCoinStats(); plotCoin();
+  });
+  document.getElementById('flip10').addEventListener('click', function() { flipCoin(10); });
+  document.getElementById('resetCoin').addEventListener('click', function() {
+    coinState.heads = 0; coinState.tails = 0;
+    document.getElementById('trueCoinPVal').style.filter = 'blur(6px)';
+    document.getElementById('trueCoinPVal').style.cursor = 'pointer';
+    document.getElementById('revealP').textContent = '\uACF5\uAC1C';
+    updateCoinStats(); plotCoin();
+  });
+  plotCoin();
+
+  // ==================================================================
+  // SECTION 3: Sunrise Problem
+  // ==================================================================
+  function updateSunrise(n) {
+    var prob = (n + 1) / (n + 2);
+    var fail = 1 - prob;
+    safeSetText('sunriseN', n >= 1e9 ? n.toExponential(2) : n.toLocaleString());
+    safeSetText('sunriseProb', prob > 0.999999 ? '1 - ' + fail.toExponential(2) : prob.toFixed(6));
+    safeSetText('sunriseFail', fail < 1e-6 ? fail.toExponential(2) : fail.toFixed(6));
+    var pStr = prob.toFixed(18);
+    var n9 = 0;
+    var afterDot = pStr.split('.')[1] || '';
+    for (var i = 0; i < afterDot.length; i++) {
+      if (afterDot[i] === '9') n9++; else break;
+    }
+    safeSetText('sunriseNines', n9 > 15 ? '15+' : String(n9));
+  }
+
+  function plotSunrise() {
+    var c = plotColors();
+    var currentN = parseFloat(document.getElementById('sunriseInput').value) || 50;
+    var maxSlider = parseFloat(document.getElementById('sunriseSlider').max);
+    var ns = [], probs = [];
+    var maxLog = Math.log10(Math.max(maxSlider, 100));
+    for (var i = 0; i <= 200; i++) {
+      var logN = (i / 200) * maxLog;
+      var n = Math.pow(10, logN);
+      ns.push(n); probs.push((n + 1) / (n + 2));
+    }
+    Plotly.newPlot('sunrisePlot', [
+      { x: ns, y: probs, name: 'P = (n+1)/(n+2)', line: { color: c.accent, width: 3 }, fill: 'tozeroy', fillcolor: c.accent + '15' },
+      { x: [currentN], y: [(currentN + 1) / (currentN + 2)], name: '\uD604\uC7AC n = ' + (currentN >= 1e9 ? currentN.toExponential(2) : currentN.toLocaleString()), mode: 'markers', marker: { color: c.accent2, size: 14, symbol: 'diamond' } },
+      { x: ns, y: ns.map(function() { return 1; }), name: 'P = 1 (\uC808\uB300 \uD655\uC2E4)', line: { color: c.accent3, width: 1, dash: 'dash' }, mode: 'lines' }
+    ], {
+      title: { text: 'Sunrise Problem: \uB0B4\uC77C \uD574\uAC00 \uB728\uB294 \uD655\uB960', font: { color: c.text, size: 15 } },
+      xaxis: { title: '\uAD00\uCE21 \uC77C\uC218 (n)', type: 'log', gridcolor: c.grid, color: c.text },
+      yaxis: { title: 'P(\uB0B4\uC77C \uD574\uAC00 \uB700)', range: [0, 1.05], gridcolor: c.grid, color: c.text },
+      plot_bgcolor: c.bg, paper_bgcolor: c.paper,
+      font: { color: c.text, family: 'Malgun Gothic, system-ui' },
+      legend: { x: 0.5, y: 0.15 }, margin: { t: 50, r: 20, b: 50, l: 60 }
+    }, { responsive: true, displayModeBar: false });
+  }
+
+  function setSunriseScale(max, val) {
+    var slider = document.getElementById('sunriseSlider');
+    slider.max = max;
+    if (val !== undefined) { slider.value = val; document.getElementById('sunriseInput').value = val; }
+    safeSetText('sunriseSliderVal', max >= 1e9 ? parseFloat(slider.value).toExponential(2) : parseFloat(slider.value).toLocaleString());
+    updateSunrise(parseFloat(slider.value)); plotSunrise();
+  }
+
+  document.getElementById('sunriseSlider').addEventListener('input', function() {
+    var val = parseFloat(this.value);
+    document.getElementById('sunriseInput').value = Math.round(val);
+    safeSetText('sunriseSliderVal', val >= 1e9 ? val.toExponential(2) : Math.round(val).toLocaleString());
+    updateSunrise(val); plotSunrise();
+  });
+  document.getElementById('sunriseApply').addEventListener('click', function() {
+    var val = parseFloat(document.getElementById('sunriseInput').value) || 0;
+    var slider = document.getElementById('sunriseSlider');
+    if (val > parseFloat(slider.max)) slider.max = val * 1.2;
+    slider.value = val;
+    safeSetText('sunriseSliderVal', val >= 1e9 ? val.toExponential(2) : val.toLocaleString());
+    updateSunrise(val); plotSunrise();
+  });
+  document.getElementById('scaleLinear').addEventListener('click', function() { setSunriseScale(100, 50); });
+  document.getElementById('scaleThousand').addEventListener('click', function() { setSunriseScale(10000, 5000); });
+  document.getElementById('scaleMillion').addEventListener('click', function() { setSunriseScale(1000000000, 500000000); });
+  document.getElementById('scaleEarth').addEventListener('click', function() {
+    var earthDays = Math.round(4.54e9 * 365.25);
+    setSunriseScale(earthDays * 1.1, earthDays);
+    document.getElementById('sunriseInput').value = earthDays;
+    safeSetText('sunriseSliderVal', earthDays.toExponential(2));
+  });
+  updateSunrise(50); plotSunrise();
+
+  // ==================================================================
+  // SECTION 4a: Fingerprint Problem (Step-by-step)
+  // ==================================================================
+  var fpCurrentStep = 0;
+
+  function updateFpValues() {
+    var prior = parseFloat(document.getElementById('fpPrior').value);
+    safeSetText('fpPriorVal', (prior * 100).toFixed(prior < 0.001 ? 3 : 2) + '%');
+    safeSetText('fpLikelihoodVal', parseFloat(document.getElementById('fpLikelihood').value).toFixed(2));
+    safeSetText('fpFalsePosVal', (parseFloat(document.getElementById('fpFalsePos').value) * 100).toFixed(2) + '%');
+  }
+  document.getElementById('fpPrior').addEventListener('input', updateFpValues);
+  document.getElementById('fpLikelihood').addEventListener('input', updateFpValues);
+  document.getElementById('fpFalsePos').addEventListener('input', updateFpValues);
+
+  function fpAdvanceStep() {
+    var prior = parseFloat(document.getElementById('fpPrior').value);
+    var likelihood = parseFloat(document.getElementById('fpLikelihood').value);
+    var falsePos = parseFloat(document.getElementById('fpFalsePos').value);
+    fpCurrentStep++;
+    if (fpCurrentStep > 4) fpCurrentStep = 4;
+
+    var steps = document.querySelectorAll('#fpSteps .step');
+    steps.forEach(function(s, i) {
+      s.classList.remove('active', 'completed');
+      if (i < fpCurrentStep - 1) s.classList.add('completed');
+      if (i === fpCurrentStep - 1) s.classList.add('active');
+    });
+
+    var numerator = likelihood * prior;
+    var denominator = likelihood * prior + falsePos * (1 - prior);
+    var posterior = numerator / denominator;
+
+    if (fpCurrentStep >= 1) {
+      safeSetHTML('fpStep1Content',
+        '<p>P(\uBC94\uC778) = ' + prior.toFixed(6) + ' (' + (prior*100).toFixed(4) + '%)</p>' +
+        '<p>P(\uC9C0\uBB38|\uBC94\uC778) = ' + likelihood.toFixed(2) + '</p>' +
+        '<p>P(\uC9C0\uBB38|\uBB34\uACE0) = ' + falsePos.toFixed(4) + ' (' + (falsePos*100).toFixed(2) + '%)</p>');
+    }
+    if (fpCurrentStep >= 2) {
+      safeSetHTML('fpStep2Content',
+        '<p>P(\uC9C0\uBB38|\uBC94\uC778) &times; P(\uBC94\uC778) = ' + likelihood.toFixed(2) + ' &times; ' + prior.toFixed(6) + ' = <b>' + numerator.toFixed(8) + '</b></p>');
+    }
+    if (fpCurrentStep >= 3) {
+      safeSetHTML('fpStep3Content',
+        '<p>P(\uC9C0\uBB38) = P(\uC9C0\uBB38|\uBC94\uC778)P(\uBC94\uC778) + P(\uC9C0\uBB38|\uBB34\uACE0)P(\uBB34\uACE0)</p>' +
+        '<p>= ' + numerator.toFixed(8) + ' + ' + falsePos.toFixed(4) + ' &times; ' + (1-prior).toFixed(6) + '</p>' +
+        '<p>= ' + numerator.toFixed(8) + ' + ' + (falsePos*(1-prior)).toFixed(8) + '</p>' +
+        '<p>= <b>' + denominator.toFixed(8) + '</b></p>');
+    }
+    if (fpCurrentStep >= 4) {
+      safeSetHTML('fpStep4Content',
+        '<p>P(\uBC94\uC778|\uC9C0\uBB38) = ' + numerator.toFixed(8) + ' / ' + denominator.toFixed(8) + '</p>' +
+        '<p style="font-size:1.2rem; color:var(--accent); font-weight:700;">= ' + (posterior*100).toFixed(2) + '%</p>' +
+        '<p style="color:var(--danger); font-weight:600;">\uC9C0\uBB38\uC774 \uC77C\uCE58\uD574\uB3C4 \uBC94\uC778\uC77C \uD655\uB960\uC740 ' + (posterior*100).toFixed(2) + '%\uC5D0 \uBD88\uACFC\uD569\uB2C8\uB2E4!</p>');
+      plotFpTree(prior, likelihood, falsePos, posterior);
+    }
+    tryRenderMath(document.getElementById('fpSteps'));
+  }
+
+  function plotFpTree(prior, likelihood, falsePos, posterior) {
+    var c = plotColors();
+    var popSize = 1000000;
+    var guilty = Math.round(popSize * prior);
+    var innocent = popSize - guilty;
+    var guiltyMatch = Math.round(guilty * likelihood);
+    var innocentMatch = Math.round(innocent * falsePos);
+    var totalMatch = guiltyMatch + innocentMatch;
+
+    Plotly.newPlot('fpTreePlot', [{
+      type: 'bar',
+      x: ['\uBC94\uC778 + \uC9C0\uBB38\uC77C\uCE58', '\uBB34\uACE0 + \uC9C0\uBB38\uC77C\uCE58'],
+      y: [guiltyMatch, innocentMatch],
+      marker: { color: [c.accent2, c.accent4] },
+      text: [guiltyMatch.toLocaleString() + '\uBA85', innocentMatch.toLocaleString() + '\uBA85'],
+      textposition: 'outside', textfont: { color: c.text }
+    }], {
+      title: { text: '\uC778\uAD6C ' + popSize.toLocaleString() + '\uBA85 \uAE30\uC900: \uC9C0\uBB38 \uC77C\uCE58\uC790 \uAD6C\uC131', font: { color: c.text, size: 14 } },
+      xaxis: { color: c.text }, yaxis: { title: '\uC778\uC6D0 (\uBA85)', gridcolor: c.grid, color: c.text },
+      plot_bgcolor: c.bg, paper_bgcolor: c.paper,
+      font: { color: c.text, family: 'Malgun Gothic, system-ui' },
+      margin: { t: 60, r: 20, b: 50, l: 80 }, showlegend: false,
+      annotations: [{
+        x: 0.5, y: 1.12, xref: 'paper', yref: 'paper',
+        text: '\uC9C0\uBB38 \uC77C\uCE58\uC790 \uCD1D ' + totalMatch.toLocaleString() + '\uBA85 \uC911 \uBC94\uC778\uC740 ' + guiltyMatch.toLocaleString() + '\uBA85 = ' + (posterior*100).toFixed(2) + '%',
+        showarrow: false, font: { color: c.accent2, size: 13 }
+      }]
+    }, { responsive: true, displayModeBar: false });
+  }
+
+  document.getElementById('fpNextStep').addEventListener('click', fpAdvanceStep);
+  document.getElementById('fpReset').addEventListener('click', function() {
+    fpCurrentStep = 0;
+    document.querySelectorAll('#fpSteps .step').forEach(function(s, i) {
+      s.classList.remove('active', 'completed');
+      if (i === 0) s.classList.add('active');
+    });
+    safeSetText('fpStep1Content', '\uBCA0\uC774\uC988 \uC815\uB9AC \uC801\uC6A9\uC744 \uC704\uD55C \uBCC0\uC218\uB97C \uC815\uC758\uD569\uB2C8\uB2E4.');
+    safeSetText('fpStep2Content', '');
+    safeSetText('fpStep3Content', '');
+    safeSetText('fpStep4Content', '');
+    Plotly.purge('fpTreePlot');
+  });
+
+  // ==================================================================
+  // SECTION 4b: Taxi Problem
+  // ==================================================================
+  function calcTaxi() {
+    var greenPct = parseInt(document.getElementById('taxiGreen').value);
+    var bluePct = 100 - greenPct;
+    var accuracy = parseInt(document.getElementById('taxiAccuracy').value) / 100;
+    safeSetText('taxiGreenVal', greenPct + '%');
+    safeSetText('taxiBlueVal', bluePct + '% (\uC790\uB3D9 \uACC4\uC0B0)');
+    safeSetText('taxiAccuracyVal', (accuracy * 100).toFixed(0) + '%');
+
+    var pBlue = bluePct / 100, pGreen = greenPct / 100;
+    var pSBgB = accuracy, pSBgG = 1 - accuracy;
+    var num = pSBgB * pBlue;
+    var den = pSBgB * pBlue + pSBgG * pGreen;
+    var post = num / den;
+
+    document.getElementById('taxiResult').style.display = 'block';
+    safeSetText('taxiAnswer', (post * 100).toFixed(1) + '%');
+
+    var blueTotal = bluePct, greenTotal = greenPct;
+    safeSetText('taxiTT', (blueTotal * accuracy).toFixed(1));
+    safeSetText('taxiFN', (blueTotal * (1 - accuracy)).toFixed(1));
+    safeSetText('taxiFP', (greenTotal * (1 - accuracy)).toFixed(1));
+    safeSetText('taxiTN', (greenTotal * accuracy).toFixed(1));
+    safeSetText('taxiBlueTotal', blueTotal);
+    safeSetText('taxiGreenTotal', greenTotal);
+    safeSetText('taxiBlueSaid', (blueTotal * accuracy + greenTotal * (1 - accuracy)).toFixed(1));
+    safeSetText('taxiGreenSaid', (blueTotal * (1 - accuracy) + greenTotal * accuracy).toFixed(1));
+
+    var taxiFormulaEl = document.getElementById('taxiFormula');
+    while (taxiFormulaEl.firstChild) taxiFormulaEl.removeChild(taxiFormulaEl.firstChild);
+    var taxiLatex = 'P(\\text{\uCCAD\uC0C9}|\\text{"\uCCAD\uC0C9" \uC99D\uC5B8}) = \\frac{' + accuracy.toFixed(2) + ' \\times ' + pBlue.toFixed(2) + '}{' + accuracy.toFixed(2) + ' \\times ' + pBlue.toFixed(2) + ' + ' + (1-accuracy).toFixed(2) + ' \\times ' + pGreen.toFixed(2) + '} = \\frac{' + num.toFixed(4) + '}{' + den.toFixed(4) + '} = ' + (post * 100).toFixed(1) + '\\%';
+    if (typeof katex !== 'undefined') {
+      katex.render(taxiLatex, taxiFormulaEl, { displayMode: true, throwOnError: false });
+    } else {
+      taxiFormulaEl.textContent = taxiLatex;
+    }
+
+    // Sensitivity plot
+    var c = plotColors();
+    var accs = [], posts = [];
+    for (var a = 50; a <= 100; a++) {
+      accs.push(a);
+      var ac = a / 100;
+      posts.push((ac * pBlue) / (ac * pBlue + (1 - ac) * pGreen) * 100);
+    }
+    Plotly.newPlot('taxiPlot', [
+      { x: accs, y: posts, name: 'P(\uC2E4\uC81C \uCCAD\uC0C9|\uC99D\uC5B8 "\uCCAD\uC0C9")', line: { color: c.accent, width: 3 }, fill: 'tozeroy', fillcolor: c.accent + '15' },
+      { x: [accuracy * 100], y: [post * 100], name: '\uD604\uC7AC \uC815\uD655\uB3C4 = ' + (accuracy*100).toFixed(0) + '%', mode: 'markers', marker: { color: c.accent2, size: 14, symbol: 'diamond' } },
+      { x: [50, 100], y: [pBlue * 100, pBlue * 100], name: '\uAE30\uC800\uC728 (' + (pBlue*100).toFixed(0) + '%)', line: { color: c.accent4, width: 1, dash: 'dash' }, mode: 'lines' }
+    ], {
+      title: { text: '\uBAA9\uACA9\uC790 \uC815\uD655\uB3C4\uC5D0 \uB530\uB978 \uC0AC\uD6C4\uD655\uB960 \uBCC0\uD654', font: { color: c.text, size: 14 } },
+      xaxis: { title: '\uBAA9\uACA9\uC790 \uC815\uD655\uB3C4 (%)', range: [50, 100], gridcolor: c.grid, color: c.text },
+      yaxis: { title: 'P(\uC2E4\uC81C \uCCAD\uC0C9) %', range: [0, 105], gridcolor: c.grid, color: c.text },
+      plot_bgcolor: c.bg, paper_bgcolor: c.paper,
+      font: { color: c.text, family: 'Malgun Gothic, system-ui' },
+      legend: { x: 0.02, y: 0.98, bgcolor: 'rgba(0,0,0,0)' }, margin: { t: 50, r: 20, b: 50, l: 60 }
+    }, { responsive: true, displayModeBar: false });
+  }
+
+  document.getElementById('taxiGreen').addEventListener('input', function() {
+    safeSetText('taxiGreenVal', this.value + '%');
+    safeSetText('taxiBlueVal', (100 - parseInt(this.value)) + '% (\uC790\uB3D9 \uACC4\uC0B0)');
+  });
+  document.getElementById('taxiAccuracy').addEventListener('input', function() {
+    safeSetText('taxiAccuracyVal', this.value + '%');
+  });
+  document.getElementById('taxiCalc').addEventListener('click', calcTaxi);
+  document.getElementById('taxiDefault').addEventListener('click', function() {
+    document.getElementById('taxiGreen').value = 85;
+    document.getElementById('taxiAccuracy').value = 80;
+    safeSetText('taxiGreenVal', '85%');
+    safeSetText('taxiBlueVal', '15% (\uC790\uB3D9 \uACC4\uC0B0)');
+    safeSetText('taxiAccuracyVal', '80%');
+    calcTaxi();
+  });
+
+  // ==================================================================
+  // SECTION 5a: Naive Bayes Spam Filter
+  // ==================================================================
+  document.getElementById('spamPrior').addEventListener('input', function() {
+    safeSetText('spamPriorVal', parseFloat(this.value).toFixed(2));
+  });
+  document.getElementById('spamCalc').addEventListener('click', function() {
+    var pSpam = parseFloat(document.getElementById('spamPrior').value);
+    var pHam = 1 - pSpam;
+    var words = document.querySelectorAll('.spam-word');
+    var likelihoodSpam = 1, likelihoodHam = 1;
+    var formulaParts = '<p><b>\uACC4\uC0B0 \uACFC\uC815:</b></p>';
+    formulaParts += '<p>P(\uC2A4\uD338) = ' + pSpam.toFixed(2) + ', P(\uC815\uC0C1) = ' + pHam.toFixed(2) + '</p>';
+    words.forEach(function(w) {
+      if (w.checked) {
+        var ps = parseFloat(w.dataset.spam), ph = parseFloat(w.dataset.ham);
+        likelihoodSpam *= ps; likelihoodHam *= ph;
+        var wordName = w.closest('tr').querySelector('td').textContent;
+        formulaParts += '<p>' + wordName + ': P(\uB2E8\uC5B4|\uC2A4\uD338)=' + ps + ', P(\uB2E8\uC5B4|\uC815\uC0C1)=' + ph + '</p>';
+      }
+    });
+    var numSpam = likelihoodSpam * pSpam, numHam = likelihoodHam * pHam;
+    var denom = numSpam + numHam;
+    var postSpam = numSpam / denom, postHam = numHam / denom;
+    formulaParts += '<hr style="margin:8px 0;">';
+    formulaParts += '<p>\uC6B0\uB3C4(\uC2A4\uD338) = ' + likelihoodSpam.toFixed(6) + '</p>';
+    formulaParts += '<p>\uC6B0\uB3C4(\uC815\uC0C1) = ' + likelihoodHam.toFixed(6) + '</p>';
+    formulaParts += '<p>P(\uC2A4\uD338|\uB2E8\uC5B4\uB4E4) = ' + numSpam.toFixed(8) + ' / ' + denom.toFixed(8) + ' = <b>' + (postSpam*100).toFixed(1) + '%</b></p>';
+
+    document.getElementById('spamResult').style.display = 'block';
+    safeSetText('spamPosterior', (postSpam * 100).toFixed(1) + '%');
+    document.getElementById('spamPosterior').style.color = postSpam > 0.5 ? 'var(--danger)' : 'var(--success)';
+    safeSetText('hamPosterior', (postHam * 100).toFixed(1) + '%');
+    safeSetText('spamVerdict', postSpam > 0.5 ? '\uC2A4\uD338!' : '\uC815\uC0C1');
+    document.getElementById('spamVerdict').style.color = postSpam > 0.5 ? 'var(--danger)' : 'var(--success)';
+    safeSetHTML('spamFormula', formulaParts);
+  });
+
+  // ==================================================================
+  // SECTION 5b: A/B Test
+  // ==================================================================
+  function gaussianRandom() {
+    var u1, u2;
+    do { u1 = Math.random(); } while (u1 === 0);
+    u2 = Math.random();
+    return Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
+  }
+  function sampleGamma(shape) {
+    if (shape < 1) return sampleGamma(1 + shape) * Math.pow(Math.random(), 1 / shape);
+    var d = shape - 1/3, c2 = 1 / Math.sqrt(9 * d);
+    while (true) {
+      var x, v;
+      do { x = gaussianRandom(); v = 1 + c2 * x; } while (v <= 0);
+      v = v * v * v;
+      var u = Math.random();
+      if (u < 1 - 0.0331 * x * x * x * x) return d * v;
+      if (Math.log(u) < 0.5 * x * x + d * (1 - v + Math.log(v))) return d * v;
+    }
+  }
+  function sampleBeta(alpha, beta) {
+    var g1 = sampleGamma(alpha), g2 = sampleGamma(beta);
+    return g1 / (g1 + g2);
+  }
+
+  function calcAB() {
+    var aConv = parseInt(document.getElementById('abAconv').value) || 0;
+    var aVisit = parseInt(document.getElementById('abAvisit').value) || 1;
+    var bConv = parseInt(document.getElementById('abBconv').value) || 0;
+    var bVisit = parseInt(document.getElementById('abBvisit').value) || 1;
+    var aAlpha = 1 + aConv, aBeta2 = 1 + (aVisit - aConv);
+    var bAlpha = 1 + bConv, bBeta2 = 1 + (bVisit - bConv);
+    var aMean = aAlpha / (aAlpha + aBeta2);
+    var bMean = bAlpha / (bAlpha + bBeta2);
+
+    var bWins = 0, nSim = 50000;
+    for (var i = 0; i < nSim; i++) {
+      if (sampleBeta(bAlpha, bBeta2) > sampleBeta(aAlpha, aBeta2)) bWins++;
+    }
+    var probBwins = bWins / nSim;
+
+    document.getElementById('abResult').style.display = 'block';
+    safeSetText('abARateVal', (aMean * 100).toFixed(2) + '%');
+    safeSetText('abBRateVal', (bMean * 100).toFixed(2) + '%');
+    safeSetText('abProbBwins', (probBwins * 100).toFixed(1) + '%');
+
+    var c = plotColors();
+    var xs = []; for (var j = 0; j <= 200; j++) xs.push(j / 200);
+    var aY = xs.map(function(x) { return betaPDF(x, aAlpha, aBeta2); });
+    var bY = xs.map(function(x) { return betaPDF(x, bAlpha, bBeta2); });
+    var xMin = Math.max(0, Math.min(aMean, bMean) - 0.1);
+    var xMax = Math.min(1, Math.max(aMean, bMean) + 0.1);
+
+    Plotly.newPlot('abPlot', [
+      { x: xs, y: aY, name: 'A: Beta(' + aAlpha + ',' + aBeta2 + ')', line: { color: c.accent, width: 3 }, fill: 'tozeroy', fillcolor: c.accent + '20' },
+      { x: xs, y: bY, name: 'B: Beta(' + bAlpha + ',' + bBeta2 + ')', line: { color: c.accent2, width: 3 }, fill: 'tozeroy', fillcolor: c.accent2 + '20' }
+    ], {
+      title: { text: 'A/B \uD14C\uC2A4\uD2B8 \uC0AC\uD6C4\uBD84\uD3EC | P(B>A) = ' + (probBwins*100).toFixed(1) + '%', font: { color: c.text, size: 14 } },
+      xaxis: { title: '\uC804\uD658\uC728', range: [xMin, xMax], gridcolor: c.grid, color: c.text },
+      yaxis: { title: '\uBC00\uB3C4', gridcolor: c.grid, color: c.text },
+      plot_bgcolor: c.bg, paper_bgcolor: c.paper,
+      font: { color: c.text, family: 'Malgun Gothic, system-ui' },
+      legend: { x: 0.02, y: 0.98, bgcolor: 'rgba(0,0,0,0)' }, margin: { t: 50, r: 20, b: 50, l: 60 }
+    }, { responsive: true, displayModeBar: false });
+  }
+
+  document.getElementById('abCalc').addEventListener('click', calcAB);
+
+}); // end DOMContentLoaded
+
+window.addEventListener('load', function() {
+  if (typeof renderMathInElement === 'function') {
+    renderMathInElement(document.body, {
+      delimiters: [
+        {left: '$$', right: '$$', display: true},
+        {left: '\\(', right: '\\)', display: false},
+        {left: '$', right: '$', display: false}
+      ]
+    });
+  }
+});
+</script>
+</body>
+</html>

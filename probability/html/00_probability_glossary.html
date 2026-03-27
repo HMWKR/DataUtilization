@@ -1,0 +1,1859 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>확률/통계 용어 사전 — Probability & Statistics Glossary</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+<style>
+:root {
+  --bg: #ffffff; --bg2: #f8f9fa; --fg: #1a1a2e;
+  --fg2: #495057; --accent: #2563eb; --accent2: #3b82f6;
+  --border: #dee2e6; --code-bg: #f1f3f5; --code-fg: #1a1a2e;
+  --why-bg: #eff6ff; --why-border: #93c5fd; --why-fg: #1e40af;
+  --nav-bg: #f8f9fa; --nav-fg: #495057; --nav-active: #2563eb;
+  --shadow: rgba(0,0,0,0.08); --radius: 8px;
+  --card-hover: #f0f7ff;
+  --tag-bg: #e0e7ff; --tag-fg: #3730a3;
+  --search-bg: #ffffff; --search-border: #d1d5db;
+  --formula-bg: #fefce8; --formula-border: #fde047;
+  --badge-bg: #dbeafe; --badge-fg: #1e40af;
+  --section1: #2563eb; --section2: #7c3aed; --section3: #059669;
+  --section4: #d97706; --section5: #dc2626; --section6: #0891b2;
+  --section7: #be185d; --section8: #4f46e5;
+}
+[data-theme="dark"] {
+  --bg: #0f172a; --bg2: #1e293b; --fg: #e2e8f0;
+  --fg2: #94a3b8; --accent: #60a5fa; --accent2: #93c5fd;
+  --border: #334155; --code-bg: #1e293b; --code-fg: #e2e8f0;
+  --why-bg: #172554; --why-border: #1d4ed8; --why-fg: #93c5fd;
+  --nav-bg: #1e293b; --nav-fg: #94a3b8; --nav-active: #60a5fa;
+  --shadow: rgba(0,0,0,0.3);
+  --card-hover: #1e3a5f;
+  --tag-bg: #312e81; --tag-fg: #a5b4fc;
+  --search-bg: #1e293b; --search-border: #475569;
+  --formula-bg: #422006; --formula-border: #a16207;
+  --badge-bg: #1e3a8a; --badge-fg: #93c5fd;
+  --section1: #60a5fa; --section2: #a78bfa; --section3: #34d399;
+  --section4: #fbbf24; --section5: #f87171; --section6: #22d3ee;
+  --section7: #f472b6; --section8: #818cf8;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; scroll-padding-top: 80px; }
+body {
+  font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', system-ui, sans-serif;
+  background: var(--bg); color: var(--fg); line-height: 1.8;
+  transition: background .3s, color .3s;
+}
+
+/* ===== Top Header ===== */
+.top-header {
+  position: sticky; top: 0; z-index: 100;
+  background: var(--bg); border-bottom: 1px solid var(--border);
+  padding: 12px 24px; display: flex; align-items: center;
+  justify-content: space-between; box-shadow: 0 2px 8px var(--shadow);
+}
+.top-header h1 { font-size: 1.1rem; color: var(--accent); white-space: nowrap; }
+.top-header .controls { display: flex; gap: 10px; align-items: center; }
+.theme-btn, .menu-btn, .index-btn {
+  background: var(--bg2); border: 1px solid var(--border); border-radius: 6px;
+  padding: 6px 14px; cursor: pointer; font-size: 0.9rem; color: var(--fg);
+  transition: all .2s; white-space: nowrap;
+}
+.theme-btn:hover, .menu-btn:hover, .index-btn:hover {
+  border-color: var(--accent); color: var(--accent);
+}
+.term-count {
+  font-size: 0.8rem; color: var(--fg2); padding: 4px 10px;
+  background: var(--bg2); border-radius: 12px; white-space: nowrap;
+}
+
+/* ===== Search Bar ===== */
+.search-container {
+  padding: 12px 24px; background: var(--bg);
+  border-bottom: 1px solid var(--border); position: sticky; top: 52px; z-index: 99;
+}
+.search-wrapper {
+  max-width: 1400px; margin: 0 auto; display: flex; gap: 12px; align-items: center;
+}
+.search-input {
+  flex: 1; padding: 10px 16px; border: 2px solid var(--search-border);
+  border-radius: var(--radius); font-size: 0.95rem; background: var(--search-bg);
+  color: var(--fg); outline: none; transition: border-color .2s;
+  font-family: inherit;
+}
+.search-input:focus { border-color: var(--accent); }
+.search-input::placeholder { color: var(--fg2); opacity: 0.6; }
+.search-stats { font-size: 0.8rem; color: var(--fg2); white-space: nowrap; min-width: 90px; text-align: right; }
+.filter-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+.filter-tag {
+  padding: 3px 10px; border-radius: 12px; font-size: 0.75rem;
+  cursor: pointer; border: 1px solid var(--border); background: var(--bg2);
+  color: var(--fg2); transition: all .2s; user-select: none;
+}
+.filter-tag:hover { border-color: var(--accent); color: var(--accent); }
+.filter-tag.active { background: var(--tag-bg); color: var(--tag-fg); border-color: var(--tag-fg); font-weight: 600; }
+
+/* ===== Layout ===== */
+.layout { display: flex; max-width: 1400px; margin: 0 auto; }
+
+/* ===== Sidebar ===== */
+.sidebar {
+  width: 260px; position: sticky; top: 108px; height: calc(100vh - 108px);
+  overflow-y: auto; padding: 16px 12px; border-right: 1px solid var(--border);
+  background: var(--nav-bg); flex-shrink: 0;
+}
+.sidebar::-webkit-scrollbar { width: 4px; }
+.sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+.sidebar a {
+  display: block; padding: 6px 10px; color: var(--nav-fg);
+  text-decoration: none; border-radius: 6px; font-size: 0.82rem;
+  margin-bottom: 1px; transition: all .2s; border-left: 3px solid transparent;
+}
+.sidebar a:hover { background: var(--bg); color: var(--accent); }
+.sidebar a.active {
+  background: var(--why-bg); color: var(--nav-active);
+  border-left-color: var(--nav-active); font-weight: 600;
+}
+.sidebar .nav-section {
+  font-weight: 700; color: var(--fg); margin-top: 14px; padding: 4px 10px;
+  font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.5px;
+}
+.sidebar .nav-section:first-child { margin-top: 0; }
+.sidebar .section-dot {
+  display: inline-block; width: 8px; height: 8px; border-radius: 50%;
+  margin-right: 6px; vertical-align: middle;
+}
+
+/* ===== Main Content ===== */
+.main-content { flex: 1; min-width: 0; padding: 28px 36px; max-width: 960px; }
+
+/* Section Headers */
+.section-header {
+  display: flex; align-items: center; gap: 12px;
+  margin: 48px 0 20px; padding-bottom: 10px;
+  border-bottom: 3px solid var(--accent);
+}
+.section-header:first-child { margin-top: 8px; }
+.section-num {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 36px; height: 36px; border-radius: 50%; color: #fff;
+  font-weight: 700; font-size: 1rem; flex-shrink: 0;
+}
+.section-header h2 { font-size: 1.35rem; color: var(--fg); margin: 0; }
+.section-desc { color: var(--fg2); font-size: 0.9rem; margin: -8px 0 20px 48px; }
+
+/* ===== Term Cards ===== */
+.term-card {
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: var(--radius); margin: 12px 0;
+  transition: all .25s; overflow: hidden;
+}
+.term-card:hover { border-color: var(--accent); box-shadow: 0 4px 16px var(--shadow); }
+.term-card-header {
+  display: flex; align-items: center; gap: 12px; padding: 14px 18px;
+  cursor: pointer; user-select: none;
+}
+.term-card-header:hover { background: var(--card-hover); }
+.term-badge {
+  display: inline-block; padding: 2px 8px; border-radius: 4px;
+  font-size: 0.7rem; font-weight: 600; white-space: nowrap;
+}
+.term-ko { font-size: 1.05rem; font-weight: 700; color: var(--fg); }
+.term-en { font-size: 0.88rem; color: var(--fg2); margin-left: 4px; }
+.term-brief {
+  font-size: 0.85rem; color: var(--fg2); margin-left: auto;
+  text-align: right; max-width: 40%; white-space: nowrap;
+  overflow: hidden; text-overflow: ellipsis;
+}
+.term-expand {
+  font-size: 0.7rem; color: var(--fg2); transition: transform .3s;
+  flex-shrink: 0;
+}
+.term-card.open .term-expand { transform: rotate(180deg); }
+.term-card-body {
+  max-height: 0; overflow: hidden; transition: max-height .35s ease;
+}
+.term-card.open .term-card-body { max-height: 800px; }
+.term-detail {
+  padding: 0 18px 16px; border-top: 1px solid var(--border);
+}
+.term-detail .brief-label {
+  font-size: 0.78rem; color: var(--accent); font-weight: 600;
+  margin-top: 12px; margin-bottom: 4px;
+}
+.term-detail .brief-text { font-size: 0.9rem; color: var(--fg); margin-bottom: 10px; }
+.term-detail .detail-label {
+  font-size: 0.78rem; color: var(--accent); font-weight: 600;
+  margin-bottom: 4px;
+}
+.term-detail .detail-text { font-size: 0.88rem; color: var(--fg2); line-height: 1.85; }
+.term-formula {
+  background: var(--formula-bg); border: 1px solid var(--formula-border);
+  border-radius: 6px; padding: 10px 16px; margin: 10px 0;
+  text-align: center; font-size: 1rem;
+}
+
+/* ===== Alphabetical Index ===== */
+.alpha-index-overlay {
+  display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0,0,0,0.5); z-index: 300; justify-content: center; align-items: center;
+}
+.alpha-index-overlay.show { display: flex; }
+.alpha-index-panel {
+  background: var(--bg); border-radius: 12px; padding: 28px 32px;
+  max-width: 700px; width: 90%; max-height: 80vh; overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+}
+.alpha-index-panel h3 {
+  font-size: 1.2rem; color: var(--accent); margin-bottom: 16px;
+  padding-bottom: 8px; border-bottom: 2px solid var(--accent);
+}
+.alpha-group { margin-bottom: 16px; }
+.alpha-letter {
+  font-size: 1rem; font-weight: 700; color: var(--accent);
+  margin-bottom: 4px; padding: 2px 0;
+  border-bottom: 1px solid var(--border);
+}
+.alpha-item {
+  display: inline-block; padding: 3px 8px; margin: 2px;
+  font-size: 0.8rem; color: var(--fg2); background: var(--bg2);
+  border-radius: 4px; cursor: pointer; transition: all .2s;
+  text-decoration: none;
+}
+.alpha-item:hover { background: var(--tag-bg); color: var(--tag-fg); }
+
+/* ===== Back to Top ===== */
+.back-to-top {
+  position: fixed; bottom: 28px; right: 28px; width: 44px; height: 44px;
+  border-radius: 50%; background: var(--accent); color: #fff; border: none;
+  cursor: pointer; font-size: 1.2rem; box-shadow: 0 4px 12px var(--shadow);
+  opacity: 0; transform: translateY(20px); transition: all .3s; z-index: 50;
+  display: flex; align-items: center; justify-content: center;
+}
+.back-to-top.show { opacity: 1; transform: translateY(0); }
+.back-to-top:hover { transform: translateY(-2px); box-shadow: 0 6px 20px var(--shadow); }
+
+/* ===== Footer ===== */
+footer {
+  text-align: center; padding: 28px; color: var(--fg2); font-size: 0.82rem;
+  border-top: 1px solid var(--border); margin-top: 48px;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 900px) {
+  .sidebar { display: none; position: fixed; left: 0; top: 108px; width: 260px; z-index: 50; box-shadow: 4px 0 16px var(--shadow); }
+  .sidebar.open { display: block; }
+  .main-content { padding: 20px 16px; }
+  .menu-btn { display: inline-block !important; }
+  .term-card-header { flex-wrap: wrap; }
+  .term-brief { display: none; }
+  .search-wrapper { flex-direction: column; }
+  .search-stats { text-align: left; }
+}
+@media (min-width: 901px) { .menu-btn { display: none !important; } }
+@media (max-width: 600px) {
+  .top-header h1 { font-size: 0.9rem; }
+  .term-ko { font-size: 0.95rem; }
+  .filter-tags { display: none; }
+}
+
+/* ===== Print ===== */
+@media print {
+  .top-header, .sidebar, .search-container, .theme-btn, .menu-btn,
+  .index-btn, .back-to-top, .filter-tags { display: none !important; }
+  .main-content { max-width: 100%; padding: 0; }
+  .term-card { break-inside: avoid; }
+  .term-card-body { max-height: none !important; }
+  .term-expand { display: none; }
+}
+
+/* ===== No results ===== */
+.no-results {
+  text-align: center; padding: 60px 20px; color: var(--fg2);
+}
+.no-results .icon { font-size: 3rem; margin-bottom: 12px; opacity: 0.4; }
+.no-results p { font-size: 1rem; }
+</style>
+</head>
+<body>
+
+<!-- ===== Header ===== -->
+<header class="top-header">
+  <h1>확률/통계 용어 사전</h1>
+  <div class="controls">
+    <button class="menu-btn" aria-label="메뉴">&#9776; 목차</button>
+    <span class="term-count" id="termCount">전체 83개 용어</span>
+    <button class="index-btn" id="indexBtn">AB 색인</button>
+    <button class="theme-btn" id="themeBtn">&#127769; Dark</button>
+  </div>
+</header>
+
+<!-- ===== Search ===== -->
+<div class="search-container">
+  <div class="search-wrapper">
+    <input type="text" class="search-input" id="searchInput"
+           placeholder="용어 검색 (한글/영문/수식 키워드)... Ctrl+K" autocomplete="off">
+    <span class="search-stats" id="searchStats"></span>
+  </div>
+  <div class="filter-tags" id="filterTags">
+    <span class="filter-tag active" data-section="all">전체</span>
+    <span class="filter-tag" data-section="sec1">확률변수</span>
+    <span class="filter-tag" data-section="sec2">이산/연속</span>
+    <span class="filter-tag" data-section="sec3">확률함수</span>
+    <span class="filter-tag" data-section="sec4">기대값/분산</span>
+    <span class="filter-tag" data-section="sec5">확률분포</span>
+    <span class="filter-tag" data-section="sec6">표준화/정규분포</span>
+    <span class="filter-tag" data-section="sec7">Long-Tail/CLT</span>
+    <span class="filter-tag" data-section="sec8">조건부/베이즈</span>
+  </div>
+</div>
+
+<!-- ===== Layout ===== -->
+<div class="layout">
+
+<!-- ===== Sidebar ===== -->
+<nav class="sidebar" id="sidebar">
+  <div class="nav-section"><span class="section-dot" style="background:var(--section1)"></span>1. 확률변수</div>
+  <a href="#sec1">확률변수 개요</a>
+  <div class="nav-section"><span class="section-dot" style="background:var(--section2)"></span>2. 이산/연속</div>
+  <a href="#sec2">이산형과 연속형</a>
+  <div class="nav-section"><span class="section-dot" style="background:var(--section3)"></span>3. 확률함수</div>
+  <a href="#sec3">PMF, CDF, PDF, KDE</a>
+  <div class="nav-section"><span class="section-dot" style="background:var(--section4)"></span>4. 기대값/분산</div>
+  <a href="#sec4">기대값과 분산</a>
+  <div class="nav-section"><span class="section-dot" style="background:var(--section5)"></span>5. 확률분포</div>
+  <a href="#sec5">주요 확률분포</a>
+  <div class="nav-section"><span class="section-dot" style="background:var(--section6)"></span>6. 표준화</div>
+  <a href="#sec6">Z-점수와 표본분포</a>
+  <div class="nav-section"><span class="section-dot" style="background:var(--section7)"></span>7. Long-Tail/CLT</div>
+  <a href="#sec7">중심극한정리</a>
+  <div class="nav-section"><span class="section-dot" style="background:var(--section8)"></span>8. 베이즈</div>
+  <a href="#sec8">조건부확률과 베이즈</a>
+</nav>
+
+<!-- ===== Main Content ===== -->
+<main class="main-content" id="mainContent">
+
+<!-- ============================================================ -->
+<!-- SECTION 1: 확률변수 -->
+<!-- ============================================================ -->
+<div class="section-header" id="sec1">
+  <span class="section-num" style="background:var(--section1)">1</span>
+  <h2>확률변수 (Random Variables)</h2>
+</div>
+<p class="section-desc">확률론의 기초 개념 -- 사건, 표본공간, 빈도에서 확률까지</p>
+
+<div class="term-card" data-section="sec1" data-ko="확률" data-en="probability" data-search="확률 probability 가능성 likelihood 0 1" id="term-probability">
+  <div class="term-card-header" onclick="toggleCard(this)">
+    <span class="term-badge" style="background:var(--section1);color:#fff">Sec 1</span>
+    <span class="term-ko">확률</span>
+    <span class="term-en">Probability</span>
+    <span class="term-brief">사건이 일어날 가능성의 수치적 표현</span>
+    <span class="term-expand">&#9660;</span>
+  </div>
+  <div class="term-card-body"><div class="term-detail">
+    <div class="brief-label">한 줄 정의</div>
+    <div class="brief-text">어떤 사건이 발생할 가능성을 0과 1 사이의 숫자로 나타낸 것</div>
+    <div class="detail-label">상세 설명</div>
+    <div class="detail-text">확률은 불확실한 현상을 정량적으로 다루기 위한 수학적 도구이다. 0은 절대 발생하지 않음, 1은 반드시 발생함을 의미한다. 모든 가능한 사건의 확률을 합하면 1이 되며, 이를 확률의 공리(Kolmogorov axioms)라 한다. 머신러닝에서는 모델의 예측 불확실성을 표현하는 핵심 언어로 사용된다.</div>
+    <div class="term-formula">$0 \le P(A) \le 1, \quad P(\Omega) = 1$</div>
+  </div></div>
+</div>
+
+<div class="term-card" data-section="sec1" data-ko="확률변수" data-en="random variable" data-search="확률변수 random variable rv 변수 mapping 함수" id="term-random-variable">
+  <div class="term-card-header" onclick="toggleCard(this)">
+    <span class="term-badge" style="background:var(--section1);color:#fff">Sec 1</span>
+    <span class="term-ko">확률변수</span>
+    <span class="term-en">Random Variable</span>
+    <span class="term-brief">표본공간의 결과를 수치로 대응시키는 함수</span>
+    <span class="term-expand">&#9660;</span>
+  </div>
+  <div class="term-card-body"><div class="term-detail">
+    <div class="brief-label">한 줄 정의</div>
+    <div class="brief-text">확률 실험의 결과를 실수 값으로 대응시키는 함수</div>
+    <div class="detail-label">상세 설명</div>
+    <div class="detail-text">확률변수는 표본공간의 각 결과를 실수에 대응시키는 함수 $X: \Omega \to \mathbb{R}$이다. 동전을 던져 앞면=1, 뒷면=0으로 대응시키면 이것이 확률변수이다. 이산형 확률변수는 셀 수 있는 값(정수 등)을 취하고, 연속형 확률변수는 구간 내 모든 실수 값을 취할 수 있다. 머신러닝에서 특성(feature)과 타겟(target) 모두 확률변수로 모델링된다.</div>
+    <div class="term-formula">$X: \Omega \to \mathbb{R}$</div>
+  </div></div>
+</div>
+
+<div class="term-card" data-section="sec1" data-ko="표본공간" data-en="sample space" data-search="표본공간 sample space omega 전체집합 모든결과" id="term-sample-space">
+  <div class="term-card-header" onclick="toggleCard(this)">
+    <span class="term-badge" style="background:var(--section1);color:#fff">Sec 1</span>
+    <span class="term-ko">표본공간</span>
+    <span class="term-en">Sample Space</span>
+    <span class="term-brief">실험에서 나올 수 있는 모든 결과의 집합</span>
+    <span class="term-expand">&#9660;</span>
+  </div>
+  <div class="term-card-body"><div class="term-detail">
+    <div class="brief-label">한 줄 정의</div>
+    <div class="brief-text">확률 실험에서 발생 가능한 모든 결과를 모아 놓은 전체 집합</div>
+    <div class="detail-label">상세 설명</div>
+    <div class="detail-text">표본공간은 기호 $\Omega$로 표기하며, 확률 실험의 모든 가능한 결과를 원소로 갖는 집합이다. 동전 던지기의 표본공간은 $\Omega = \{H, T\}$, 주사위의 표본공간은 $\Omega = \{1,2,3,4,5,6\}$이다. 표본공간은 확률을 정의하기 위한 출발점이며, 모든 사건은 표본공간의 부분집합으로 정의된다.</div>
+    <div class="term-formula">$\Omega = \{$모든 가능한 결과$\}$</div>
+  </div></div>
+</div>
+
+<div class="term-card" data-section="sec1" data-ko="사건" data-en="event" data-search="사건 event 부분집합 subset 결과" id="term-event">
+  <div class="term-card-header" onclick="toggleCard(this)">
+    <span class="term-badge" style="background:var(--section1);color:#fff">Sec 1</span>
+    <span class="term-ko">사건</span>
+    <span class="term-en">Event</span>
+    <span class="term-brief">표본공간의 부분집합</span>
+    <span class="term-expand">&#9660;</span>
+  </div>
+  <div class="term-card-body"><div class="term-detail">
+    <div class="brief-label">한 줄 정의</div>
+    <div class="brief-text">표본공간의 부분집합으로, 관심 있는 결과들의 모음</div>
+    <div class="detail-label">상세 설명</div>
+    <div class="detail-text">사건은 표본공간 $\Omega$의 부분집합이다. 예를 들어 주사위에서 "짝수가 나오는 사건"은 $A = \{2, 4, 6\}$이다. 사건에 대해 합사건(union), 곱사건(intersection), 여사건(complement) 등의 연산을 수행할 수 있다. 확률은 이러한 사건에 대해 정의되며, $P(A)$는 사건 $A$가 발생할 확률을 의미한다.</div>
+    <div class="term-formula">$A \subseteq \Omega, \quad P(A) = \frac{|A|}{|\Omega|}$ (고전적 정의)</div>
+  </div></div>
+</div>
+
+<div class="term-card" data-section="sec1" data-ko="빈도" data-en="frequency" data-search="빈도 frequency 횟수 도수 count 발생횟수" id="term-frequency">
+  <div class="term-card-header" onclick="toggleCard(this)">
+    <span class="term-badge" style="background:var(--section1);color:#fff">Sec 1</span>
+    <span class="term-ko">빈도</span>
+    <span class="term-en">Frequency</span>
+    <span class="term-brief">특정 사건이 관측된 횟수</span>
+    <span class="term-expand">&#9660;</span>
+  </div>
+  <div class="term-card-body"><div class="term-detail">
+    <div class="brief-label">한 줄 정의</div>
+    <div class="brief-text">동일 조건에서 반복 실험할 때, 특정 결과가 나타난 횟수</div>
+    <div class="detail-label">상세 설명</div>
+    <div class="detail-text">빈도(도수)는 데이터에서 특정 값이나 사건이 관찰된 절대적 횟수이다. 히스토그램의 y축이 빈도를 나타내며, 데이터의 분포 형태를 파악하는 가장 기본적인 방법이다. 빈도를 전체 시행 횟수로 나누면 상대빈도가 되며, 이는 확률의 경험적 추정치로 사용된다.</div>
+  </div></div>
+</div>
+
+<div class="term-card" data-section="sec1" data-ko="상대빈도" data-en="relative frequency" data-search="상대빈도 relative frequency 비율 proportion 빈도주의" id="term-relative-frequency">
+  <div class="term-card-header" onclick="toggleCard(this)">
+    <span class="term-badge" style="background:var(--section1);color:#fff">Sec 1</span>
+    <span class="term-ko">상대빈도</span>
+    <span class="term-en">Relative Frequency</span>
+    <span class="term-brief">전체 시행 중 해당 사건의 비율</span>
+    <span class="term-expand">&#9660;</span>
+  </div>
+  <div class="term-card-body"><div class="term-detail">
+    <div class="brief-label">한 줄 정의</div>
+    <div class="brief-text">특정 사건의 빈도를 전체 시행 횟수로 나눈 비율</div>
+    <div class="detail-label">상세 설명</div>
+    <div class="detail-text">상대빈도는 빈도를 전체 시행 횟수 $n$으로 나눈 값으로, $\frac{n_A}{n}$ 형태이다. 빈도주의(frequentist) 확률에서는 시행 횟수 $n$이 무한히 커질 때 상대빈도가 수렴하는 값을 확률로 정의한다. 이는 대수의 법칙(Law of Large Numbers)에 의해 보장되며, 통계적 추론의 기초가 된다.</div>
+    <div class="term-formula">$\text{상대빈도} = \frac{n_A}{n} \xrightarrow{n \to \infty} P(A)$</div>
+  </div></div>
+</div>
+
+<div class="term-card" data-section="sec1" data-ko="결합확률" data-en="joint probability" data-search="결합확률 joint probability 동시 두사건 교집합" id="term-joint-probability">
+  <div class="term-card-header" onclick="toggleCard(this)">
+    <span class="term-badge" style="background:var(--section1);color:#fff">Sec 1</span>
+    <span class="term-ko">결합확률</span>
+    <span class="term-en">Joint Probability</span>
+    <span class="term-brief">두 사건이 동시에 발생할 확률</span>
+    <span class="term-expand">&#9660;</span>
+  </div>
+  <div class="term-card-body"><div class="term-detail">
+    <div class="brief-label">한 줄 정의</div>
+    <div class="brief-text">두 개 이상의 사건이 동시에 일어날 확률</div>
+    <div class="detail-label">상세 설명</div>
+    <div class="detail-text">결합확률 $P(A \cap B)$는 사건 $A$와 $B$가 동시에 발생할 확률이다. 두 사건이 독립이면 $P(A \cap B) = P(A)P(B)$로 분해된다. 머신러닝에서 여러 특성의 결합분포를 모델링하는 것은 핵심 과제이며, 나이브 베이즈 분류기는 독립 가정을 통해 결합확률을 단순화하는 대표적 예이다.</div>
+    <div class="term-formula">$P(A \cap B) = P(A|B) \cdot P(B) = P(B|A) \cdot P(A)$</div>
+  </div></div>
+</div>
+
+<div class="term-card" data-section="sec1" data-ko="동시확률" data-en="simultaneous probability" data-search="동시확률 simultaneous probability 동시발생 결합" id="term-simultaneous-probability">
+  <div class="term-card-header" onclick="toggleCard(this)">
+    <span class="term-badge" style="background:var(--section1);color:#fff">Sec 1</span>
+    <span class="term-ko">동시확률</span>
+    <span class="term-en">Simultaneous Probability</span>
+    <span class="term-brief">결합확률과 동의어</span>
+    <span class="term-expand">&#9660;</span>
+  </div>
+  <div class="term-card-body"><div class="term-detail">
+    <div class="brief-label">한 줄 정의</div>
+    <div class="brief-text">두 사건이 동시에 발생할 확률 (결합확률의 다른 표현)</div>
+    <div class="detail-label">상세 설명</div>
+    <div class="detail-text">동시확률은 결합확률(joint probability)과 같은 의미로 사용되는 용어이다. 한국어 교재에서 "동시확률"이라는 표현이 자주 등장하며, 여러 사건이 동시에(simultaneously) 일어나는 상황을 강조할 때 사용된다. 수학적으로는 $P(A, B)$ 또는 $P(A \cap B)$로 동일하게 표기한다.</div>
+    <div class="term-formula">$P(A, B) \equiv P(A \cap B)$</div>
+  </div></div>
+</div>
+
+<div class="term-card" data-section="sec1" data-ko="시행" data-en="trial experiment" data-search="시행 trial experiment 실험 반복 random experiment" id="term-trial">
+  <div class="term-card-header" onclick="toggleCard(this)">
+    <span class="term-badge" style="background:var(--section1);color:#fff">Sec 1</span>
+    <span class="term-ko">시행</span>
+    <span class="term-en">Trial / Experiment</span>
+    <span class="term-brief">같은 조건에서 반복할 수 있는 확률 실험</span>
+    <span class="term-expand">&#9660;</span>
+  </div>
+  <div class="term-card-body"><div class="term-detail">
+    <div class="brief-label">한 줄 정의</div>
+    <div class="brief-text">결과가 불확실한 실험을 동일 조건 아래 수행하는 것</div>
+    <div class="detail-label">상세 설명</div>
+    <div class="detail-text">시행(trial)은 결과가 확정적이지 않은 실험을 의미한다. 동전 던지기, 주사위 굴리기, 고객의 구매 여부 관측 등이 모두 시행에 해당한다. 여러 번의 시행을 통해 상대빈도를 구할 수 있으며, 이 상대빈도는 시행 횟수가 충분히 클 때 이론적 확률에 수렴한다. 통계적 실험 설계의 기본 단위이다.</div>
+  </div></div>
+</div>
+
+<div class="term-card" data-section="sec1" data-ko="경우의 수" data-en="number of cases" data-search="경우의 수 number of cases 가짓수 counting 순열 조합" id="term-number-of-cases">
+  <div class="term-card-header" onclick="toggleCard(this)">
+    <span class="term-badge" style="background:var(--section1);color:#fff">Sec 1</span>
+    <span class="term-ko">경우의 수</span>
+    <span class="term-en">Number of Cases</span>
+    <span class="term-brief">사건이 일어날 수 있는 가짓수</span>
+    <span class="term-expand">&#9660;</span>
+  </div>
+  <div class="term-card-body"><div class="term-detail">
+    <div class="brief-label">한 줄 정의</div>
+    <div class="brief-text">어떤 사건이 발생할 수 있는 모든 가능한 방법의 수</div>
+    <div class="detail-label">상세 설명</div>
+    <div class="detail-text">경우의 수는 고전적 확률 계산의 기초로, 순열(permutation)과 조합(combination)을 통해 체계적으로 셀 수 있다. 확률은 "유리한 경우의 수 / 전체 경우의 수"로 정의되며, 이를 라플라스의 고전적 확률 정의라 한다. 경우의 수 계산은 조합론(combinatorics)의 핵심 주제이다.</div>
+    <div class="term-formula">$P(A) = \frac{\text{사건 A에 해당하는 경우의 수}}{|\Omega|}$</div>
+  </div></div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 2: 이산/연속 -->
+<!-- ============================================================ -->
+<div class="section-header" id="sec2">
+  <span class="section-num" style="background:var(--section2)">2</span>
+  <h2>이산형과 연속형 (Discrete &amp; Continuous)</h2>
+</div>
+<p class="section-desc">확률변수의 두 가지 유형과 컴퓨터에서의 수 표현</p>
+
+<div class="term-card" data-section="sec2" data-ko="이산형" data-en="discrete" data-search="이산형 discrete 셀수있는 countable 정수 카테고리" id="term-discrete">
+  <div class="term-card-header" onclick="toggleCard(this)">
+    <span class="term-badge" style="background:var(--section2);color:#fff">Sec 2</span>
+    <span class="term-ko">이산형</span>
+    <span class="term-en">Discrete</span>
+    <span class="term-brief">셀 수 있는 값을 취하는 변수 유형</span>
+    <span class="term-expand">&#9660;</span>
+  </div>
+  <div class="term-card-body"><div class="term-detail">
+    <div class="brief-label">한 줄 정의</div>
+    <div class="brief-text">유한하거나 셀 수 있는(countable) 값만을 취하는 확률변수의 유형</div>
+    <div class="detail-label">상세 설명</div>
+    <div class="detail-text">이산형 확률변수는 동전 앞/뒤(0, 1), 주사위 눈(1~6), 고객 수(0, 1, 2, ...)처럼 떨어져 있는(분리된) 값을 가진다. 각 값에 대해 확률을 직접 할당할 수 있으며, 이를 확률질량함수(PMF)로 표현한다. 분류(classification) 문제의 타겟 변수가 대표적인 이산형 변수이다.</div>
+  </div></div>
+</div>
+
+<div class="term-card" data-section="sec2" data-ko="연속형" data-en="continuous" data-search="연속형 continuous 실수 uncountable 구간 밀도" id="term-continuous">
+  <div class="term-card-header" onclick="toggleCard(this)">
+    <span class="term-badge" style="background:var(--section2);color:#fff">Sec 2</span>
+    <span class="term-ko">연속형</span>
+    <span class="term-en">Continuous</span>
+    <span class="term-brief">구간 내 모든 실수 값을 취할 수 있는 변수 유형</span>
+    <span class="term-expand">&#9660;</span>
+  </div>
+  <div class="term-card-body"><div class="term-detail">
+    <div class="brief-label">한 줄 정의</div>
+    <div class="brief-text">특정 구간 내의 모든 실수 값을 취할 수 있는 확률변수의 유형</div>
+    <div class="detail-label">상세 설명</div>
+    <div class="detail-text">연속형 확률변수는 키, 몸무게, 온도처럼 구간 내 어떤 값이든 취할 수 있다. 특정 한 점의 확률은 0이므로 구간의 확률만 의미가 있으며, 이를 확률밀도함수(PDF)로 표현한다. PDF 아래 면적이 구간 확률을 나타낸다. 회귀(regression) 문제의 타겟 변수가 대표적인 연속형 변수이다.</div>
+    <div class="term-formula">$P(a \le X \le b) = \int_a^b f(x)\,dx$</div>
+  </div></div>
+</div>
+
+<div class="term-card" data-section="sec2" data-ko="부동소수점" data-en="floating point" data-search="부동소수점 floating point 실수표현 컴퓨터 float double" id="term-floating-point">
+  <div class="term-card-header" onclick="toggleCard(this)">
+    <span class="term-badge" style="background:var(--section2);color:#fff">Sec 2</span>
+    <span class="term-ko">부동소수점</span>
+    <span class="term-en">Floating Point</span>
+    <span class="term-brief">컴퓨터가 실수를 근사적으로 저장하는 방식</span>
+    <span class="term-expand">&#9660;</span>
+  </div>
+  <div class="term-card-body"><div class="term-detail">
+    <div class="brief-label">한 줄 정의</div>
+    <div class="brief-text">컴퓨터에서 실수를 부호, 지수, 가수로 분리하여 근사 표현하는 방식</div>
+    <div class="detail-label">상세 설명</div>
+    <div class="detail-text">연속적인 실수를 유한한 비트로 표현하기 위해 부동소수점 방식을 사용한다. $(-1)^s \times m \times 2^e$ 형태로 표현하며, 이로 인해 정밀도 한계와 반올림 오차가 발생한다. 예를 들어 $0.1 + 0.2 \ne 0.3$이 되는 것이 대표적인 부동소수점 오차이다. 머신러닝에서 수치 안정성(numerical stability) 문제의 근원이 된다.</div>
+    <div class="term-formula">$x = (-1)^s \times m \times 2^e$</div>
+  </div></div>
+</div>
+
+<div class="term-card" data-section="sec2" data-ko="IEEE 754" data-en="ieee 754" data-search="ieee 754 부동소수점 표준 32bit 64bit single double" id="term-ieee754">
+  <div class="term-card-header" onclick="toggleCard(this)">
+    <span class="term-badge" style="background:var(--section2);color:#fff">Sec 2</span>
+    <span class="term-ko">IEEE 754</span>
+    <span class="term-en">IEEE 754</span>
+    <span class="term-brief">부동소수점 연산의 국제 표준</span>
+    <span class="term-expand">&#9660;</span>
+  </div>
+  <div class="term-card-body"><div class="term-detail">
+    <div class="brief-label">한 줄 정의</div>
+    <div class="brief-text">부동소수점 수의 표현과 연산 규칙을 정의하는 IEEE 국제 표준</div>
+    <div class="detail-label">상세 설명</div>
+    <div class="detail-text">IEEE 754는 32비트(단정밀도, float)와 64비트(배정밀도, double) 부동소수점 형식을 정의한다. 단정밀도는 약 7자리, 배정밀도는 약 15~16자리의 유효 숫자를 표현할 수 있다. NaN(Not a Number), Infinity, 비정규 수(denormalized number) 등 특수 값도 정의한다. Python의 float은 기본적으로 64비트 배정밀도를 사용한다.</div>
+  </div></div>
+</div>
+
+<div class="term-card" data-section="sec2" data-ko="정밀도" data-en="precision" data-search="정밀도 precision 유효숫자 significant digits 정확도 해상도" id="term-precision">
+  <div class="term-card-header" onclick="toggleCard(this)">
+    <span class="term-badge" style="background:var(--section2);color:#fff">Sec 2</span>
+    <span class="term-ko">정밀도</span>
+    <span class="term-en">Precision</span>
+    <span class="term-brief">수치 표현의 세밀함 정도</span>
+    <span class="term-expand">&#9660;</span>
+  </div>
+  <div class="term-card-body"><div class="term-detail">
+    <div class="brief-label">한 줄 정의</div>
+    <div class="brief-text">수치를 얼마나 세밀하게(유효 숫자 몇 자리까지) 표현할 수 있는지의 정도</div>
+    <div class="detail-label">상세 설명</div>
+    <div class="detail-text">정밀도는 부동소수점에서 가수(mantissa) 비트 수에 의해 결정된다. 정밀도가 높을수록 실수를 더 정확히 근사할 수 있지만, 메모리와 연산 비용이 증가한다. 딥러닝에서는 학습 속도 향상을 위해 반정밀도(FP16) 또는 혼합정밀도(mixed precision) 학습을 사용하기도 한다.</div>
+  </div></div>
+</div>
+
+<div class="term-card" data-section="sec2" data-ko="관측" data-en="observation" data-search="관측 observation 측정 데이터포인트 sample data point" id="term-observation">
+  <div class="term-card-header" onclick="toggleCard(this)">
+    <span class="term-badge" style="background:var(--section2);color:#fff">Sec 2</span>
+    <span class="term-ko">관측</span>
+    <span class="term-en">Observation</span>
+    <span class="term-brief">실험이나 조사를 통해 실제로 얻은 데이터 값</span>
+    <span class="term-expand">&#9660;</span>
+  </div>
+  <div class="term-card-body"><div class="term-detail">
+    <div class="brief-label">한 줄 정의</div>
+    <div class="brief-text">확률변수의 실현값, 즉 실제로 측정되거나 수집된 하나의 데이터</div>
+    <div class="detail-label">상세 설명</div>
+    <div class="detail-text">관측값(observation)은 확률변수 $X$가 실제로 취한 특정 값이다. $X$가 확률변수이고 $x$가 관측값이라 할 때, 대문자와 소문자로 구분하여 표기한다. 데이터셋의 각 행(row)이 하나의 관측에 해당하며, $n$개의 관측값을 모으면 표본(sample)이 된다. 통계적 추론은 이 관측값들로부터 모집단의 특성을 추정한다.</div>
+  </div></div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 3: 확률 함수 -->
+<!-- ============================================================ -->
+<div class="section-header" id="sec3">
+  <span class="section-num" style="background:var(--section3)">3</span>
+  <h2>확률 함수 (Probability Functions)</h2>
+</div>
+<p class="section-desc">PMF, CDF, PDF -- 확률변수의 분포를 기술하는 세 가지 핵심 함수와 KDE</p>
+
+<div class="term-card" data-section="sec3" data-ko="확률질량함수" data-en="probability mass function pmf" data-search="확률질량함수 pmf probability mass function 이산 질량" id="term-pmf">
+  <div class="term-card-header" onclick="toggleCard(this)">
+    <span class="term-badge" style="background:var(--section3);color:#fff">Sec 3</span>
+    <span class="term-ko">확률질량함수 (PMF)</span>
+    <span class="term-en">Probability Mass Function</span>
+    <span class="term-brief">이산형 확률변수의 각 값에 대한 확률</span>
+    <span class="term-expand">&#9660;</span>
+  </div>
+  <div class="term-card-body"><div class="term-detail">
+    <div class="brief-label">한 줄 정의</div>
+    <div class="brief-text">이산형 확률변수가 특정 값을 취할 확률을 나타내는 함수</div>
+    <div class="detail-label">상세 설명</div>
+    <div class="detail-text">PMF는 이산형 확률변수 $X$에 대해 $P(X = x)$를 정의하는 함수이다. 모든 가능한 값에 대한 PMF의 합은 1이 된다. 주사위의 경우 각 눈의 PMF는 $P(X=k) = 1/6$이다. 막대그래프(bar chart)로 시각화하며, 연속형의 PDF와 대응되는 개념이다. 분류 모델의 출력 확률도 PMF로 이해할 수 있다.</div>
+    <div class="term-formula">$P(X = x_i) \ge 0, \quad \sum_i P(X = x_i) = 1$</div>
+  </div></div>
+</div>
+
+<div class="term-card" data-section="sec3" data-ko="누적분포함수" data-en="cumulative distribution function cdf" data-search="누적분포함수 cdf cumulative distribution function 누적확률" id="term-cdf">
+  <div class="term-card-header" onclick="toggleCard(this)">
+    <span class="term-badge" style="background:var(--section3);color:#fff">Sec 3</span>
+    <span class="term-ko">누적분포함수 (CDF)</span>
+    <span class="term-en">Cumulative Distribution Function</span>
+    <span class="term-brief">확률변수가 특정 값 이하일 누적 확률</span>
+    <span class="term-expand">&#9660;</span>
+  </div>
+  <div class="term-card-body"><div class="term-detail">
+    <div class="brief-label">한 줄 정의</div>
+    <div class="brief-text">확률변수 $X$가 특정 값 $x$ 이하일 확률을 나타내는 함수</div>
+    <div class="detail-label">상세 설명</div>
+    <div class="detail-text">CDF는 $F(x) = P(X \le x)$로 정의되며, 이산형과 연속형 모두에 적용된다. 항상 0에서 1로 단조증가하는 함수이다. 이산형에서는 계단 함수 형태, 연속형에서는 매끄러운 S자 형태를 보인다. CDF를 미분하면 PDF가 되고, PDF를 적분하면 CDF가 된다. 분위수(quantile) 계산에 핵심적으로 사용된다.</div>
+    <div class="term-formula">$F(x) = P(X \le x) = \int_{-\infty}^{x} f(t)\,dt$</div>
+  </div></div>
+</div>
+
+<div class="term-card" data-section="sec3" data-ko="확률밀도함수" data-en="probability density function pdf" data-search="확률밀도함수 pdf probability density function 연속 밀도 적분" id="term-pdf">
+  <div class="term-card-header" onclick="toggleCard(this)">
+    <span class="term-badge" style="background:var(--section3);color:#fff">Sec 3</span>
+    <span class="term-ko">확률밀도함수 (PDF)</span>
+    <span class="term-en">Probability Density Function</span>
+    <span class="term-brief">연속형 확률변수의 확률 밀도를 나타내는 함수</span>
+    <span class="term-expand">&#9660;</span>
+  </div>
+  <div class="term-card-body"><div class="term-detail">
+    <div class="brief-label">한 줄 정의</div>
+    <div class="brief-text">연속형 확률변수의 분포를 기술하며, 구간 면적이 확률을 나타내는 함수</div>
+    <div class="detail-label">상세 설명</div>
+    <div class="detail-text">PDF $f(x)$는 연속형 확률변수의 분포를 기술하는 함수이다. $f(x)$ 자체는 확률이 아니라 밀도이므로 1보다 클 수 있지만, 전체 면적 $\int_{-\infty}^{\infty} f(x)dx = 1$이다. 특정 구간의 확률은 해당 구간에서 PDF 아래 면적으로 계산한다. 정규분포의 종 모양 곡선이 가장 유명한 PDF 예시이다.</div>
+    <div class="term-formula">$f(x) \ge 0, \quad \int_{-\infty}^{\infty} f(x)\,dx = 1$</div>
+  </div></div>
+</div>
+
+<div class="term-card" data-section="sec3" data-ko="커널밀도추정" data-en="kernel density estimation kde" data-search="커널밀도추정 kde kernel density estimation 비모수 밀도추정 스무딩" id="term-kde">
+  <div class="term-card-header" onclick="toggleCard(this)">
+    <span class="term-badge" style="background:var(--section3);color:#fff">Sec 3</span>
+    <span class="term-ko">커널밀도추정 (KDE)</span>
+    <span class="term-en">Kernel Density Estimation</span>
+    <span class="term-brief">데이터로부터 확률밀도함수를 비모수적으로 추정</span>
+    <span class="term-expand">&#9660;</span>
+  </div>
+  <div class="term-card-body"><div class="term-detail">
+    <div class="brief-label">한 줄 정의</div>
+    <div class="brief-text">데이터 각 점에 커널 함수를 올리고 합산하여 매끄러운 밀도 함수를 추정하는 비모수적 방법</div>
+    <div class="detail-label">상세 설명</div>
+    <div class="detail-text">KDE는 히스토그램의 한계(bin 크기 의존)를 극복하는 밀도 추정 방법이다. 각 데이터 포인트 $x_i$에 커널 함수 $K$를 배치하고 평균하여 전체 밀도를 추정한다. 가우시안 커널이 가장 많이 사용되며, 대역폭(bandwidth) $h$가 추정의 매끄러움을 결정한다. Seaborn의 kdeplot이 대표적인 시각화 도구이다.</div>
+    <div class="term-formula">$\hat{f}(x) = \frac{1}{nh}\sum_{i=1}^{n} K\!\left(\frac{x - x_i}{h}\right)$</div>
+  </div></div>
+</div>
+
+<div class="term-card" data-section="sec3" data-ko="대역폭" data-en="bandwidth" data-search="대역폭 bandwidth 밴드위드 평활도 smoothing h parameter" id="term-bandwidth">
+  <div class="term-card-header" onclick="toggleCard(this)">
+    <span class="term-badge" style="background:var(--section3);color:#fff">Sec 3</span>
+    <span class="term-ko">대역폭</span>
+    <span class="term-en">Bandwidth</span>
+    <span class="term-brief">KDE에서 커널의 너비를 결정하는 파라미터</span>
+    <span class="term-expand">&#9660;</span>
+  </div>
+  <div class="term-card-body"><div class="term-detail">
+    <div class="brief-label">한 줄 정의</div>
+    <div class="brief-text">커널밀도추정에서 각 커널 함수의 너비(퍼짐 정도)를 제어하는 매개변수</div>
+    <div class="detail-label">상세 설명</div>
+    <div class="detail-text">대역폭 $h$가 너무 작으면 과적합(overfitting)되어 울퉁불퉁한 곡선이 되고, 너무 크면 과소적합(underfitting)되어 세부 구조를 놓친다. Silverman의 규칙이나 교차검증(cross-validation)으로 최적 대역폭을 선택한다. 이는 머신러닝의 bias-variance 트레이드오프와 직접적으로 연결되는 개념이다.</div>
+  </div></div>
+</div>
+
+<div class="term-card" data-section="sec3" data-ko="커널" data-en="kernel" data-search="커널 kernel 가우시안 epanechnikov 가중함수 weight" id="term-kernel">
+  <div class="term-card-header" onclick="toggleCard(this)">
+    <span class="term-badge" style="background:var(--section3);color:#fff">Sec 3</span>
+    <span class="term-ko">커널</span>
+    <span class="term-en">Kernel</span>
+    <span class="term-brief">KDE에서 각 데이터 점 주위의 가중 함수</span>
+    <span class="term-expand">&#9660;</span>
+  </div>
+  <div class="term-card-body"><div class="term-detail">
+    <div class="brief-label">한 줄 정의</div>
+    <div class="brief-text">KDE에서 각 데이터 포인트를 중심으로 확률 밀도를 부여하는 대칭 함수</div>
+    <div class="detail-label">상세 설명</div>
+    <div class="detail-text">커널 함수 $K(u)$는 비음수이고, 대칭이며, 적분하면 1이 되는 함수이다. 가우시안(정규), 균일(uniform), 삼각(triangular), Epanechnikov 등이 대표적이다. 가우시안 커널이 가장 널리 사용되며, 커널 선택보다 대역폭 선택이 추정 품질에 훨씬 큰 영향을 미친다.</div>
+    <div class="term-formula">$K(u): \int K(u)\,du = 1, \quad K(u) = K(-u) \ge 0$</div>
+  </div></div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 4: 기대값/분산 -->
+<!-- ============================================================ -->
+<div class="section-header" id="sec4">
+  <span class="section-num" style="background:var(--section4)">4</span>
+  <h2>기대값과 분산 (Expectation &amp; Variance)</h2>
+</div>
+<p class="section-desc">분포의 중심 위치와 퍼짐 정도를 수치로 요약하는 핵심 통계량</p>
+
+<div class="term-card" data-section="sec4" data-ko="기대값" data-en="expectation expected value" data-search="기대값 expectation expected value 평균 mean 가중평균" id="term-expectation">
+  <div class="term-card-header" onclick="toggleCard(this)">
+    <span class="term-badge" style="background:var(--section4);color:#fff">Sec 4</span>
+    <span class="term-ko">기대값</span>
+    <span class="term-en">Expectation / Expected Value</span>
+    <span class="term-brief">확률변수의 가중 평균</span>
+    <span class="term-expand">&#9660;</span>
+  </div>
+  <div class="term-card-body"><div class="term-detail">
+    <div class="brief-label">한 줄 정의</div>
+    <div class="brief-text">확률변수가 취할 수 있는 값들의 확률 가중 평균</div>
+    <div class="detail-label">상세 설명</div>
+    <div class="detail-text">기대값 $E[X]$는 확률변수 $X$의 "장기적 평균"을 의미한다. 이산형에서는 $E[X] = \sum x_i P(x_i)$, 연속형에서는 $E[X] = \int x f(x) dx$로 계산한다. 주사위의 기대값은 $3.5$이며, 이는 충분히 많이 굴렸을 때의 평균에 수렴한다. 손실 함수의 기대값 최소화가 머신러닝 학습의 핵심 목표이다.</div>
+    <div class="term-formula">$E[X] = \sum_i x_i P(X = x_i) = \int_{-\infty}^{\infty} x f(x)\,dx$</div>
+  </div></div>
+</div>
+
+<div class="term-card" data-section="sec4" data-ko="평균" data-en="mean" data-search="평균 mean average 산술평균 arithmetic mean 중심" id="term-mean">
+  <div class="term-card-header" onclick="toggleCard(this)">
+    <span class="term-badge" style="background:var(--section4);color:#fff">Sec 4</span>
+    <span class="term-ko">평균</span>
+    <span class="term-en">Mean</span>
+    <span class="term-brief">데이터의 중심 위치를 나타내는 대표값</span>
+    <span class="term-expand">&#9660;</span>
+  </div>
+  <div class="term-card-body"><div class="term-detail">
+    <div class="brief-label">한 줄 정의</div>
+    <div class="brief-text">모든 데이터 값을 더한 후 개수로 나눈 산술 평균</div>
+    <div class="detail-label">상세 설명</div>
+    <div class="detail-text">표본평균 $\bar{x} = \frac{1}{n}\sum x_i$는 데이터의 중심 위치를 나타내는 가장 기본적인 통계량이다. 모집단의 평균(모평균)은 $\mu$로 표기한다. 평균은 기대값의 표본 추정치이며, 이상치(outlier)에 민감한 단점이 있다. 분포가 대칭일 때 평균, 중앙값, 최빈값이 일치한다.</div>
+    <div class="term-formula">$\bar{x} = \frac{1}{n}\sum_{i=1}^{n} x_i, \quad \mu = E[X]$</div>
+  </div></div>
+</div>
+
+<div class="term-card" data-section="sec4" data-ko="분산" data-en="variance" data-search="분산 variance var 편차제곱 퍼짐 산포도 spread" id="term-variance">
+  <div class="term-card-header" onclick="toggleCard(this)">
+    <span class="term-badge" style="background:var(--section4);color:#fff">Sec 4</span>
+    <span class="term-ko">분산</span>
+    <span class="term-en">Variance</span>
+    <span class="term-brief">데이터가 평균으로부터 얼마나 퍼져있는지의 척도</span>
+    <span class="term-expand">&#9660;</span>
+  </div>
+  <div class="term-card-body"><div class="term-detail">
+    <div class="brief-label">한 줄 정의</div>
+    <div class="brief-text">각 데이터 값과 평균의 차이(편차)를 제곱하여 평균한 값</div>
+    <div class="detail-label">상세 설명</div>
+    <div class="detail-text">분산 $\text{Var}(X) = E[(X - \mu)^2]$는 데이터의 퍼짐(산포) 정도를 측정한다. 분산이 크면 데이터가 평균에서 멀리 흩어져 있고, 작으면 평균 근처에 밀집해 있다. 표본분산은 $n-1$로 나누어 불편추정치(unbiased estimator)를 얻는다. 머신러닝에서 모델의 분산은 과적합과 관련된 중요한 개념이다.</div>
+    <div class="term-formula">$\text{Var}(X) = E[(X - \mu)^2] = E[X^2] - (E[X])^2$</div>
+  </div></div>
+</div>
+
+<div class="term-card" data-section="sec4" data-ko="표준편차" data-en="standard deviation" data-search="표준편차 standard deviation std sigma 시그마 루트분산" id="term-std">
+  <div class="term-card-header" onclick="toggleCard(this)">
+    <span class="term-badge" style="background:var(--section4);color:#fff">Sec 4</span>
+    <span class="term-ko">표준편차</span>
+    <span class="term-en">Standard Deviation</span>
+    <span class="term-brief">분산의 제곱근, 원래 단위의 퍼짐 척도</span>
+    <span class="term-expand">&#9660;</span>
+  </div>
+  <div class="term-card-body"><div class="term-detail">
+    <div class="brief-label">한 줄 정의</div>
+    <div class="brief-text">분산의 양의 제곱근으로, 데이터와 동일한 단위를 갖는 산포 척도</div>
+    <div class="detail-label">상세 설명</div>
+    <div class="detail-text">표준편차 $\sigma = \sqrt{\text{Var}(X)}$는 분산의 제곱근이다. 분산은 단위가 원래의 제곱이 되어 해석이 어렵지만, 표준편차는 원래 데이터와 같은 단위를 가져 직관적으로 이해할 수 있다. 정규분포에서 평균 $\pm 1\sigma$ 구간에 약 68%, $\pm 2\sigma$에 약 95%, $\pm 3\sigma$에 약 99.7%의 데이터가 포함된다.</div>
+    <div class="term-formula">$\sigma = \sqrt{\text{Var}(X)} = \sqrt{E[(X-\mu)^2]}$</div>
+  </div></div>
+</div>
+
+<div class="term-card" data-section="sec4" data-ko="편향" data-en="bias" data-search="편향 bias 편의 치우침 underfitting 체계적오차" id="term-bias">
+  <div class="term-card-header" onclick="toggleCard(this)">
+    <span class="term-badge" style="background:var(--section4);color:#fff">Sec 4</span>
+    <span class="term-ko">편향</span>
+    <span class="term-en">Bias</span>
+    <span class="term-brief">추정값과 참값 사이의 체계적 차이</span>
+    <span class="term-expand">&#9660;</span>
+  </div>
+  <div class="term-card-body"><div class="term-detail">
+    <div class="brief-label">한 줄 정의</div>
+    <div class="brief-text">추정량의 기대값과 참된 모수(parameter) 값 사이의 체계적 편차</div>
+    <div class="detail-label">상세 설명</div>
+    <div class="detail-text">편향 $\text{Bias}(\hat{\theta}) = E[\hat{\theta}] - \theta$은 추정량이 참값을 체계적으로 과대 또는 과소 추정하는 정도이다. 편향이 0이면 불편추정량(unbiased estimator)이라 한다. 머신러닝에서 편향이 높은 모델은 과소적합(underfitting) 경향을 보이며, 데이터의 패턴을 충분히 학습하지 못한다.</div>
+    <div class="term-formula">$\text{Bias}(\hat{\theta}) = E[\hat{\theta}] - \theta$</div>
+  </div></div>
+</div>
+
+<div class="term-card" data-section="sec4" data-ko="분산과 편향" data-en="variance and bias tradeoff" data-search="분산과편향 variance bias tradeoff 편향분산 상충 trade-off" id="term-bias-variance">
+  <div class="term-card-header" onclick="toggleCard(this)">
+    <span class="term-badge" style="background:var(--section4);color:#fff">Sec 4</span>
+    <span class="term-ko">분산과 편향</span>
+    <span class="term-en">Bias-Variance Tradeoff</span>
+    <span class="term-brief">모델 복잡도에 따른 편향과 분산의 상충 관계</span>
+    <span class="term-expand">&#9660;</span>
+  </div>
+  <div class="term-card-body"><div class="term-detail">
+    <div class="brief-label">한 줄 정의</div>
+    <div class="brief-text">모델의 총 오차는 편향의 제곱, 분산, 그리고 노이즈의 합으로 분해된다</div>
+    <div class="detail-label">상세 설명</div>
+    <div class="detail-text">모델의 기대 오차는 $\text{Error} = \text{Bias}^2 + \text{Variance} + \text{Noise}$로 분해된다. 모델이 단순하면 편향은 높고 분산은 낮으며(과소적합), 복잡하면 편향은 낮고 분산은 높다(과적합). 최적의 모델은 이 둘의 합이 최소인 지점에서 달성되며, 이것이 머신러닝 모델 선택의 핵심 원리이다.</div>
+    <div class="term-formula">$E[(\hat{f} - f)^2] = \text{Bias}[\hat{f}]^2 + \text{Var}[\hat{f}] + \sigma^2$</div>
+  </div></div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 5: 확률분포 -->
+<!-- ============================================================ -->
+<div class="section-header" id="sec5">
+  <span class="section-num" style="background:var(--section5)">5</span>
+  <h2>확률분포 (Probability Distributions)</h2>
+</div>
+<p class="section-desc">머신러닝에서 자주 사용되는 이산형/연속형 주요 확률분포 14종</p>
+
+<div class="term-card" data-section="sec5" data-ko="베르누이분포" data-en="bernoulli distribution" data-search="베르누이분포 bernoulli distribution 이진 binary 성공실패 0 1" id="term-bernoulli">
+  <div class="term-card-header" onclick="toggleCard(this)">
+    <span class="term-badge" style="background:var(--section5);color:#fff">Sec 5</span>
+    <span class="term-ko">베르누이분포</span>
+    <span class="term-en">Bernoulli Distribution</span>
+    <span class="term-brief">성공/실패 두 가지 결과만 갖는 분포</span>
+    <span class="term-expand">&#9660;</span>
+  </div>
+  <div class="term-card-body"><div class="term-detail">
+    <div class="brief-label">한 줄 정의</div>
+    <div class="brief-text">결과가 성공(1) 또는 실패(0) 두 가지뿐인 단일 시행의 확률분포</div>
+    <div class="detail-label">상세 설명</div>
+    <div class="detail-text">베르누이분포는 가장 단순한 이산확률분포로, 성공 확률 $p$인 한 번의 시행을 모델링한다. 동전 던지기, 이메일이 스팸인지 아닌지 등이 베르누이 확률변수의 예이다. 기대값은 $p$, 분산은 $p(1-p)$이다. 이항분포, 기하분포 등 다른 분포의 기본 구성 요소이며, 로지스틱 회귀의 출력이 베르누이 확률에 해당한다.</div>
+    <div class="term-formula">$P(X=k) = p^k(1-p)^{1-k}, \quad k \in \{0, 1\}$</div>
+  </div></div>
+</div>
+
+<div class="term-card" data-section="sec5" data-ko="이항분포" data-en="binomial distribution" data-search="이항분포 binomial distribution n번 시행 성공횟수 조합" id="term-binomial">
+  <div class="term-card-header" onclick="toggleCard(this)">
+    <span class="term-badge" style="background:var(--section5);color:#fff">Sec 5</span>
+    <span class="term-ko">이항분포</span>
+    <span class="term-en">Binomial Distribution</span>
+    <span class="term-brief">n번 베르누이 시행에서 성공 횟수의 분포</span>
+    <span class="term-expand">&#9660;</span>
+  </div>
+  <div class="term-card-body"><div class="term-detail">
+    <div class="brief-label">한 줄 정의</div>
+    <div class="brief-text">성공 확률 $p$인 독립적 베르누이 시행을 $n$번 반복할 때, 성공 횟수의 분포</div>
+    <div class="detail-label">상세 설명</div>
+    <div class="detail-text">이항분포 $B(n, p)$는 $n$번의 독립적 베르누이 시행에서 성공 횟수 $k$의 확률을 나타낸다. 기대값은 $np$, 분산은 $np(1-p)$이다. $n$이 충분히 크면 중심극한정리에 의해 정규분포에 근사된다. A/B 테스트에서 전환율 차이의 통계적 유의성 검정에 활용된다.</div>
+    <div class="term-formula">$P(X=k) = \binom{n}{k} p^k (1-p)^{n-k}$</div>
+  </div></div>
+</div>
+
+<div class="term-card" data-section="sec5" data-ko="정규분포" data-en="normal gaussian distribution" data-search="정규분포 normal gaussian distribution 종형곡선 bell curve 가우시안" id="term-normal">
+  <div class="term-card-header" onclick="toggleCard(this)">
+    <span class="term-badge" style="background:var(--section5);color:#fff">Sec 5</span>
+    <span class="term-ko">정규분포</span>
+    <span class="term-en">Normal / Gaussian Distribution</span>
+    <span class="term-brief">종 모양(bell curve)의 가장 중요한 연속확률분포</span>
+    <span class="term-expand">&#9660;</span>
+  </div>
+  <div class="term-card-body"><div class="term-detail">
+    <div class="brief-label">한 줄 정의</div>
+    <div class="brief-text">평균 $\mu$를 중심으로 좌우 대칭인 종 모양 곡선의 연속확률분포</div>
+    <div class="detail-label">상세 설명</div>
+    <div class="detail-text">정규분포 $N(\mu, \sigma^2)$는 자연현상과 사회현상에서 가장 빈번히 나타나는 분포이다. 중심극한정리에 의해 많은 독립 확률변수의 합은 정규분포에 수렴한다. 평균과 표준편차 두 모수로 완전히 결정되며, 선형회귀의 오차항, 가우시안 혼합 모델 등 머신러닝 전반에서 핵심적으로 사용된다.</div>
+    <div class="term-formula">$f(x) = \frac{1}{\sigma\sqrt{2\pi}} e^{-\frac{(x-\mu)^2}{2\sigma^2}}$</div>
+  </div></div>
+</div>
+
+<div class="term-card" data-section="sec5" data-ko="표준정규분포" data-en="standard normal distribution" data-search="표준정규분포 standard normal z분포 mu0 sigma1" id="term-standard-normal">
+  <div class="term-card-header" onclick="toggleCard(this)">
+    <span class="term-badge" style="background:var(--section5);color:#fff">Sec 5</span>
+    <span class="term-ko">표준정규분포</span>
+    <span class="term-en">Standard Normal Distribution</span>
+    <span class="term-brief">평균 0, 표준편차 1인 정규분포</span>
+    <span class="term-expand">&#9660;</span>
+  </div>
+  <div class="term-card-body"><div class="term-detail">
+    <div class="brief-label">한 줄 정의</div>
+    <div class="brief-text">평균이 0이고 표준편차가 1인 정규분포 $N(0, 1)$</div>
+    <div class="detail-label">상세 설명</div>
+    <div class="detail-text">표준정규분포는 Z-변환(표준화)을 통해 임의의 정규분포를 변환한 결과이다. Z-표를 이용한 확률 계산의 기준이 되며, 가설 검정에서 검정 통계량이 표준정규분포를 따르는 경우가 많다. $\Phi(z)$로 CDF를 표기하며, 머신러닝의 배치 정규화(Batch Normalization)도 이 원리를 활용한다.</div>
+    <div class="term-formula">$Z = \frac{X - \mu}{\sigma} \sim N(0, 1)$</div>
+  </div></div>
+</div>
+
+<div class="term-card" data-section="sec5" data-ko="균일분포" data-en="uniform distribution" data-search="균일분포 uniform distribution 일양분포 동일확률 등확률" id="term-uniform">
+  <div class="term-card-header" onclick="toggleCard(this)">
+    <span class="term-badge" style="background:var(--section5);color:#fff">Sec 5</span>
+    <span class="term-ko">균일분포</span>
+    <span class="term-en">Uniform Distribution</span>
+    <span class="term-brief">구간 내 모든 값이 동일한 확률을 갖는 분포</span>
+    <span class="term-expand">&#9660;</span>
+  </div>
+  <div class="term-card-body"><div class="term-detail">
+    <div class="brief-label">한 줄 정의</div>
+    <div class="brief-text">주어진 구간 $[a, b]$ 내에서 모든 값이 동일한 확률 밀도를 갖는 분포</div>
+    <div class="detail-label">상세 설명</div>
+    <div class="detail-text">균일분포 $U(a, b)$는 구간 $[a, b]$에서 PDF가 상수 $\frac{1}{b-a}$인 분포이다. 주사위의 각 눈이 나올 확률이 이산 균일분포, 난수 생성기의 기본 출력이 연속 균일분포의 예이다. 기대값은 $\frac{a+b}{2}$이고 분산은 $\frac{(b-a)^2}{12}$이다. 사전 정보가 없을 때의 무정보 사전분포(uninformative prior)로도 사용된다.</div>
+    <div class="term-formula">$f(x) = \frac{1}{b-a}, \quad a \le x \le b$</div>
+  </div></div>
+</div>
+
+<div class="term-card" data-section="sec5" data-ko="지수분포" data-en="exponential distribution" data-search="지수분포 exponential distribution 대기시간 포아송과정 lambda 무기억" id="term-exponential">
+  <div class="term-card-header" onclick="toggleCard(this)">
+    <span class="term-badge" style="background:var(--section5);color:#fff">Sec 5</span>
+    <span class="term-ko">지수분포</span>
+    <span class="term-en">Exponential Distribution</span>
+    <span class="term-brief">사건 사이의 대기 시간을 모델링하는 분포</span>
+    <span class="term-expand">&#9660;</span>
+  </div>
+  <div class="term-card-body"><div class="term-detail">
+    <div class="brief-label">한 줄 정의</div>
+    <div class="brief-text">포아송 과정에서 다음 사건이 발생할 때까지의 대기 시간을 나타내는 분포</div>
+    <div class="detail-label">상세 설명</div>
+    <div class="detail-text">지수분포 $\text{Exp}(\lambda)$는 연속형 분포로, 콜센터 다음 전화까지의 시간, 기계 고장 간격 등을 모델링한다. 기대값은 $1/\lambda$, 분산은 $1/\lambda^2$이다. 무기억 성질(memoryless property)이 특징으로, 이미 기다린 시간과 무관하게 남은 대기 시간의 분포가 동일하다.</div>
+    <div class="term-formula">$f(x) = \lambda e^{-\lambda x}, \quad x \ge 0$</div>
+  </div></div>
+</div>
+
+<div class="term-card" data-section="sec5" data-ko="포아송분포" data-en="poisson distribution" data-search="포아송분포 poisson distribution 사건횟수 단위시간 lambda 희귀사건" id="term-poisson">
+  <div class="term-card-header" onclick="toggleCard(this)">
+    <span class="term-badge" style="background:var(--section5);color:#fff">Sec 5</span>
+    <span class="term-ko">포아송분포</span>
+    <span class="term-en">Poisson Distribution</span>
+    <span class="term-brief">단위 시간/공간에서 사건 발생 횟수의 분포</span>
+    <span class="term-expand">&#9660;</span>
+  </div>
+  <div class="term-card-body"><div class="term-detail">
+    <div class="brief-label">한 줄 정의</div>
+    <div class="brief-text">단위 시간(또는 공간)당 평균 $\lambda$번 발생하는 사건의 발생 횟수 분포</div>
+    <div class="detail-label">상세 설명</div>
+    <div class="detail-text">포아송분포 $\text{Pois}(\lambda)$는 희귀 사건의 발생 횟수를 모델링한다. 1시간 동안 걸려오는 전화 수, 1페이지의 오타 수 등이 예시이다. 기대값과 분산이 모두 $\lambda$로 같다는 특징이 있다. $n$이 크고 $p$가 작은 이항분포의 근사로도 사용되며, 카운트 데이터의 회귀 분석(포아송 회귀)에 활용된다.</div>
+    <div class="term-formula">$P(X=k) = \frac{\lambda^k e^{-\lambda}}{k!}, \quad k = 0, 1, 2, \ldots$</div>
+  </div></div>
+</div>
+
+<div class="term-card" data-section="sec5" data-ko="기하분포" data-en="geometric distribution" data-search="기하분포 geometric distribution 첫성공 시행횟수 무기억" id="term-geometric">
+  <div class="term-card-header" onclick="toggleCard(this)">
+    <span class="term-badge" style="background:var(--section5);color:#fff">Sec 5</span>
+    <span class="term-ko">기하분포</span>
+    <span class="term-en">Geometric Distribution</span>
+    <span class="term-brief">첫 번째 성공까지 필요한 시행 횟수의 분포</span>
+    <span class="term-expand">&#9660;</span>
+  </div>
+  <div class="term-card-body"><div class="term-detail">
+    <div class="brief-label">한 줄 정의</div>
+    <div class="brief-text">독립적 베르누이 시행에서 처음으로 성공할 때까지의 시행 횟수 분포</div>
+    <div class="detail-label">상세 설명</div>
+    <div class="detail-text">기하분포는 성공 확률 $p$인 독립 시행을 반복할 때, 첫 성공이 $k$번째에 나올 확률을 나타낸다. 기대값은 $1/p$이며, 이산형 분포 중 유일하게 무기억 성질을 갖는다. 고객이 처음 구매하기까지의 방문 횟수, 불량품이 나올 때까지의 생산 개수 등을 모델링할 수 있다.</div>
+    <div class="term-formula">$P(X=k) = (1-p)^{k-1}p, \quad k = 1, 2, 3, \ldots$</div>
+  </div></div>
+</div>
+
+<div class="term-card" data-section="sec5" data-ko="파레토분포" data-en="pareto distribution" data-search="파레토분포 pareto distribution 멱법칙 power law 꼬리두꺼운" id="term-pareto">
+  <div class="term-card-header" onclick="toggleCard(this)">
+    <span class="term-badge" style="background:var(--section5);color:#fff">Sec 5</span>
+    <span class="term-ko">파레토분포</span>
+    <span class="term-en">Pareto Distribution</span>
+    <span class="term-brief">멱법칙(power law)을 따르는 두꺼운 꼬리 분포</span>
+    <span class="term-expand">&#9660;</span>
+  </div>
+  <div class="term-card-body"><div class="term-detail">
+    <div class="brief-label">한 줄 정의</div>
+    <div class="brief-text">소수가 대부분을 차지하는 멱법칙 현상을 모델링하는 두꺼운 꼬리(heavy-tail) 분포</div>
+    <div class="detail-label">상세 설명</div>
+    <div class="detail-text">파레토분포는 소득 분포, 도시 인구, 웹사이트 트래픽 등 극단값이 빈번한 현상을 모델링한다. 형상 모수(shape parameter) $\alpha$가 꼬리 두께를 결정한다. $\alpha$가 작을수록 극단값의 발생 확률이 높다. 파레토 법칙(80-20 규칙)의 수학적 기초이며, Long-Tail 현상을 설명하는 핵심 분포이다.</div>
+    <div class="term-formula">$f(x) = \frac{\alpha x_m^{\alpha}}{x^{\alpha+1}}, \quad x \ge x_m$</div>
+  </div></div>
+</div>
+
+<div class="term-card" data-section="sec5" data-ko="베타분포" data-en="beta distribution" data-search="베타분포 beta distribution 0과1사이 사전분포 alpha beta conjugate" id="term-beta">
+  <div class="term-card-header" onclick="toggleCard(this)">
+    <span class="term-badge" style="background:var(--section5);color:#fff">Sec 5</span>
+    <span class="term-ko">베타분포</span>
+    <span class="term-en">Beta Distribution</span>
+    <span class="term-brief">0과 1 사이의 확률값 자체를 모델링하는 분포</span>
+    <span class="term-expand">&#9660;</span>
+  </div>
+  <div class="term-card-body"><div class="term-detail">
+    <div class="brief-label">한 줄 정의</div>
+    <div class="brief-text">$[0, 1]$ 구간에서 정의되며, 확률이나 비율의 분포를 모델링하는 유연한 분포</div>
+    <div class="detail-label">상세 설명</div>
+    <div class="detail-text">베타분포 $\text{Beta}(\alpha, \beta)$는 두 형상 모수에 따라 U자, J자, 종 모양 등 다양한 형태를 취한다. 베이즈 추론에서 베르누이/이항분포의 켤레 사전분포(conjugate prior)로 사용되어, 성공 확률 $p$에 대한 사전 지식을 표현한다. 기대값은 $\frac{\alpha}{\alpha+\beta}$이며, A/B 테스트의 베이지안 분석에서 핵심 역할을 한다.</div>
+    <div class="term-formula">$f(x) = \frac{x^{\alpha-1}(1-x)^{\beta-1}}{B(\alpha, \beta)}, \quad 0 \le x \le 1$</div>
+  </div></div>
+</div>
+
+<div class="term-card" data-section="sec5" data-ko="감마분포" data-en="gamma distribution" data-search="감마분포 gamma distribution 대기시간합 shape rate 지수분포일반화" id="term-gamma">
+  <div class="term-card-header" onclick="toggleCard(this)">
+    <span class="term-badge" style="background:var(--section5);color:#fff">Sec 5</span>
+    <span class="term-ko">감마분포</span>
+    <span class="term-en">Gamma Distribution</span>
+    <span class="term-brief">여러 사건 대기 시간의 합을 모델링하는 분포</span>
+    <span class="term-expand">&#9660;</span>
+  </div>
+  <div class="term-card-body"><div class="term-detail">
+    <div class="brief-label">한 줄 정의</div>
+    <div class="brief-text">$\alpha$개의 독립 지수분포 확률변수의 합이 따르는 분포</div>
+    <div class="detail-label">상세 설명</div>
+    <div class="detail-text">감마분포 $\text{Gamma}(\alpha, \beta)$는 형상(shape) $\alpha$와 비율(rate) $\beta$ 두 모수를 갖는다. 지수분포($\alpha=1$)와 카이제곱분포($\beta=1/2$, $\alpha=k/2$)를 특수한 경우로 포함하는 더 일반적인 분포이다. 양의 실수 값을 갖는 데이터(대기 시간, 비용 등)를 모델링하며, 베이즈 추론에서 정밀도의 사전분포로 사용된다.</div>
+    <div class="term-formula">$f(x) = \frac{\beta^\alpha}{\Gamma(\alpha)} x^{\alpha-1} e^{-\beta x}, \quad x > 0$</div>
+  </div></div>
+</div>
+
+<div class="term-card" data-section="sec5" data-ko="카이제곱분포" data-en="chi-squared distribution" data-search="카이제곱분포 chi-squared distribution 자유도 적합도검정 독립성검정" id="term-chi-squared">
+  <div class="term-card-header" onclick="toggleCard(this)">
+    <span class="term-badge" style="background:var(--section5);color:#fff">Sec 5</span>
+    <span class="term-ko">카이제곱분포</span>
+    <span class="term-en">Chi-squared Distribution</span>
+    <span class="term-brief">표준정규 확률변수 제곱합의 분포</span>
+    <span class="term-expand">&#9660;</span>
+  </div>
+  <div class="term-card-body"><div class="term-detail">
+    <div class="brief-label">한 줄 정의</div>
+    <div class="brief-text">$k$개의 독립적인 표준정규 확률변수의 제곱합이 따르는 분포</div>
+    <div class="detail-label">상세 설명</div>
+    <div class="detail-text">카이제곱분포 $\chi^2(k)$는 자유도 $k$를 모수로 가지며, $Z_1^2 + Z_2^2 + \cdots + Z_k^2$의 분포이다. 기대값은 $k$, 분산은 $2k$이다. 범주형 변수의 독립성 검정(chi-squared test), 적합도 검정, 분산 추정 등에 핵심적으로 사용된다. 자유도가 커질수록 정규분포에 근사한다.</div>
+    <div class="term-formula">$\chi^2(k) = \sum_{i=1}^{k} Z_i^2, \quad Z_i \sim N(0,1)$</div>
+  </div></div>
+</div>
+
+<div class="term-card" data-section="sec5" data-ko="t-분포" data-en="t-distribution student" data-search="t분포 t-distribution student 소표본 두꺼운꼬리 자유도" id="term-t-distribution">
+  <div class="term-card-header" onclick="toggleCard(this)">
+    <span class="term-badge" style="background:var(--section5);color:#fff">Sec 5</span>
+    <span class="term-ko">t-분포</span>
+    <span class="term-en">t-Distribution (Student's t)</span>
+    <span class="term-brief">소표본에서 평균 검정에 사용하는 두꺼운 꼬리 분포</span>
+    <span class="term-expand">&#9660;</span>
+  </div>
+  <div class="term-card-body"><div class="term-detail">
+    <div class="brief-label">한 줄 정의</div>
+    <div class="brief-text">모분산을 모를 때 표본 평균의 분포를 기술하는, 정규분포보다 꼬리가 두꺼운 분포</div>
+    <div class="detail-label">상세 설명</div>
+    <div class="detail-text">t-분포는 자유도 $\nu$에 의해 결정되며, $\nu$가 작을수록 꼬리가 두꺼워 극단값 가능성이 높다. $\nu \to \infty$이면 표준정규분포에 수렴한다. 소표본($n &lt; 30$)에서 모분산을 모를 때 평균에 대한 가설 검정(t-test)과 신뢰구간 구축에 사용된다. 머신러닝에서는 강건 회귀(robust regression)에 활용된다.</div>
+    <div class="term-formula">$t = \frac{\bar{X} - \mu}{S / \sqrt{n}} \sim t(\nu), \quad \nu = n - 1$</div>
+  </div></div>
+</div>
+
+<div class="term-card" data-section="sec5" data-ko="F-분포" data-en="f-distribution" data-search="f분포 f-distribution 분산비 anova 회귀분석 f검정" id="term-f-distribution">
+  <div class="term-card-header" onclick="toggleCard(this)">
+    <span class="term-badge" style="background:var(--section5);color:#fff">Sec 5</span>
+    <span class="term-ko">F-분포</span>
+    <span class="term-en">F-Distribution</span>
+    <span class="term-brief">두 분산의 비(ratio)가 따르는 분포</span>
+    <span class="term-expand">&#9660;</span>
+  </div>
+  <div class="term-card-body"><div class="term-detail">
+    <div class="brief-label">한 줄 정의</div>
+    <div class="brief-text">두 독립적인 카이제곱 분포의 비율로 정의되는 분포</div>
+    <div class="detail-label">상세 설명</div>
+    <div class="detail-text">F-분포는 자유도 $(d_1, d_2)$를 모수로 가지며, 두 모집단의 분산 비를 검정하는 데 사용된다. 분산분석(ANOVA)에서 그룹 간 분산과 그룹 내 분산의 비가 F-분포를 따르며, 회귀분석에서 모델 전체의 유의성을 F-검정으로 평가한다. 항상 양의 값을 가지며 오른쪽으로 기운 형태이다.</div>
+    <div class="term-formula">$F = \frac{\chi^2_{d_1}/d_1}{\chi^2_{d_2}/d_2} \sim F(d_1, d_2)$</div>
+  </div></div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 6: 표준화/정규분포 -->
+<!-- ============================================================ -->
+<div class="section-header" id="sec6">
+  <span class="section-num" style="background:var(--section6)">6</span>
+  <h2>표준화와 표본 분포 (Standardization &amp; Sampling)</h2>
+</div>
+<p class="section-desc">Z-점수, 모수 추정, 표본분포, 시그마 규칙</p>
+
+<div class="term-card" data-section="sec6" data-ko="Z-점수" data-en="z-score" data-search="z점수 z-score 표준점수 standard score 표준화값" id="term-z-score">
+  <div class="term-card-header" onclick="toggleCard(this)">
+    <span class="term-badge" style="background:var(--section6);color:#fff">Sec 6</span>
+    <span class="term-ko">Z-점수</span>
+    <span class="term-en">Z-score</span>
+    <span class="term-brief">평균에서 표준편차 몇 배만큼 떨어져 있는지</span>
+    <span class="term-expand">&#9660;</span>
+  </div>
+  <div class="term-card-body"><div class="term-detail">
+    <div class="brief-label">한 줄 정의</div>
+    <div class="brief-text">데이터 값이 평균으로부터 표준편차의 몇 배 만큼 떨어져 있는지를 나타내는 값</div>
+    <div class="detail-label">상세 설명</div>
+    <div class="detail-text">Z-점수는 $Z = \frac{X - \mu}{\sigma}$로 계산하며, 원래 데이터를 평균 0, 표준편차 1로 변환한 값이다. Z-점수가 2이면 평균보다 표준편차 2배만큼 큰 값이라는 뜻이다. 서로 다른 단위와 척도의 변수를 동일한 기준으로 비교할 수 있게 해주며, 이상치 탐지(|Z| > 3)에도 활용된다.</div>
+    <div class="term-formula">$Z = \frac{X - \mu}{\sigma}$</div>
+  </div></div>
+</div>
+
+<div class="term-card" data-section="sec6" data-ko="표준화" data-en="standardization" data-search="표준화 standardization scaling z변환 정규화 normalize" id="term-standardization">
+  <div class="term-card-header" onclick="toggleCard(this)">
+    <span class="term-badge" style="background:var(--section6);color:#fff">Sec 6</span>
+    <span class="term-ko">표준화</span>
+    <span class="term-en">Standardization</span>
+    <span class="term-brief">평균 0, 표준편차 1로 데이터를 변환하는 과정</span>
+    <span class="term-expand">&#9660;</span>
+  </div>
+  <div class="term-card-body"><div class="term-detail">
+    <div class="brief-label">한 줄 정의</div>
+    <div class="brief-text">데이터에서 평균을 빼고 표준편차로 나누어 평균 0, 표준편차 1로 변환하는 과정</div>
+    <div class="detail-label">상세 설명</div>
+    <div class="detail-text">표준화(Z-변환)는 서로 다른 스케일의 변수들을 동일한 척도로 맞추는 전처리 방법이다. 특히 거리 기반 알고리즘(KNN, SVM)이나 경사하강법 기반 모델에서 필수적이다. scikit-learn의 StandardScaler가 대표적 도구이며, 학습 데이터의 평균과 표준편차를 기억해두고 테스트 데이터에도 동일하게 적용해야 한다.</div>
+    <div class="term-formula">$X_{\text{std}} = \frac{X - \mu}{\sigma}$</div>
+  </div></div>
+</div>
+
+<div class="term-card" data-section="sec6" data-ko="평균중심화" data-en="mean centering" data-search="평균중심화 mean centering 중심이동 demean zero mean" id="term-mean-centering">
+  <div class="term-card-header" onclick="toggleCard(this)">
+    <span class="term-badge" style="background:var(--section6);color:#fff">Sec 6</span>
+    <span class="term-ko">평균중심화</span>
+    <span class="term-en">Mean Centering</span>
+    <span class="term-brief">평균을 0으로 이동시키는 변환</span>
+    <span class="term-expand">&#9660;</span>
+  </div>
+  <div class="term-card-body"><div class="term-detail">
+    <div class="brief-label">한 줄 정의</div>
+    <div class="brief-text">각 데이터 값에서 평균을 빼서 데이터의 중심을 원점으로 이동시키는 변환</div>
+    <div class="detail-label">상세 설명</div>
+    <div class="detail-text">평균중심화는 표준화의 첫 번째 단계로, $X' = X - \bar{X}$로 계산한다. 표준편차로 나누지 않으므로 원래 분산은 보존된다. PCA(주성분 분석)의 필수 전처리 단계이며, 해석의 용이성을 위해 회귀분석에서도 자주 적용된다. 평균중심화 후의 데이터는 원점을 중심으로 분포하게 된다.</div>
+    <div class="term-formula">$X' = X - \bar{X}$</div>
+  </div></div>
+</div>
+
+<div class="term-card" data-section="sec6" data-ko="모수" data-en="parameter" data-search="모수 parameter 모집단특성 theta mu sigma 추정대상" id="term-parameter">
+  <div class="term-card-header" onclick="toggleCard(this)">
+    <span class="term-badge" style="background:var(--section6);color:#fff">Sec 6</span>
+    <span class="term-ko">모수</span>
+    <span class="term-en">Parameter</span>
+    <span class="term-brief">모집단의 특성을 나타내는 고정된 상수</span>
+    <span class="term-expand">&#9660;</span>
+  </div>
+  <div class="term-card-body"><div class="term-detail">
+    <div class="brief-label">한 줄 정의</div>
+    <div class="brief-text">모집단 분포를 결정짓는 고정된 수치 (예: 모평균 $\mu$, 모분산 $\sigma^2$)</div>
+    <div class="detail-label">상세 설명</div>
+    <div class="detail-text">모수는 모집단의 확률분포를 완전히 결정하는 상수이다. 정규분포의 $\mu$와 $\sigma$, 베르누이분포의 $p$ 등이 모수의 예이다. 실제로는 모수를 직접 알 수 없으므로 표본으로부터 추정(estimation)한다. 머신러닝에서 "학습"이란 결국 모델의 모수(가중치, 편향)를 데이터로부터 추정하는 과정이다.</div>
+  </div></div>
+</div>
+
+<div class="term-card" data-section="sec6" data-ko="모집단" data-en="population" data-search="모집단 population 전체집단 모수 전수조사" id="term-population">
+  <div class="term-card-header" onclick="toggleCard(this)">
+    <span class="term-badge" style="background:var(--section6);color:#fff">Sec 6</span>
+    <span class="term-ko">모집단</span>
+    <span class="term-en">Population</span>
+    <span class="term-brief">관심 대상이 되는 전체 집단</span>
+    <span class="term-expand">&#9660;</span>
+  </div>
+  <div class="term-card-body"><div class="term-detail">
+    <div class="brief-label">한 줄 정의</div>
+    <div class="brief-text">연구나 분석의 대상이 되는 개체들의 전체 집합</div>
+    <div class="detail-label">상세 설명</div>
+    <div class="detail-text">모집단(population)은 연구 질문에 답하기 위해 관심을 갖는 모든 개체의 집합이다. 대한민국 성인 전체, 특정 공장의 모든 제품 등이 예시이다. 모집단 전체를 조사하는 것은 비용과 시간의 제약으로 대부분 불가능하므로, 표본(sample)을 추출하여 모집단의 특성(모수)을 추론한다.</div>
+  </div></div>
+</div>
+
+<div class="term-card" data-section="sec6" data-ko="표본" data-en="sample" data-search="표본 sample 부분집합 추출 표본추출 sampling" id="term-sample">
+  <div class="term-card-header" onclick="toggleCard(this)">
+    <span class="term-badge" style="background:var(--section6);color:#fff">Sec 6</span>
+    <span class="term-ko">표본</span>
+    <span class="term-en">Sample</span>
+    <span class="term-brief">모집단에서 추출한 일부 데이터</span>
+    <span class="term-expand">&#9660;</span>
+  </div>
+  <div class="term-card-body"><div class="term-detail">
+    <div class="brief-label">한 줄 정의</div>
+    <div class="brief-text">모집단의 특성을 파악하기 위해 추출한 모집단의 부분집합</div>
+    <div class="detail-label">상세 설명</div>
+    <div class="detail-text">표본(sample)은 모집단에서 일정한 규칙(무작위 추출 등)에 따라 선택한 개체들의 집합이다. 표본의 크기 $n$이 클수록 모집단을 더 잘 대표한다. 무작위 표본(random sample)이어야 편향 없는 추론이 가능하며, 머신러닝에서 학습 데이터셋이 곧 모집단에서 추출한 표본에 해당한다.</div>
+  </div></div>
+</div>
+
+<div class="term-card" data-section="sec6" data-ko="표본평균" data-en="sample mean" data-search="표본평균 sample mean xbar 추정량 불편추정량" id="term-sample-mean">
+  <div class="term-card-header" onclick="toggleCard(this)">
+    <span class="term-badge" style="background:var(--section6);color:#fff">Sec 6</span>
+    <span class="term-ko">표본평균</span>
+    <span class="term-en">Sample Mean</span>
+    <span class="term-brief">표본 데이터의 산술 평균</span>
+    <span class="term-expand">&#9660;</span>
+  </div>
+  <div class="term-card-body"><div class="term-detail">
+    <div class="brief-label">한 줄 정의</div>
+    <div class="brief-text">표본에서 관측된 값들의 산술 평균으로, 모평균 $\mu$의 추정치</div>
+    <div class="detail-label">상세 설명</div>
+    <div class="detail-text">표본평균 $\bar{X} = \frac{1}{n}\sum X_i$는 모평균 $\mu$의 불편추정량이다. 즉 $E[\bar{X}] = \mu$이며, 분산은 $\text{Var}(\bar{X}) = \sigma^2/n$으로 표본 크기가 커질수록 줄어든다. 표본평균의 분포(표본분포)는 중심극한정리에 의해 정규분포에 수렴하며, 이것이 통계적 추론의 이론적 토대가 된다.</div>
+    <div class="term-formula">$\bar{X} = \frac{1}{n}\sum_{i=1}^{n} X_i, \quad E[\bar{X}] = \mu, \quad \text{Var}(\bar{X}) = \frac{\sigma^2}{n}$</div>
+  </div></div>
+</div>
+
+<div class="term-card" data-section="sec6" data-ko="표본분포" data-en="sampling distribution" data-search="표본분포 sampling distribution 통계량분포 반복추출" id="term-sampling-distribution">
+  <div class="term-card-header" onclick="toggleCard(this)">
+    <span class="term-badge" style="background:var(--section6);color:#fff">Sec 6</span>
+    <span class="term-ko">표본분포</span>
+    <span class="term-en">Sampling Distribution</span>
+    <span class="term-brief">통계량(표본평균 등)의 확률분포</span>
+    <span class="term-expand">&#9660;</span>
+  </div>
+  <div class="term-card-body"><div class="term-detail">
+    <div class="brief-label">한 줄 정의</div>
+    <div class="brief-text">같은 모집단에서 반복 표본 추출할 때, 통계량(예: 표본평균)이 따르는 분포</div>
+    <div class="detail-label">상세 설명</div>
+    <div class="detail-text">표본분포는 표본 통계량(표본평균, 표본분산 등)의 확률분포이다. 모집단에서 크기 $n$인 표본을 무한히 많이 추출하면, 각 표본에서 계산한 통계량들이 하나의 분포를 이룬다. 표본평균의 표본분포는 중심극한정리에 의해 정규분포에 수렴하며, 표준오차 $\sigma/\sqrt{n}$이 그 퍼짐을 나타낸다.</div>
+    <div class="term-formula">$\bar{X} \sim N\!\left(\mu, \frac{\sigma^2}{n}\right) \quad (n \text{이 충분히 클 때})$</div>
+  </div></div>
+</div>
+
+<div class="term-card" data-section="sec6" data-ko="68-95-99.7 규칙" data-en="68-95-99.7 rule empirical rule" data-search="68-95-99.7 규칙 empirical rule 경험적규칙 3시그마 정규분포비율" id="term-empirical-rule">
+  <div class="term-card-header" onclick="toggleCard(this)">
+    <span class="term-badge" style="background:var(--section6);color:#fff">Sec 6</span>
+    <span class="term-ko">68-95-99.7 규칙</span>
+    <span class="term-en">Empirical Rule</span>
+    <span class="term-brief">정규분포에서 시그마 구간별 데이터 비율</span>
+    <span class="term-expand">&#9660;</span>
+  </div>
+  <div class="term-card-body"><div class="term-detail">
+    <div class="brief-label">한 줄 정의</div>
+    <div class="brief-text">정규분포에서 $\pm 1\sigma$, $\pm 2\sigma$, $\pm 3\sigma$ 구간에 각각 약 68%, 95%, 99.7%의 데이터가 포함되는 규칙</div>
+    <div class="detail-label">상세 설명</div>
+    <div class="detail-text">경험적 규칙(empirical rule)은 정규분포의 핵심 성질을 요약한 것이다. $\mu \pm 1\sigma$에 약 68.27%, $\mu \pm 2\sigma$에 약 95.45%, $\mu \pm 3\sigma$에 약 99.73%의 데이터가 포함된다. 이상치 탐지에서 $3\sigma$ 밖의 값을 이상치로 간주하는 근거가 되며, 품질관리의 6시그마 방법론의 기초이기도 하다.</div>
+    <div class="term-formula">$P(\mu - k\sigma \le X \le \mu + k\sigma) \approx 68\% / 95\% / 99.7\%$</div>
+  </div></div>
+</div>
+
+<div class="term-card" data-section="sec6" data-ko="시그마 구간" data-en="sigma interval" data-search="시그마 구간 sigma interval 신뢰구간 표준편차구간 범위" id="term-sigma-interval">
+  <div class="term-card-header" onclick="toggleCard(this)">
+    <span class="term-badge" style="background:var(--section6);color:#fff">Sec 6</span>
+    <span class="term-ko">시그마 구간</span>
+    <span class="term-en">Sigma Interval</span>
+    <span class="term-brief">평균을 중심으로 표준편차의 배수로 정의한 구간</span>
+    <span class="term-expand">&#9660;</span>
+  </div>
+  <div class="term-card-body"><div class="term-detail">
+    <div class="brief-label">한 줄 정의</div>
+    <div class="brief-text">평균에서 표준편차의 $k$배 범위, 즉 $[\mu - k\sigma, \mu + k\sigma]$ 구간</div>
+    <div class="detail-label">상세 설명</div>
+    <div class="detail-text">시그마 구간은 데이터의 퍼짐을 표준편차 단위로 표현한 범위이다. $1\sigma$ 구간은 약 68%, $2\sigma$는 약 95%, $3\sigma$는 약 99.7%를 포함한다. 제조업의 6시그마(Six Sigma)는 $6\sigma$ 구간 내에 불량이 있어야 한다는 품질 기준으로, 백만 개당 3.4개 이하의 불량률을 목표로 한다.</div>
+    <div class="term-formula">$[\mu - k\sigma, \; \mu + k\sigma]$</div>
+  </div></div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 7: Long-Tail / CLT -->
+<!-- ============================================================ -->
+<div class="section-header" id="sec7">
+  <span class="section-num" style="background:var(--section7)">7</span>
+  <h2>Long-Tail과 중심극한정리 (Long-Tail &amp; CLT)</h2>
+</div>
+<p class="section-desc">정규분포를 벗어나는 현실 데이터와, 평균이 정규분포에 수렴하는 CLT</p>
+
+<div class="term-card" data-section="sec7" data-ko="Long-Tail 분포" data-en="long-tail distribution" data-search="long-tail distribution 긴꼬리 두꺼운꼬리 heavy tail 멱법칙" id="term-long-tail">
+  <div class="term-card-header" onclick="toggleCard(this)">
+    <span class="term-badge" style="background:var(--section7);color:#fff">Sec 7</span>
+    <span class="term-ko">Long-Tail 분포</span>
+    <span class="term-en">Long-Tail Distribution</span>
+    <span class="term-brief">극단값이 무시할 수 없는 빈도로 나타나는 분포</span>
+    <span class="term-expand">&#9660;</span>
+  </div>
+  <div class="term-card-body"><div class="term-detail">
+    <div class="brief-label">한 줄 정의</div>
+    <div class="brief-text">소수의 고빈도 항목과 다수의 저빈도 항목이 공존하여, 꼬리가 긴 형태의 분포</div>
+    <div class="detail-label">상세 설명</div>
+    <div class="detail-text">Long-Tail 분포에서는 소수의 인기 항목이 대부분의 점유율을 차지하지만, 비인기 항목의 총합도 무시할 수 없다. 아마존 판매량, 유튜브 조회수, 단어 빈도(Zipf's law) 등이 대표적이다. 정규분포의 가정이 맞지 않으므로 평균과 분산만으로는 데이터를 충분히 설명할 수 없으며, 로그 변환이나 순위 기반 방법이 필요하다.</div>
+  </div></div>
+</div>
+
+<div class="term-card" data-section="sec7" data-ko="파레토 법칙" data-en="pareto principle 80-20 rule" data-search="파레토법칙 pareto principle 80-20 rule 이팔법칙 불균형" id="term-pareto-principle">
+  <div class="term-card-header" onclick="toggleCard(this)">
+    <span class="term-badge" style="background:var(--section7);color:#fff">Sec 7</span>
+    <span class="term-ko">파레토 법칙</span>
+    <span class="term-en">Pareto Principle (80-20 Rule)</span>
+    <span class="term-brief">결과의 80%가 원인의 20%에서 비롯된다는 경험 법칙</span>
+    <span class="term-expand">&#9660;</span>
+  </div>
+  <div class="term-card-body"><div class="term-detail">
+    <div class="brief-label">한 줄 정의</div>
+    <div class="brief-text">전체 결과의 약 80%가 전체 원인의 약 20%에서 발생한다는 경험적 법칙</div>
+    <div class="detail-label">상세 설명</div>
+    <div class="detail-text">이탈리아 경제학자 파레토가 발견한 법칙으로, 부(wealth)의 80%를 인구의 20%가 소유한다는 관찰에서 시작되었다. 소프트웨어 버그의 80%는 코드의 20%에서 발생하고, 매출의 80%는 고객의 20%에서 나온다. 파레토분포와 수학적으로 연결되며, 데이터 분석에서 중요 변수 선별의 근거로 활용된다.</div>
+  </div></div>
+</div>
+
+<div class="term-card" data-section="sec7" data-ko="중심극한정리" data-en="central limit theorem clt" data-search="중심극한정리 central limit theorem clt 표본평균 정규분포수렴" id="term-clt">
+  <div class="term-card-header" onclick="toggleCard(this)">
+    <span class="term-badge" style="background:var(--section7);color:#fff">Sec 7</span>
+    <span class="term-ko">중심극한정리 (CLT)</span>
+    <span class="term-en">Central Limit Theorem</span>
+    <span class="term-brief">표본평균의 분포가 정규분포에 수렴하는 정리</span>
+    <span class="term-expand">&#9660;</span>
+  </div>
+  <div class="term-card-body"><div class="term-detail">
+    <div class="brief-label">한 줄 정의</div>
+    <div class="brief-text">모집단의 분포에 관계없이, 표본 크기가 충분히 크면 표본평균의 분포가 정규분포에 수렴한다는 정리</div>
+    <div class="detail-label">상세 설명</div>
+    <div class="detail-text">중심극한정리는 통계학의 가장 중요한 정리 중 하나이다. 모집단이 어떤 분포를 따르든(유한한 분산만 있으면), $n$개의 독립 표본의 평균 $\bar{X}$는 $n \to \infty$일 때 $N(\mu, \sigma^2/n)$에 수렴한다. 실무에서는 $n \ge 30$ 정도면 근사가 충분히 좋다. 가설 검정과 신뢰구간 구축의 이론적 토대이다.</div>
+    <div class="term-formula">$\frac{\bar{X}_n - \mu}{\sigma / \sqrt{n}} \xrightarrow{d} N(0, 1) \quad (n \to \infty)$</div>
+  </div></div>
+</div>
+
+<div class="term-card" data-section="sec7" data-ko="대수의 법칙" data-en="law of large numbers" data-search="대수의법칙 law of large numbers lln 큰수법칙 수렴 상대빈도수렴" id="term-lln">
+  <div class="term-card-header" onclick="toggleCard(this)">
+    <span class="term-badge" style="background:var(--section7);color:#fff">Sec 7</span>
+    <span class="term-ko">대수의 법칙</span>
+    <span class="term-en">Law of Large Numbers</span>
+    <span class="term-brief">표본평균이 모평균에 수렴한다는 법칙</span>
+    <span class="term-expand">&#9660;</span>
+  </div>
+  <div class="term-card-body"><div class="term-detail">
+    <div class="brief-label">한 줄 정의</div>
+    <div class="brief-text">표본의 크기가 커질수록 표본 평균이 모집단의 기대값(모평균)에 가까워진다는 법칙</div>
+    <div class="detail-label">상세 설명</div>
+    <div class="detail-text">대수의 법칙에는 약한 법칙(확률 수렴)과 강한 법칙(거의 확실한 수렴)이 있다. 동전을 무한히 던지면 앞면의 비율이 0.5에 수렴하는 것이 대표적 예시이다. 중심극한정리가 분포의 형태를 말해준다면, 대수의 법칙은 수렴 자체를 보장한다. 머신러닝에서 학습 데이터가 충분하면 경험적 손실이 기대 손실에 수렴한다는 근거이다.</div>
+    <div class="term-formula">$\bar{X}_n = \frac{1}{n}\sum_{i=1}^n X_i \xrightarrow{P} \mu \quad (n \to \infty)$</div>
+  </div></div>
+</div>
+
+<div class="term-card" data-section="sec7" data-ko="Barabasi-Albert 모델" data-en="barabasi-albert model" data-search="barabasi albert model 바라바시 알버트 선호적연결 네트워크 성장모델" id="term-barabasi-albert">
+  <div class="term-card-header" onclick="toggleCard(this)">
+    <span class="term-badge" style="background:var(--section7);color:#fff">Sec 7</span>
+    <span class="term-ko">Barabasi-Albert 모델</span>
+    <span class="term-en">Barabasi-Albert Model</span>
+    <span class="term-brief">선호적 연결로 척도없는 네트워크를 생성하는 모델</span>
+    <span class="term-expand">&#9660;</span>
+  </div>
+  <div class="term-card-body"><div class="term-detail">
+    <div class="brief-label">한 줄 정의</div>
+    <div class="brief-text">새 노드가 연결이 많은 기존 노드에 더 잘 연결되는 "선호적 연결"로 멱법칙 차수 분포를 만드는 네트워크 성장 모델</div>
+    <div class="detail-label">상세 설명</div>
+    <div class="detail-text">BA 모델은 "부익부" 현상(preferential attachment)을 수학적으로 모델링한다. 새 노드가 기존 노드에 연결될 확률이 그 노드의 차수(degree)에 비례하므로, 결과적으로 차수 분포가 멱법칙 $P(k) \propto k^{-\gamma}$을 따르는 척도없는 네트워크가 생성된다. 인터넷, SNS, 인용 네트워크 등 실제 네트워크의 구조를 설명한다.</div>
+    <div class="term-formula">$P(\text{새 노드} \to i) = \frac{k_i}{\sum_j k_j}$</div>
+  </div></div>
+</div>
+
+<div class="term-card" data-section="sec7" data-ko="척도없는 네트워크" data-en="scale-free network" data-search="척도없는네트워크 scale-free network 멱법칙 허브 power law degree" id="term-scale-free">
+  <div class="term-card-header" onclick="toggleCard(this)">
+    <span class="term-badge" style="background:var(--section7);color:#fff">Sec 7</span>
+    <span class="term-ko">척도없는 네트워크</span>
+    <span class="term-en">Scale-free Network</span>
+    <span class="term-brief">차수 분포가 멱법칙을 따르는 네트워크</span>
+    <span class="term-expand">&#9660;</span>
+  </div>
+  <div class="term-card-body"><div class="term-detail">
+    <div class="brief-label">한 줄 정의</div>
+    <div class="brief-text">소수의 허브(hub)가 매우 많은 연결을 가지고 대다수 노드는 적은 연결을 갖는, 멱법칙 차수 분포의 네트워크</div>
+    <div class="detail-label">상세 설명</div>
+    <div class="detail-text">"척도없는(scale-free)"이란 어떤 배율로 확대해도 같은 패턴이 반복된다는 자기유사성(self-similarity)을 의미한다. 차수 분포가 $P(k) \sim k^{-\gamma}$ ($2 &lt; \gamma &lt; 3$)을 따르며, 일반적 무작위 네트워크(포아송 차수분포)와 근본적으로 다르다. 허브를 제거하면 네트워크가 빠르게 분리되는 취약점이 있다.</div>
+    <div class="term-formula">$P(k) \sim k^{-\gamma}, \quad 2 &lt; \gamma &lt; 3$</div>
+  </div></div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 8: 조건부확률/베이즈 -->
+<!-- ============================================================ -->
+<div class="section-header" id="sec8">
+  <span class="section-num" style="background:var(--section8)">8</span>
+  <h2>조건부확률과 베이즈 정리 (Conditional &amp; Bayes)</h2>
+</div>
+<p class="section-desc">사전 지식을 업데이트하는 베이즈 추론의 핵심 개념들</p>
+
+<div class="term-card" data-section="sec8" data-ko="조건부확률" data-en="conditional probability" data-search="조건부확률 conditional probability 주어진 given 조건 사건" id="term-conditional-probability">
+  <div class="term-card-header" onclick="toggleCard(this)">
+    <span class="term-badge" style="background:var(--section8);color:#fff">Sec 8</span>
+    <span class="term-ko">조건부확률</span>
+    <span class="term-en">Conditional Probability</span>
+    <span class="term-brief">다른 사건이 일어났다는 조건 하의 확률</span>
+    <span class="term-expand">&#9660;</span>
+  </div>
+  <div class="term-card-body"><div class="term-detail">
+    <div class="brief-label">한 줄 정의</div>
+    <div class="brief-text">사건 $B$가 일어났다는 조건 아래에서 사건 $A$가 일어날 확률</div>
+    <div class="detail-label">상세 설명</div>
+    <div class="detail-text">조건부확률 $P(A|B)$는 $B$라는 정보가 주어졌을 때 $A$의 확률이다. "비가 온다"는 조건 하에서 "우산을 가져올" 확률 등이 예시이다. 결합확률과 $P(A|B) = P(A \cap B)/P(B)$의 관계가 있다. 머신러닝의 핵심은 데이터(특성)가 주어졌을 때 타겟의 조건부확률을 추정하는 것이다.</div>
+    <div class="term-formula">$P(A|B) = \frac{P(A \cap B)}{P(B)}, \quad P(B) > 0$</div>
+  </div></div>
+</div>
+
+<div class="term-card" data-section="sec8" data-ko="결합분포" data-en="joint distribution" data-search="결합분포 joint distribution 결합확률분포 다변량 multivariate" id="term-joint-distribution">
+  <div class="term-card-header" onclick="toggleCard(this)">
+    <span class="term-badge" style="background:var(--section8);color:#fff">Sec 8</span>
+    <span class="term-ko">결합분포</span>
+    <span class="term-en">Joint Distribution</span>
+    <span class="term-brief">두 개 이상의 확률변수에 대한 동시 확률분포</span>
+    <span class="term-expand">&#9660;</span>
+  </div>
+  <div class="term-card-body"><div class="term-detail">
+    <div class="brief-label">한 줄 정의</div>
+    <div class="brief-text">두 개 이상의 확률변수가 동시에 취하는 값들의 확률분포</div>
+    <div class="detail-label">상세 설명</div>
+    <div class="detail-text">결합분포 $P(X, Y)$는 확률변수 $X$와 $Y$의 모든 가능한 값 조합에 대한 확률을 나타낸다. 이산형에서는 결합 확률표로, 연속형에서는 결합 확률밀도함수 $f_{X,Y}(x,y)$로 표현된다. 결합분포에서 주변분포와 조건부분포를 유도할 수 있으며, 다변량 정규분포가 대표적인 연속형 결합분포이다.</div>
+    <div class="term-formula">$P(X=x, Y=y) \quad \text{또는} \quad f_{X,Y}(x,y)$</div>
+  </div></div>
+</div>
+
+<div class="term-card" data-section="sec8" data-ko="주변분포" data-en="marginal distribution" data-search="주변분포 marginal distribution 주변확률 marginalization 합산" id="term-marginal">
+  <div class="term-card-header" onclick="toggleCard(this)">
+    <span class="term-badge" style="background:var(--section8);color:#fff">Sec 8</span>
+    <span class="term-ko">주변분포 / 주변확률</span>
+    <span class="term-en">Marginal Distribution</span>
+    <span class="term-brief">결합분포에서 한 변수만의 분포를 추출</span>
+    <span class="term-expand">&#9660;</span>
+  </div>
+  <div class="term-card-body"><div class="term-detail">
+    <div class="brief-label">한 줄 정의</div>
+    <div class="brief-text">결합분포에서 다른 변수를 합산(적분)하여 구한 개별 변수의 분포</div>
+    <div class="detail-label">상세 설명</div>
+    <div class="detail-text">주변분포는 결합분포에서 관심 없는 변수를 "주변화(marginalize out)"하여 얻는다. 이산형에서는 합산, 연속형에서는 적분으로 계산한다. 결합확률표의 행/열 합계가 주변분포에 해당한다. 주변화는 베이즈 추론에서 증거(evidence) $P(D) = \sum_\theta P(D|\theta)P(\theta)$를 계산하는 핵심 연산이다.</div>
+    <div class="term-formula">$P(X=x) = \sum_y P(X=x, Y=y)$</div>
+  </div></div>
+</div>
+
+<div class="term-card" data-section="sec8" data-ko="독립" data-en="independence" data-search="독립 independence 독립사건 무관 곱규칙 independent" id="term-independence">
+  <div class="term-card-header" onclick="toggleCard(this)">
+    <span class="term-badge" style="background:var(--section8);color:#fff">Sec 8</span>
+    <span class="term-ko">독립</span>
+    <span class="term-en">Independence</span>
+    <span class="term-brief">한 사건의 발생이 다른 사건에 영향을 주지 않음</span>
+    <span class="term-expand">&#9660;</span>
+  </div>
+  <div class="term-card-body"><div class="term-detail">
+    <div class="brief-label">한 줄 정의</div>
+    <div class="brief-text">한 사건의 발생 여부가 다른 사건의 확률에 전혀 영향을 미치지 않는 관계</div>
+    <div class="detail-label">상세 설명</div>
+    <div class="detail-text">사건 $A$와 $B$가 독립이면 $P(A|B) = P(A)$, 즉 $B$의 발생을 알아도 $A$의 확률이 변하지 않는다. 동치 조건으로 $P(A \cap B) = P(A)P(B)$가 있다. 독립 가정은 통계적 추론을 크게 단순화하며, 나이브 베이즈 분류기의 핵심 가정이다. 상관관계가 0이더라도 독립이 아닐 수 있음에 주의해야 한다.</div>
+    <div class="term-formula">$P(A \cap B) = P(A) \cdot P(B) \iff A \perp\!\!\!\perp B$</div>
+  </div></div>
+</div>
+
+<div class="term-card" data-section="sec8" data-ko="종속" data-en="dependence" data-search="종속 dependence 종속사건 관련 dependent 상관" id="term-dependence">
+  <div class="term-card-header" onclick="toggleCard(this)">
+    <span class="term-badge" style="background:var(--section8);color:#fff">Sec 8</span>
+    <span class="term-ko">종속</span>
+    <span class="term-en">Dependence</span>
+    <span class="term-brief">한 사건이 다른 사건의 확률에 영향을 줌</span>
+    <span class="term-expand">&#9660;</span>
+  </div>
+  <div class="term-card-body"><div class="term-detail">
+    <div class="brief-label">한 줄 정의</div>
+    <div class="brief-text">한 사건의 발생이 다른 사건의 확률을 변화시키는 관계</div>
+    <div class="detail-label">상세 설명</div>
+    <div class="detail-text">사건 $A$와 $B$가 종속이면 $P(A|B) \ne P(A)$이다. 비가 오면 우산 판매가 늘어나듯, 한 사건의 정보가 다른 사건에 대한 확률을 변화시킨다. 종속 관계는 상관관계(correlation)나 조건부확률로 측정할 수 있다. 종속 관계를 활용하여 예측 모델을 구축하는 것이 머신러닝의 기본 아이디어이다.</div>
+    <div class="term-formula">$P(A|B) \ne P(A) \iff P(A \cap B) \ne P(A)P(B)$</div>
+  </div></div>
+</div>
+
+<div class="term-card" data-section="sec8" data-ko="베이즈 정리" data-en="bayes theorem" data-search="베이즈정리 bayes theorem 역확률 사후확률계산 업데이트" id="term-bayes-theorem">
+  <div class="term-card-header" onclick="toggleCard(this)">
+    <span class="term-badge" style="background:var(--section8);color:#fff">Sec 8</span>
+    <span class="term-ko">베이즈 정리</span>
+    <span class="term-en">Bayes' Theorem</span>
+    <span class="term-brief">사전확률을 증거로 업데이트하여 사후확률을 구하는 공식</span>
+    <span class="term-expand">&#9660;</span>
+  </div>
+  <div class="term-card-body"><div class="term-detail">
+    <div class="brief-label">한 줄 정의</div>
+    <div class="brief-text">데이터(증거)를 관찰한 후 가설의 확률을 업데이트하는 수학적 공식</div>
+    <div class="detail-label">상세 설명</div>
+    <div class="detail-text">베이즈 정리는 사전확률 $P(H)$에 우도비 $P(D|H)/P(D)$를 곱하여 사후확률 $P(H|D)$를 구한다. "증거가 주어졌을 때 가설이 참일 확률"을 계산하며, 새로운 증거가 생길 때마다 반복적으로 업데이트할 수 있다. 나이브 베이즈 분류기, 베이지안 최적화, 스팸 필터 등 머신러닝 전반에서 핵심적으로 활용된다.</div>
+    <div class="term-formula">$P(H|D) = \frac{P(D|H) \cdot P(H)}{P(D)}$</div>
+  </div></div>
+</div>
+
+<div class="term-card" data-section="sec8" data-ko="사전확률" data-en="prior probability" data-search="사전확률 prior probability 사전지식 사전분포 사전정보" id="term-prior">
+  <div class="term-card-header" onclick="toggleCard(this)">
+    <span class="term-badge" style="background:var(--section8);color:#fff">Sec 8</span>
+    <span class="term-ko">사전확률</span>
+    <span class="term-en">Prior Probability</span>
+    <span class="term-brief">데이터를 보기 전 가설에 대한 초기 믿음</span>
+    <span class="term-expand">&#9660;</span>
+  </div>
+  <div class="term-card-body"><div class="term-detail">
+    <div class="brief-label">한 줄 정의</div>
+    <div class="brief-text">데이터(증거)를 관찰하기 전에 가설이 참일 것이라고 믿는 확률</div>
+    <div class="detail-label">상세 설명</div>
+    <div class="detail-text">사전확률 $P(H)$는 데이터를 보기 전 기존 지식이나 경험에 기반한 가설의 초기 확률이다. 전문가 의견, 이전 연구 결과, 또는 무정보 사전분포(uninformative prior) 등으로 설정할 수 있다. 사전확률의 선택은 베이즈 추론의 결과에 영향을 미치지만, 데이터가 충분하면 그 영향은 줄어든다.</div>
+    <div class="term-formula">$P(H) = \text{데이터 관찰 전 가설의 확률}$</div>
+  </div></div>
+</div>
+
+<div class="term-card" data-section="sec8" data-ko="사후확률" data-en="posterior probability" data-search="사후확률 posterior probability 업데이트된 사후분포" id="term-posterior">
+  <div class="term-card-header" onclick="toggleCard(this)">
+    <span class="term-badge" style="background:var(--section8);color:#fff">Sec 8</span>
+    <span class="term-ko">사후확률</span>
+    <span class="term-en">Posterior Probability</span>
+    <span class="term-brief">데이터를 관찰한 후 업데이트된 가설의 확률</span>
+    <span class="term-expand">&#9660;</span>
+  </div>
+  <div class="term-card-body"><div class="term-detail">
+    <div class="brief-label">한 줄 정의</div>
+    <div class="brief-text">데이터(증거)를 관찰한 후 베이즈 정리로 업데이트된 가설의 확률</div>
+    <div class="detail-label">상세 설명</div>
+    <div class="detail-text">사후확률 $P(H|D)$는 사전확률이 데이터에 의해 업데이트된 결과이다. "사후확률 $\propto$ 우도 $\times$ 사전확률" 관계가 핵심이며, 새 데이터가 추가될 때마다 현재 사후확률을 새로운 사전확률로 삼아 반복적으로 업데이트할 수 있다. MAP(Maximum A Posteriori) 추정은 사후확률을 최대화하는 모수를 찾는 방법이다.</div>
+    <div class="term-formula">$P(H|D) \propto P(D|H) \cdot P(H)$</div>
+  </div></div>
+</div>
+
+<div class="term-card" data-section="sec8" data-ko="우도" data-en="likelihood" data-search="우도 likelihood 가능도 데이터생성확률 모수고정" id="term-likelihood">
+  <div class="term-card-header" onclick="toggleCard(this)">
+    <span class="term-badge" style="background:var(--section8);color:#fff">Sec 8</span>
+    <span class="term-ko">우도</span>
+    <span class="term-en">Likelihood</span>
+    <span class="term-brief">특정 모수 하에서 관측 데이터가 나올 가능성</span>
+    <span class="term-expand">&#9660;</span>
+  </div>
+  <div class="term-card-body"><div class="term-detail">
+    <div class="brief-label">한 줄 정의</div>
+    <div class="brief-text">모수 $\theta$가 주어졌을 때 관측 데이터 $D$가 나올 확률, $L(\theta) = P(D|\theta)$</div>
+    <div class="detail-label">상세 설명</div>
+    <div class="detail-text">우도(likelihood)는 확률과 비슷해 보이지만, 데이터를 고정하고 모수를 변수로 본다는 점이 다르다. $P(D|\theta)$에서 데이터 $D$는 고정이고 $\theta$가 변하는 함수를 우도 함수라 한다. 최대우도추정(MLE)은 우도를 최대화하는 모수를 찾는 방법으로, 머신러닝의 많은 학습 알고리즘이 이에 기반한다.</div>
+    <div class="term-formula">$L(\theta) = P(D|\theta) = \prod_{i=1}^n P(x_i|\theta)$</div>
+  </div></div>
+</div>
+
+<div class="term-card" data-section="sec8" data-ko="증거" data-en="evidence" data-search="증거 evidence 주변우도 정규화상수 marginal likelihood" id="term-evidence">
+  <div class="term-card-header" onclick="toggleCard(this)">
+    <span class="term-badge" style="background:var(--section8);color:#fff">Sec 8</span>
+    <span class="term-ko">증거</span>
+    <span class="term-en">Evidence</span>
+    <span class="term-brief">모든 가설에 걸친 데이터의 총 확률</span>
+    <span class="term-expand">&#9660;</span>
+  </div>
+  <div class="term-card-body"><div class="term-detail">
+    <div class="brief-label">한 줄 정의</div>
+    <div class="brief-text">모든 가능한 가설에 대해 우도와 사전확률의 곱을 합산한 데이터의 총 확률</div>
+    <div class="detail-label">상세 설명</div>
+    <div class="detail-text">증거(evidence) $P(D)$는 베이즈 정리의 분모로, 주변우도(marginal likelihood)라고도 한다. $P(D) = \sum_H P(D|H)P(H)$로 계산하며, 사후확률을 합이 1이 되도록 정규화하는 역할을 한다. 단일 모수 추정에서는 무시할 수 있지만, 모델 선택(model selection)에서는 모델의 복잡도를 자동 반영하는 중요한 기준이 된다.</div>
+    <div class="term-formula">$P(D) = \sum_{H} P(D|H) \cdot P(H)$</div>
+  </div></div>
+</div>
+
+<div class="term-card" data-section="sec8" data-ko="기저율" data-en="base rate" data-search="기저율 base rate 기본비율 유병률 prevalence 사전비율" id="term-base-rate">
+  <div class="term-card-header" onclick="toggleCard(this)">
+    <span class="term-badge" style="background:var(--section8);color:#fff">Sec 8</span>
+    <span class="term-ko">기저율</span>
+    <span class="term-en">Base Rate</span>
+    <span class="term-brief">조건 없이 전체에서 해당 사건의 비율</span>
+    <span class="term-expand">&#9660;</span>
+  </div>
+  <div class="term-card-body"><div class="term-detail">
+    <div class="brief-label">한 줄 정의</div>
+    <div class="brief-text">특별한 조건 없이 전체 모집단에서 해당 사건이 발생하는 기본 비율</div>
+    <div class="detail-label">상세 설명</div>
+    <div class="detail-text">기저율은 사전확률과 같은 개념으로, 전체 인구 중 질병 유병률, 전체 이메일 중 스팸 비율 등이 예시이다. 검진 결과가 양성이더라도 질병의 기저율이 매우 낮으면 실제로 질병이 있을 확률은 낮을 수 있다. 분류 모델 평가 시 클래스 불균형은 기저율 문제와 직접 연결된다.</div>
+  </div></div>
+</div>
+
+<div class="term-card" data-section="sec8" data-ko="기저율 무시 오류" data-en="base rate fallacy" data-search="기저율무시오류 base rate fallacy 기저율오류 인지편향 base rate neglect" id="term-base-rate-fallacy">
+  <div class="term-card-header" onclick="toggleCard(this)">
+    <span class="term-badge" style="background:var(--section8);color:#fff">Sec 8</span>
+    <span class="term-ko">기저율 무시 오류</span>
+    <span class="term-en">Base Rate Fallacy</span>
+    <span class="term-brief">기저율을 무시하고 특정 증거만으로 판단하는 오류</span>
+    <span class="term-expand">&#9660;</span>
+  </div>
+  <div class="term-card-body"><div class="term-detail">
+    <div class="brief-label">한 줄 정의</div>
+    <div class="brief-text">기저율(사전확률)을 무시하고 조건부 정보(우도)에만 의존하여 잘못된 확률 판단을 내리는 인지 편향</div>
+    <div class="detail-label">상세 설명</div>
+    <div class="detail-text">유병률 0.1%인 질병의 검사 양성률이 99%일 때, 양성 결과를 받은 사람이 실제 질병이 있을 확률은 약 9%에 불과하다. 하지만 많은 사람이 이를 99%로 착각하는데, 이것이 기저율 무시 오류이다. 베이즈 정리를 올바르게 적용하면 이 오류를 피할 수 있으며, 분류 모델의 정밀도(precision) 해석에도 같은 논리가 적용된다.</div>
+  </div></div>
+</div>
+
+<div class="term-card" data-section="sec8" data-ko="라플라스 계승 규칙" data-en="laplace rule of succession" data-search="라플라스 계승규칙 laplace rule succession 스무딩 add-one 사전분포" id="term-laplace-succession">
+  <div class="term-card-header" onclick="toggleCard(this)">
+    <span class="term-badge" style="background:var(--section8);color:#fff">Sec 8</span>
+    <span class="term-ko">라플라스 계승 규칙</span>
+    <span class="term-en">Laplace's Rule of Succession</span>
+    <span class="term-brief">관측되지 않은 사건에도 확률을 부여하는 규칙</span>
+    <span class="term-expand">&#9660;</span>
+  </div>
+  <div class="term-card-body"><div class="term-detail">
+    <div class="brief-label">한 줄 정의</div>
+    <div class="brief-text">$n$번 성공 관측 후 다음 시행이 성공할 확률을 $\frac{n+1}{n+2}$로 추정하는 규칙</div>
+    <div class="detail-label">상세 설명</div>
+    <div class="detail-text">라플라스 계승 규칙은 "내일도 해가 뜰 확률은?"이라는 문제에 대한 답으로, 균일 사전분포를 가정한 베이즈 추정의 결과이다. $s$번 성공, $f$번 실패 관측 후 다음 성공 확률은 $\frac{s+1}{s+f+2}$이다. 관측 빈도가 0인 사건에도 양의 확률을 부여하여 "영확률 문제"를 해결하며, 이는 나이브 베이즈의 라플라스 스무딩(add-1 smoothing)의 기초이다.</div>
+    <div class="term-formula">$P(\text{다음 성공}) = \frac{s + 1}{s + f + 2}$</div>
+  </div></div>
+</div>
+
+<div class="term-card" data-section="sec8" data-ko="생존자 편향" data-en="survivorship bias" data-search="생존자편향 survivorship bias 선택편향 생존편향 탈락" id="term-survivorship-bias">
+  <div class="term-card-header" onclick="toggleCard(this)">
+    <span class="term-badge" style="background:var(--section8);color:#fff">Sec 8</span>
+    <span class="term-ko">생존자 편향</span>
+    <span class="term-en">Survivorship Bias</span>
+    <span class="term-brief">살아남은 것만 보고 잘못된 결론을 내리는 오류</span>
+    <span class="term-expand">&#9660;</span>
+  </div>
+  <div class="term-card-body"><div class="term-detail">
+    <div class="brief-label">한 줄 정의</div>
+    <div class="brief-text">성공(생존)한 사례만 관찰하고 실패(탈락)한 사례를 무시하여 왜곡된 결론을 내리는 인지 편향</div>
+    <div class="detail-label">상세 설명</div>
+    <div class="detail-text">2차 대전 중 귀환 폭격기의 총탄 자국만 보고 보강 부위를 결정하려 했으나, 에이브러햄 왈드는 "귀환하지 못한 비행기의 피격 부위"가 진짜 취약 부위임을 지적했다. 성공한 기업만 분석하여 성공 요인을 찾거나, 펀드 수익률에서 폐쇄된 펀드를 제외하면 생존자 편향이 발생한다. 데이터 수집 시 탈락/누락 데이터에 주의해야 한다.</div>
+  </div></div>
+</div>
+
+<div class="term-card" data-section="sec8" data-ko="Monty Hall 문제" data-en="monty hall problem" data-search="monty hall problem 몬티홀 문전환 조건부확률 3문" id="term-monty-hall">
+  <div class="term-card-header" onclick="toggleCard(this)">
+    <span class="term-badge" style="background:var(--section8);color:#fff">Sec 8</span>
+    <span class="term-ko">Monty Hall 문제</span>
+    <span class="term-en">Monty Hall Problem</span>
+    <span class="term-brief">문을 바꾸면 당첨 확률이 높아지는 직관 반하는 문제</span>
+    <span class="term-expand">&#9660;</span>
+  </div>
+  <div class="term-card-body"><div class="term-detail">
+    <div class="brief-label">한 줄 정의</div>
+    <div class="brief-text">3개의 문 중 하나를 선택한 후, 사회자가 염소 문을 열면 선택을 바꾸는 것이 유리한 확률 문제</div>
+    <div class="detail-label">상세 설명</div>
+    <div class="detail-text">Monty Hall 문제는 조건부확률의 직관 반하는 성질을 보여주는 유명한 문제이다. 선택을 바꾸면 당첨 확률이 $1/3$에서 $2/3$로 증가한다. 핵심은 사회자가 "정보를 가지고" 문을 연다는 점이며, 이 새로운 정보가 조건부확률을 변화시킨다. 베이즈 정리로 엄밀하게 증명할 수 있으며, 조건부확률의 직관적 이해가 왜 중요한지를 보여주는 교과서적 사례이다.</div>
+    <div class="term-formula">$P(\text{바꾸면 당첨}) = \frac{2}{3}, \quad P(\text{안 바꾸면 당첨}) = \frac{1}{3}$</div>
+  </div></div>
+</div>
+
+</main>
+</div>
+
+<!-- ===== Alphabetical Index Overlay ===== -->
+<div class="alpha-index-overlay" id="alphaOverlay">
+  <div class="alpha-index-panel" id="alphaPanel">
+    <h3>알파벳순 색인 (Alphabetical Index)</h3>
+    <div id="alphaContent"></div>
+  </div>
+</div>
+
+<!-- ===== No Results ===== -->
+<div class="no-results" id="noResults" style="display:none">
+  <div class="icon">?</div>
+  <p>검색 결과가 없습니다.</p>
+  <p style="font-size:0.85rem; margin-top:8px;">다른 키워드로 검색해 보세요.</p>
+</div>
+
+<!-- ===== Back to Top ===== -->
+<button class="back-to-top" id="backToTop" aria-label="맨 위로">&#8593;</button>
+
+<!-- ===== Footer ===== -->
+<footer>
+  <p>확률/통계 용어 사전 -- 머신러닝을 위한 확률론 (3주차 강의 PDF 기반)</p>
+  <p>전체 83개 용어 | 8개 섹션 | 2026-03-27 생성</p>
+</footer>
+
+<!-- ===== JavaScript ===== -->
+<script>
+(function() {
+  'use strict';
+
+  // ===== Theme Toggle =====
+  var themeBtn = document.getElementById('themeBtn');
+  var htmlEl = document.documentElement;
+  var savedTheme = localStorage.getItem('glossary-theme') || 'light';
+  if (savedTheme === 'dark') {
+    htmlEl.setAttribute('data-theme', 'dark');
+    themeBtn.textContent = '\u2600\uFE0F Light';
+  }
+
+  themeBtn.addEventListener('click', function() {
+    var isDark = htmlEl.getAttribute('data-theme') === 'dark';
+    htmlEl.setAttribute('data-theme', isDark ? 'light' : 'dark');
+    themeBtn.textContent = isDark ? '\uD83C\uDF19 Dark' : '\u2600\uFE0F Light';
+    localStorage.setItem('glossary-theme', isDark ? 'light' : 'dark');
+  });
+
+  // ===== Mobile Menu =====
+  var menuBtn = document.querySelector('.menu-btn');
+  var sidebar = document.getElementById('sidebar');
+  if (menuBtn) {
+    menuBtn.addEventListener('click', function() { sidebar.classList.toggle('open'); });
+    document.addEventListener('click', function(e) {
+      if (!sidebar.contains(e.target) && !menuBtn.contains(e.target)) {
+        sidebar.classList.remove('open');
+      }
+    });
+  }
+
+  // ===== Card Toggle (global) =====
+  window.toggleCard = function(header) {
+    var card = header.parentElement;
+    card.classList.toggle('open');
+  };
+
+  // ===== Search & Filter =====
+  var searchInput = document.getElementById('searchInput');
+  var searchStats = document.getElementById('searchStats');
+  var filterTags = document.querySelectorAll('.filter-tag');
+  var allCards = document.querySelectorAll('.term-card');
+  var sectionHeaders = document.querySelectorAll('.section-header');
+  var sectionDescs = document.querySelectorAll('.section-desc');
+  var noResults = document.getElementById('noResults');
+  var termCount = document.getElementById('termCount');
+  var activeSection = 'all';
+
+  filterTags.forEach(function(tag) {
+    tag.addEventListener('click', function() {
+      filterTags.forEach(function(t) { t.classList.remove('active'); });
+      tag.classList.add('active');
+      activeSection = tag.dataset.section;
+      applyFilters();
+    });
+  });
+
+  searchInput.addEventListener('input', function() { applyFilters(); });
+
+  function applyFilters() {
+    var query = searchInput.value.trim().toLowerCase();
+    var visibleCount = 0;
+    var visibleSections = {};
+
+    allCards.forEach(function(card) {
+      var section = card.dataset.section;
+      var searchText = (card.dataset.ko + ' ' + card.dataset.en + ' ' + card.dataset.search).toLowerCase();
+      var detailEl = card.querySelector('.term-detail');
+      var bodyText = detailEl ? detailEl.textContent.toLowerCase() : '';
+      var fullText = searchText + ' ' + bodyText;
+
+      var sectionMatch = activeSection === 'all' || section === activeSection;
+      var searchMatch = !query || fullText.indexOf(query) !== -1;
+
+      if (sectionMatch && searchMatch) {
+        card.style.display = '';
+        visibleCount++;
+        visibleSections[section] = true;
+      } else {
+        card.style.display = 'none';
+      }
+    });
+
+    sectionHeaders.forEach(function(h) {
+      var secId = h.id;
+      h.style.display = visibleSections[secId] || (activeSection === 'all' && !query) ? '' : 'none';
+    });
+    sectionDescs.forEach(function(d) {
+      var prevHeader = d.previousElementSibling;
+      d.style.display = prevHeader && prevHeader.style.display !== 'none' ? '' : 'none';
+    });
+
+    searchStats.textContent = query ? visibleCount + '/' + allCards.length + ' matches' : '';
+    termCount.textContent = 'total ' + allCards.length + ' terms';
+    noResults.style.display = visibleCount === 0 ? 'block' : 'none';
+  }
+
+  // ===== Alphabetical Index =====
+  var indexBtn = document.getElementById('indexBtn');
+  var alphaOverlay = document.getElementById('alphaOverlay');
+  var alphaContentEl = document.getElementById('alphaContent');
+
+  function buildAlphaIndex() {
+    var terms = [];
+    allCards.forEach(function(card) {
+      terms.push({ en: card.dataset.en || '', ko: card.dataset.ko || '', id: card.id });
+    });
+    terms.sort(function(a, b) {
+      var aKey = a.en.replace(/[^a-z0-9]/gi, '').toLowerCase();
+      var bKey = b.en.replace(/[^a-z0-9]/gi, '').toLowerCase();
+      return aKey < bKey ? -1 : aKey > bKey ? 1 : 0;
+    });
+    var groups = {};
+    terms.forEach(function(t) {
+      var letter = t.en.charAt(0).toUpperCase();
+      if (!/[A-Z]/.test(letter)) letter = '#';
+      if (!groups[letter]) groups[letter] = [];
+      groups[letter].push(t);
+    });
+
+    // Build DOM safely without innerHTML
+    while (alphaContentEl.firstChild) alphaContentEl.removeChild(alphaContentEl.firstChild);
+    var sortedKeys = Object.keys(groups).sort();
+    sortedKeys.forEach(function(letter) {
+      var groupDiv = document.createElement('div');
+      groupDiv.className = 'alpha-group';
+      var letterDiv = document.createElement('div');
+      letterDiv.className = 'alpha-letter';
+      letterDiv.textContent = letter;
+      groupDiv.appendChild(letterDiv);
+      groups[letter].forEach(function(t) {
+        var a = document.createElement('a');
+        a.className = 'alpha-item';
+        a.href = '#' + t.id;
+        a.textContent = t.ko + ' (' + t.en + ')';
+        a.addEventListener('click', function() { closeAlpha(); });
+        groupDiv.appendChild(a);
+      });
+      alphaContentEl.appendChild(groupDiv);
+    });
+  }
+
+  indexBtn.addEventListener('click', function() {
+    buildAlphaIndex();
+    alphaOverlay.classList.add('show');
+  });
+
+  alphaOverlay.addEventListener('click', function(e) {
+    if (e.target === alphaOverlay) closeAlpha();
+  });
+
+  function closeAlpha() { alphaOverlay.classList.remove('show'); }
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeAlpha();
+    if ((e.ctrlKey && e.key === 'k') || (e.key === '/' && document.activeElement.tagName !== 'INPUT')) {
+      e.preventDefault();
+      searchInput.focus();
+      searchInput.select();
+    }
+  });
+
+  // ===== Back to Top =====
+  var backToTop = document.getElementById('backToTop');
+  window.addEventListener('scroll', function() {
+    backToTop.classList.toggle('show', window.scrollY > 400);
+  });
+  backToTop.addEventListener('click', function() { window.scrollTo({ top: 0, behavior: 'smooth' }); });
+
+  // ===== Sidebar Active Link =====
+  var sidebarLinks = document.querySelectorAll('.sidebar a');
+  var observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        var id = entry.target.id;
+        sidebarLinks.forEach(function(link) {
+          link.classList.toggle('active', link.getAttribute('href') === '#' + id);
+        });
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+  sectionHeaders.forEach(function(h) { observer.observe(h); });
+
+  // ===== Expand All on print =====
+  window.addEventListener('beforeprint', function() {
+    allCards.forEach(function(c) { c.classList.add('open'); });
+  });
+
+})();
+</script>
+</body>
+</html>
